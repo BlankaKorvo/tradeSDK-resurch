@@ -1,0 +1,6 @@
+[submodule "Stock.Indicators"]
+	path = Stock.Indicators
+	url = https://github.com/BlankaKorvo/Stock.Indicators.git
+[submodule "invest-openapi-csharp-sdk"]
+	path = invest-openapi-csharp-sdk
+	url = https://github.com/BlankaKorvo/invest-openapi-csharp-sdk.git
