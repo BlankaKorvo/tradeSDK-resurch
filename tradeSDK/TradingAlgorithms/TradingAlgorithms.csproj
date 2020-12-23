@@ -1,12 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\invest-openapi-csharp-sdk\src\Tinkoff.Trading.OpenApi\Tinkoff.Trading.OpenApi.csproj" />
+    <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
   </ItemGroup>
 
 </Project>

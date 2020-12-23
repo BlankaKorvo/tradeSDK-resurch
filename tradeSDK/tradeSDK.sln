@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tinkoff.Trading.OpenApi", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Indicators", "..\Stock.Indicators\indicators\Indicators.csproj", "{6A1E7F13-619F-4338-B49C-FD6DFF9932CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenerStocks", "ScreenerStocks\ScreenerStocks.csproj", "{C3C07092-704C-4135-89FF-ACFF54D3C15A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradingAlgorithms", "TradingAlgorithms\TradingAlgorithms.csproj", "{062AA595-6179-4484-B6F2-B7FC2069116F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{6A1E7F13-619F-4338-B49C-FD6DFF9932CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A1E7F13-619F-4338-B49C-FD6DFF9932CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A1E7F13-619F-4338-B49C-FD6DFF9932CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3C07092-704C-4135-89FF-ACFF54D3C15A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3C07092-704C-4135-89FF-ACFF54D3C15A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3C07092-704C-4135-89FF-ACFF54D3C15A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3C07092-704C-4135-89FF-ACFF54D3C15A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{062AA595-6179-4484-B6F2-B7FC2069116F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{062AA595-6179-4484-B6F2-B7FC2069116F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{062AA595-6179-4484-B6F2-B7FC2069116F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{062AA595-6179-4484-B6F2-B7FC2069116F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
