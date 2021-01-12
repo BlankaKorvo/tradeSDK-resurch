@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\invest-openapi-csharp-sdk\src\Tinkoff.Trading.OpenApi\Tinkoff.Trading.OpenApi.csproj" />
-    <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
+    <PackageReference Include="Tinkoff.Trading.OpenApi" Version="1.7.0" />
   </ItemGroup>
 
 </Project>
