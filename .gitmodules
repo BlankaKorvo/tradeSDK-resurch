@@ -1,0 +1,3 @@
+[submodule "Stock.Indicators"]
+	path = Stock.Indicators
+	url = https://github.com/BlankaKorvo/Stock.Indicators
