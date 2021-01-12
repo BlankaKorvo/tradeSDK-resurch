@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScreenerStocks", "ScreenerS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingAlgorithms", "TradingAlgorithms\TradingAlgorithms.csproj", "{062AA595-6179-4484-B6F2-B7FC2069116F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Indicators", "..\Stock.Indicators\indicators\Indicators.csproj", "{CF4AADF9-CBBB-476C-A07D-AB6F7DEBDEA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{062AA595-6179-4484-B6F2-B7FC2069116F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{062AA595-6179-4484-B6F2-B7FC2069116F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{062AA595-6179-4484-B6F2-B7FC2069116F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF4AADF9-CBBB-476C-A07D-AB6F7DEBDEA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF4AADF9-CBBB-476C-A07D-AB6F7DEBDEA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF4AADF9-CBBB-476C-A07D-AB6F7DEBDEA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF4AADF9-CBBB-476C-A07D-AB6F7DEBDEA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
