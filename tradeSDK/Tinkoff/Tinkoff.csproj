@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
-    <ProjectReference Include="..\Tinkoff\Tinkoff.csproj" />
   </ItemGroup>
 
 </Project>

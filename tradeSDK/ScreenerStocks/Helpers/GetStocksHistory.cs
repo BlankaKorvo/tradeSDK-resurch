@@ -4,27 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Helpers;
-using Tinkoff.Trading.OpenApi.Models;
-using Tinkoff.Trading.OpenApi.Network;
 
 namespace ScreenerStocks.Helpers
 {
     class GetStocksHistory
     {
-        async Task<List<MarketInstrument>> AllUsdStocks(Context context)
-        {
-            List<MarketInstrument> usdStocks = new List<MarketInstrument>();
-            MarketInstrumentList stocks = await context.MarketStocksAsync();
-            foreach (MarketInstrument item in stocks.Instruments)
-            {
-                if (item.Currency == Currency.Usd)
-                {
-                    usdStocks.Add(item);
-                }
-            }
-            return usdStocks;
-        }
+        //async Task<List<MarketInstrument>> AllUsdStocks(Context context)
+        //{
+        //    List<MarketInstrument> usdStocks = new List<MarketInstrument>();
+        //    MarketInstrumentList stocks = await context.MarketStocksAsync();
+        //    foreach (MarketInstrument item in stocks.Instruments)
+        //    {
+        //        if (item.Currency == Currency.Usd)
+        //        {
+        //            usdStocks.Add(item);
+        //        }
+        //    }
+        //    return usdStocks;
+        //}
 
         //public async Task<List<CandleList>> AllUsdCandles(Context context, CandleInterval candleInterval)
         //{
