@@ -26,11 +26,71 @@ namespace Tinkoff
             }
             return quotes;
         }
+
+        public static List<Quote> ConvertTinkoffCandlesToQuote(List<CandlePayload> candles, decimal realClose)
+        {
+            List<Quote> quotes = new List<Quote>();
+
+            foreach (var candle in candles)
+            {
+                Quote quote = new Quote();
+                quote.Close = candle.Close;
+                quote.Date = candle.Time;
+                quote.Open = candle.Open;
+                quote.High = candle.High;
+                quote.Low = candle.Low;
+                quote.Volume = candle.Volume;
+                quotes.Add(quote);
+            }
+            quotes.Last().Close = realClose;
+            return quotes;
+        }
+
         public static List<EmaResult> EmaData(CandleList candleList, int history)
         {
-            List<Quote> candles = Serialization.ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
             return Indicator.GetEma(candles, history).ToList();
         }
 
+        public static List<EmaResult> EmaData(CandleList candleList, int history, decimal realPrise)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            return Indicator.GetEma(candles, history).ToList();
+        }
+
+        public static List<ObvResult> ObvData(CandleList candleList, int history)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            return Indicator.GetObv(candles, history).ToList();
+        }
+        
+        public static List<ObvResult> ObvData(CandleList candleList, int history, decimal realPrise)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            return Indicator.GetObv(candles, history).ToList();
+        }
+
+        public static List<SmaResult> SmaData(CandleList candleList, int history)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            return Indicator.GetSma(candles, history).ToList();
+        }
+        public static List<SmaResult> SmaData(CandleList candleList, int history, decimal realPrise)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            return Indicator.GetSma(candles, history).ToList();
+        }
+
+        public static List<SuperTrendResult> SuperTrendData(CandleList candleList, int history, decimal multiplier)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            return Indicator.GetSuperTrend(candles, history, multiplier).ToList();
+        }
+
+        public static List<SuperTrendResult> SuperTrendData(CandleList candleList, int history, decimal multiplier, decimal realPrise)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            return Indicator.GetSuperTrend(candles, history, multiplier).ToList();
+        }
     }
 }
