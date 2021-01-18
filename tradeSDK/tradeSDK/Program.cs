@@ -29,8 +29,8 @@ namespace tradeSDK
             decimal EmaPriceDeltaCondition = 0.12M;
             //decimal DeltaThreeDpoLongCondition = 1;
             //decimal DeltaThreeDpoFromLongCondition = 0;
-            decimal deltaAngleFourDpoLongCondition = 30;
-            decimal deltaAngleFourDpoFromLongCondition = -50;
+            decimal deltaAngleFourDpoLongCondition = 40;
+            decimal deltaAngleFourDpoFromLongCondition = 0;
 
             decimal longLastDpoCondition = 0;
             decimal fromLongDpoCondition = 0;
@@ -48,8 +48,8 @@ namespace tradeSDK
                     CandleList candleList = await market.GetCandleByFigi(context, figi, candleInterval, date);
                     //var list1 = new List<A>() { new A { SomeProp1 = 1, SomeProp2 = "A" }, new A { SomeProp1 = 2, SomeProp2 = "B" } };
 
-                    CandleList first = await market.GetCandleByFigi(context, figi, candleInterval, date);
-                    CandleList second = await market.GetCandleByFigi(context, figi, candleInterval, date.AddDays(-1));
+                    //CandleList first = await market.GetCandleByFigi(context, figi, candleInterval, date);
+                    //CandleList second = await market.GetCandleByFigi(context, figi, candleInterval, date.AddDays(-1));
 
 
                     var orderbook = await context.MarketOrderbookAsync(figi, 1);
@@ -78,6 +78,27 @@ namespace tradeSDK
                     //int barsback = dpoPeriod / 2 + 1;
                     List<SmaResult> smaForDpo = Serialization.SmaData(candleList, dpoPeriod, deltaPrice);
                     List<EmaResult> ema = Serialization.EmaData(candleList, emaPeriod, deltaPrice);
+                    List<ObvResult> obv = Serialization.ObvData(candleList, 10, deltaPrice);
+                    List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, superTrandPeriod, superTrandSensitive, deltaPrice);
+                    List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
+
+
+
+                    bool ichimokuLong(List<IchimokuResult> ichimoku)
+                    {
+                        if (ichimoku.Last().TenkanSen > ichimoku.Last().KijunSen
+                            && ichimoku.Last().KijunSen > ichimoku.Last().SenkouSpanA
+                            && ichimoku.Last().KijunSen > ichimoku.Last().SenkouSpanB
+                            )
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    
+                    }
                     //SmaResult lastma = sma[sma.Count - barsback -1];
                     //decimal? lastDpo = bid - lastma.Sma;
 
@@ -139,11 +160,24 @@ namespace tradeSDK
                         return Convert.ToDecimal(angleOne + angleTwo + angleThree) /3;
                     }
 
+                    decimal? DeltaDegreeAngle(List<decimal> values, int quantity)
+                    {
+                        if (values.Count < 2)
+                        {
+                            Console.WriteLine("Не верные входные данные");
+                        }
+                        else 
+                        {
+                            var countDelta = values.Count - 1;
+                            for(int i; )
+                        }
+                        
+                    }
+
 
                     decimal? EmaPriceDelta = 100 - (ema.Last().Ema * 100 / deltaPrice);
 
-                    var obv = Serialization.ObvData(candleList, 10, deltaPrice);
-                    var superTrand = Serialization.SuperTrendData(candleList, superTrandPeriod, superTrandSensitive, deltaPrice);
+
 
                     var deltaFourDpo = DeltaFourDpo(lastDpo, twoLastDpo, threeLastDpo, fourLastDpo);
 
@@ -204,7 +238,9 @@ namespace tradeSDK
                         && superTrand.Last().UpperBand == null 
                         && lastDpo >= longLastDpoCondition
                         && EmaPriceDelta < EmaPriceDeltaCondition
-                        && deltaAngleFourDpo > deltaAngleFourDpoLongCondition)
+                        && deltaAngleFourDpo > deltaAngleFourDpoLongCondition
+                        && ichimokuLong(ichimoku)
+                        )              
                     {
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Buy, ask));
                         using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
