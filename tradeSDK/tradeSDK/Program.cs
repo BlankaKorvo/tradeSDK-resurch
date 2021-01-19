@@ -21,6 +21,12 @@ namespace tradeSDK
             SandboxContext context = new Auth().GetSanboxContext();
             //Serialization ser = new Serialization();
 
+            var figi = "BBG000BVPV84";
+            var candleInterval = CandleInterval.FiveMinutes;
+            int CandleCount = 110;
+
+            int sleep = 10;
+
             int dpoPeriod = 20;
             int emaPeriod = 10;
 
@@ -41,11 +47,54 @@ namespace tradeSDK
                 try
                 {
                     int count = 0;
-                    var figi = "BBG000BVPV84";
+                    
                     var date = DateTime.Now;
-                    var candleInterval = CandleInterval.FiveMinutes;
+                    List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
 
-                    CandleList candleList = await market.GetCandleByFigi(context, figi, candleInterval, date);
+                    CandlePayloadEqualityComparer CandlePayloadEqC = new CandlePayloadEqualityComparer();
+
+                    if (candleInterval == CandleInterval.Minute
+                        || candleInterval == CandleInterval.TwoMinutes
+                        || candleInterval == CandleInterval.ThreeMinutes
+                        || candleInterval == CandleInterval.FiveMinutes
+                        || candleInterval == CandleInterval.TenMinutes
+                        || candleInterval == CandleInterval.QuarterHour
+                        || candleInterval == CandleInterval.HalfHour)
+                    {
+                        while (AllCandlePayloadTemp.Count < CandleCount)
+                        {
+                            AllCandlePayloadTemp = await GetAllCandles(market, context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                            date = date.AddDays(-1);
+                        }
+                    }
+                    else if (candleInterval == CandleInterval.Hour)
+                        while (AllCandlePayloadTemp.Count < CandleCount)
+                        {
+                            AllCandlePayloadTemp = await GetAllCandles(market, context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                            date = date.AddDays(-7);
+                        }
+                    else if(candleInterval == CandleInterval.Day)
+                    {
+                        while (AllCandlePayloadTemp.Count < CandleCount)
+                        {
+                            AllCandlePayloadTemp = await GetAllCandles(market, context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                            date = date.AddYears(-1);
+                        }
+                    }
+
+                    List<CandlePayload> candlePayload = (from u in AllCandlePayloadTemp
+                                                         orderby u.Time
+                                                select u).ToList();
+
+                    Console.WriteLine(candlePayload.Last().Close + " " + candlePayload.Last().Time);
+                    Console.WriteLine(candlePayload[candlePayload.Count - 2].Close + " " + candlePayload[candlePayload.Count - 2].Time);
+                    Console.WriteLine(candlePayload[candlePayload.Count - 3].Close + " " + candlePayload[candlePayload.Count - 3].Time);
+
+                    CandleList candleList = new CandleList(figi, candleInterval, candlePayload);
+
+                    //CandleList candleList = await market.GetCandleByFigi(context, figi, candleInterval, date);
+
+
                     //var list1 = new List<A>() { new A { SomeProp1 = 1, SomeProp2 = "A" }, new A { SomeProp1 = 2, SomeProp2 = "B" } };
 
                     //CandleList first = await market.GetCandleByFigi(context, figi, candleInterval, date);
@@ -83,9 +132,11 @@ namespace tradeSDK
                     List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
 
 
-
-                    bool ichimokuLong(List<IchimokuResult> ichimoku)
+                    var uuu = ichmokuAngleLong(ichimoku, 3, 30);
+                    bool ichimokuLongLine(List<IchimokuResult> ichimoku)
                     {
+                        
+
                         if (ichimoku.Last().TenkanSen > ichimoku.Last().KijunSen
                             && ichimoku.Last().KijunSen > ichimoku.Last().SenkouSpanA
                             && ichimoku.Last().KijunSen > ichimoku.Last().SenkouSpanB
@@ -96,8 +147,30 @@ namespace tradeSDK
                         else
                         {
                             return false;
+                        }                    
+                    }
+
+                    bool ichmokuAngleLong(List<IchimokuResult> ichimoku, int anglesCount, double angle)
+                    {
+
+                        List<IchimokuResult> skipIchimoku = ichimoku.Skip(ichimoku.Count - (anglesCount + 1)).ToList();
+                        List<decimal?> values = new List<decimal?>();
+                        foreach (var item in skipIchimoku)
+                        {
+                            values.Add(item.TenkanSen);
                         }
-                    
+
+                        double thisAngle = DeltaDegreeAngle(values);
+                        Console.WriteLine();
+                        Console.WriteLine("thisAngleIchimoku: " + thisAngle);
+                        if (thisAngle > angle)        
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     //SmaResult lastma = sma[sma.Count - barsback -1];
                     //decimal? lastDpo = bid - lastma.Sma;
@@ -160,24 +233,21 @@ namespace tradeSDK
                         return Convert.ToDecimal(angleOne + angleTwo + angleThree) /3;
                     }
 
-                    decimal? DeltaDegreeAngle(List<decimal> values, int quantity)
+                    double DeltaDegreeAngle(List<decimal?> values)
                     {
-                        if (values.Count < 2)
+                        var countDelta = values.Count;
+                        double summ = 0;
+                        for (int i = 1; i < countDelta; i++)
                         {
-                            Console.WriteLine("Не верные входные данные");
+                            double deltaLeg = Convert.ToDouble(values[i] - values[i - 1]);
+                            double legDifference = Math.Atan(deltaLeg);
+                            double angle = legDifference * (180 / Math.PI);
+                            summ += angle;
                         }
-                        else 
-                        {
-                            var countDelta = values.Count - 1;
-                            for(int i; )
-                        }
-                        
+                        return summ / (countDelta - 1);
                     }
 
-
                     decimal? EmaPriceDelta = 100 - (ema.Last().Ema * 100 / deltaPrice);
-
-
 
                     var deltaFourDpo = DeltaFourDpo(lastDpo, twoLastDpo, threeLastDpo, fourLastDpo);
 
@@ -194,6 +264,8 @@ namespace tradeSDK
                     Console.WriteLine("fourLastDpo: " + fourLastDpo);
 
                     Console.WriteLine();
+                    Console.WriteLine("Ichimoku: " + ichimoku.Last().TenkanSen + " " + ichimoku.Last().KijunSen + " " + ichimoku.Last().SenkouSpanA + " " + ichimoku.Last().SenkouSpanB);
+                    
 
                     Console.WriteLine("Obv: " + obv.Last().Obv);
                     Console.WriteLine("ObvSma: " + obv.Last().ObvSma);
@@ -239,7 +311,8 @@ namespace tradeSDK
                         && lastDpo >= longLastDpoCondition
                         && EmaPriceDelta < EmaPriceDeltaCondition
                         && deltaAngleFourDpo > deltaAngleFourDpoLongCondition
-                        && ichimokuLong(ichimoku)
+                        && ichimokuLongLine(ichimoku)
+                        && ichmokuAngleLong(ichimoku, 3, 30)
                         )              
                     {
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Buy, ask));
@@ -264,15 +337,25 @@ namespace tradeSDK
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
+                    sleep += 10;                    
                 }
 
                 finally 
                 {
                 }
 
-                Thread.Sleep(250);
+                sleep -= 1;
+                Thread.Sleep(sleep);
+                Console.WriteLine("Sleep!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + sleep);
             }
                 
+        }
+
+        private static async Task<List<CandlePayload>> GetAllCandles(Market market, SandboxContext context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
+        {
+            CandleList candleListTemp = await market.GetCandleByFigi(context, figi, candleInterval, date);
+            AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
+            return AllCandlePayloadTemp;
         }
     }
 }
