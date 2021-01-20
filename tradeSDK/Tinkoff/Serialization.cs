@@ -81,6 +81,17 @@ namespace Tinkoff
             return Indicator.GetSma(candles, history).ToList();
         }
 
+        public static List<DpoResult> DpoData(CandleList candleList, int history)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            return Indicator.GetDpo(candles, history).ToList();
+        }
+        public static List<DpoResult> DpoData(CandleList candleList, int history, decimal realPrise)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            return Indicator.GetDpo(candles, history).ToList();
+        }
+
         public static List<SuperTrendResult> SuperTrendData(CandleList candleList, int history, decimal multiplier)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);

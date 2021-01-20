@@ -9,8 +9,6 @@ using Tinkoff;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 
-
-
 namespace tradeSDK
 {
     class Program
@@ -22,96 +20,49 @@ namespace tradeSDK
             //Serialization ser = new Serialization();
 
             var figi = "BBG000BVPV84";
-            var candleInterval = CandleInterval.FiveMinutes;
+            var candleInterval = CandleInterval.Minute;
             int CandleCount = 110;
 
-            int sleep = 10;
+            //System config
+            int sleep = DynamicSleep(0);
 
+            //DPO config
             int dpoPeriod = 20;
-            int emaPeriod = 10;
-
-            int superTrandPeriod = 20;
-            int superTrandSensitive = 2;
-            decimal EmaPriceDeltaCondition = 0.12M;
-            //decimal DeltaThreeDpoLongCondition = 1;
-            //decimal DeltaThreeDpoFromLongCondition = 0;
-            decimal deltaAngleFourDpoLongCondition = 40;
-            decimal deltaAngleFourDpoFromLongCondition = 0;
+            int dpoAverageAngleCountLong = 2;
+            double dpoAverageAngleConditionLong = 20;
+            int dpoAverageAngleCountFromLong = 4;
+            double dpoAverageAngleConditionFromLong = -5;
 
             decimal longLastDpoCondition = 0;
             decimal fromLongDpoCondition = 0;
 
+            //Ema config
+            int emaPeriod = 10;
+            decimal EmaPriceDeltaCondition = 0.12M;
+
+            //Super Trend config
+            int superTrandPeriod = 20;
+            int superTrandSensitive = 2;
+
+            //Ichimoku
+            int ichimokuDeltaAngleCountLong = 2;
+            double ichimokuTenkanSenAngleLong = 10;
 
             while (true)
             {
                 try
                 {
                     int count = 0;
-                    
-                    var date = DateTime.Now;
-                    List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
 
-                    CandlePayloadEqualityComparer CandlePayloadEqC = new CandlePayloadEqualityComparer();
+                    CandleList candleList = await market.GetCandlesTinkoff(context, figi, candleInterval, CandleCount);
 
-                    if (candleInterval == CandleInterval.Minute
-                        || candleInterval == CandleInterval.TwoMinutes
-                        || candleInterval == CandleInterval.ThreeMinutes
-                        || candleInterval == CandleInterval.FiveMinutes
-                        || candleInterval == CandleInterval.TenMinutes
-                        || candleInterval == CandleInterval.QuarterHour
-                        || candleInterval == CandleInterval.HalfHour)
-                    {
-                        while (AllCandlePayloadTemp.Count < CandleCount)
-                        {
-                            AllCandlePayloadTemp = await GetAllCandles(market, context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
-                            date = date.AddDays(-1);
-                        }
-                    }
-                    else if (candleInterval == CandleInterval.Hour)
-                        while (AllCandlePayloadTemp.Count < CandleCount)
-                        {
-                            AllCandlePayloadTemp = await GetAllCandles(market, context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
-                            date = date.AddDays(-7);
-                        }
-                    else if(candleInterval == CandleInterval.Day)
-                    {
-                        while (AllCandlePayloadTemp.Count < CandleCount)
-                        {
-                            AllCandlePayloadTemp = await GetAllCandles(market, context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
-                            date = date.AddYears(-1);
-                        }
-                    }
-
-                    List<CandlePayload> candlePayload = (from u in AllCandlePayloadTemp
-                                                         orderby u.Time
-                                                select u).ToList();
-
-                    Console.WriteLine(candlePayload.Last().Close + " " + candlePayload.Last().Time);
-                    Console.WriteLine(candlePayload[candlePayload.Count - 2].Close + " " + candlePayload[candlePayload.Count - 2].Time);
-                    Console.WriteLine(candlePayload[candlePayload.Count - 3].Close + " " + candlePayload[candlePayload.Count - 3].Time);
-
-                    CandleList candleList = new CandleList(figi, candleInterval, candlePayload);
-
-                    //CandleList candleList = await market.GetCandleByFigi(context, figi, candleInterval, date);
-
-
-                    //var list1 = new List<A>() { new A { SomeProp1 = 1, SomeProp2 = "A" }, new A { SomeProp1 = 2, SomeProp2 = "B" } };
-
-                    //CandleList first = await market.GetCandleByFigi(context, figi, candleInterval, date);
-                    //CandleList second = await market.GetCandleByFigi(context, figi, candleInterval, date.AddDays(-1));
-
-
-                    var orderbook = await context.MarketOrderbookAsync(figi, 1);
+                    Orderbook orderbook = await context.MarketOrderbookAsync(figi, 1);
                     if (orderbook.Asks.Count == 0)
                     {
                         Console.WriteLine(DateTime.Now + "  биржа не фурычит");
-                        Thread.Sleep(200);
+                        Thread.Sleep(sleep);
                         continue;
-                    }               
-
-                    CandlePayload lastCandle = candleList.Candles.Last();
-                    CandlePayload preLastCandle = candleList.Candles[candleList.Candles.Count - 2];
-                    CandlePayload prePreLastCandle = candleList.Candles[candleList.Candles.Count - 3];
+                    }
 
                     var ask = orderbook.Asks.Last().Price;
                     var bid = orderbook.Bids.Last().Price;
@@ -121,38 +72,29 @@ namespace tradeSDK
 
                     var deltaPrice = (ask + bid) / 2;
 
-                    var deltaPriceOneLast = (lastCandle.Close + lastCandle.Open + lastCandle.High + lastCandle.Low) / 4;
-                    var deltaPraiceTwoLast = (lastCandle.Close + lastCandle.Open + lastCandle.High + lastCandle.Low + preLastCandle.Close + preLastCandle.Open + preLastCandle.High + preLastCandle.Low) / 8;
-                                        
-                    //int barsback = dpoPeriod / 2 + 1;
                     List<SmaResult> smaForDpo = Serialization.SmaData(candleList, dpoPeriod, deltaPrice);
                     List<EmaResult> ema = Serialization.EmaData(candleList, emaPeriod, deltaPrice);
-                    List<ObvResult> obv = Serialization.ObvData(candleList, 10, deltaPrice);
+                    List<DpoResult> dpo = Serialization.DpoData(candleList, dpoPeriod, deltaPrice);
                     List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, superTrandPeriod, superTrandSensitive, deltaPrice);
                     List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
 
-
-                    var uuu = ichmokuAngleLong(ichimoku, 3, 30);
-                    bool ichimokuLongLine(List<IchimokuResult> ichimoku)
+                    bool ichimokuLongLine(List<IchimokuResult> ichimoku, decimal? price)
                     {
-                        
-
                         if (ichimoku.Last().TenkanSen > ichimoku.Last().KijunSen
-                            && ichimoku.Last().KijunSen > ichimoku.Last().SenkouSpanA
-                            && ichimoku.Last().KijunSen > ichimoku.Last().SenkouSpanB
-                            )
+                            && price > ichimoku.Last().SenkouSpanA
+                            && price > ichimoku.Last().SenkouSpanB
+                            && price > ichimoku.Last().TenkanSen)
                         {
                             return true;
                         }
                         else
                         {
                             return false;
-                        }                    
+                        }
                     }
 
-                    bool ichmokuAngleLong(List<IchimokuResult> ichimoku, int anglesCount, double angle)
+                    double ichmokuTenkansenDegreeAverageAngle(List<IchimokuResult> ichimoku, int anglesCount)
                     {
-
                         List<IchimokuResult> skipIchimoku = ichimoku.Skip(ichimoku.Count - (anglesCount + 1)).ToList();
                         List<decimal?> values = new List<decimal?>();
                         foreach (var item in skipIchimoku)
@@ -160,78 +102,24 @@ namespace tradeSDK
                             values.Add(item.TenkanSen);
                         }
 
-                        double thisAngle = DeltaDegreeAngle(values);
-                        Console.WriteLine();
-                        Console.WriteLine("thisAngleIchimoku: " + thisAngle);
-                        if (thisAngle > angle)        
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return DeltaDegreeAngle(values);
                     }
-                    //SmaResult lastma = sma[sma.Count - barsback -1];
-                    //decimal? lastDpo = bid - lastma.Sma;
 
-                    decimal? Dpo(CandleList candleList,  int dpoPeriod, int iterator = 0)
+                    double DpoDegreeAverageAngle(List<DpoResult> dpo, int anglesCount)
                     {
-                        int barsback = dpoPeriod / 2 + 1;
-                        List<SmaResult> smaForDpo = Serialization.SmaData(candleList, dpoPeriod, deltaPrice);
-                        SmaResult lastma = smaForDpo[smaForDpo.Count - barsback - 1 - iterator];
-                        if (iterator == 0)
+                        List<DpoResult> skipDpo = dpo.Skip(dpo.Count - (anglesCount + 1)).ToList();
+                        List<decimal?> values = new List<decimal?>();
+                        foreach (var item in skipDpo)
                         {
-                            return deltaPrice - lastma.Sma;
-                        }
-                        else
-                        {
-                            decimal close = candleList.Candles[candleList.Candles.Count - 1 - iterator].Close;
-                            Console.WriteLine("Close: " + close);
-                            return close - lastma.Sma; 
+                            Console.WriteLine(item.Dpo);
+                            values.Add(item.Dpo);
                         }
 
+                        return DeltaDegreeAngle(values);
                     }
 
-                    decimal? lastDpo = Dpo(candleList, dpoPeriod);
-                    decimal? twoLastDpo = Dpo(candleList, dpoPeriod, 1);
-                    decimal? threeLastDpo = Dpo(candleList, dpoPeriod, 2);
-                    decimal? fourLastDpo = Dpo(candleList, dpoPeriod, 3);
-
-                    //bool proisvThreeCandle(CandlePayload lastCandle, CandlePayload preLastCandle, CandlePayload prePreLastCandle)
-                    //{
-                    //    return true;
-                    //}
-
-                    decimal? DeltaFourDpo(decimal? lastDpo, decimal? twoLastDpo, decimal? threeLastDpo, decimal? fourPreLastDpo)
-                    {
-                        var deltaOne = lastDpo - twoLastDpo;
-                        var deltaTwo = twoLastDpo - threeLastDpo;
-                        var deltaThree = threeLastDpo - fourPreLastDpo;
-
-                        return deltaOne + deltaTwo + deltaThree;
-                    }
-
-                    decimal? DeltaAngleFourDpo(decimal? lastDpo, decimal? twoLastDpo, decimal? threeLastDpo, decimal? fourPreLastDpo)
-                    {
-
-                        double deltaOne = Convert.ToDouble(lastDpo - twoLastDpo);
-                        double angleOne = Math.Atan(deltaOne) * (180 / Math.PI);
-
-                        Console.WriteLine(angleOne);
-
-                        double deltaTwo = Convert.ToDouble(twoLastDpo - threeLastDpo);
-                        double angleTwo = Math.Atan(deltaTwo) * (180 / Math.PI);
-
-                        Console.WriteLine(angleTwo);
-
-                        double deltaThree = Convert.ToDouble(threeLastDpo - fourPreLastDpo);
-                        double angleThree = Math.Atan(deltaThree) * (180 / Math.PI);
-
-                        Console.WriteLine(angleThree);
-
-                        return Convert.ToDecimal(angleOne + angleTwo + angleThree) /3;
-                    }
+                    decimal? lastDpo = dpo.Last().Dpo;
+                   
 
                     double DeltaDegreeAngle(List<decimal?> values)
                     {
@@ -247,56 +135,13 @@ namespace tradeSDK
                         return summ / (countDelta - 1);
                     }
 
-                    decimal? EmaPriceDelta = 100 - (ema.Last().Ema * 100 / deltaPrice);
-
-                    var deltaFourDpo = DeltaFourDpo(lastDpo, twoLastDpo, threeLastDpo, fourLastDpo);
-
-                    var deltaAngleFourDpo = DeltaAngleFourDpo(lastDpo, twoLastDpo, threeLastDpo, fourLastDpo);
-
-                    Console.WriteLine();
-                    Console.WriteLine("lastDpo: " + lastDpo);
-                    Console.WriteLine("deltaAngleFourDpo: " + deltaAngleFourDpo);
-                    Console.WriteLine("SmaPriceDelta: " + EmaPriceDelta);
-                    Console.WriteLine();
-
-                    Console.WriteLine("twoLastDpo: " + twoLastDpo);
-                    Console.WriteLine("threeLastDpo: " + threeLastDpo);
-                    Console.WriteLine("fourLastDpo: " + fourLastDpo);
-
-                    Console.WriteLine();
-                    Console.WriteLine("Ichimoku: " + ichimoku.Last().TenkanSen + " " + ichimoku.Last().KijunSen + " " + ichimoku.Last().SenkouSpanA + " " + ichimoku.Last().SenkouSpanB);
-                    
-
-                    Console.WriteLine("Obv: " + obv.Last().Obv);
-                    Console.WriteLine("ObvSma: " + obv.Last().ObvSma);
-                    Console.WriteLine("deltaPriceOneLast: " + deltaPriceOneLast);
-                    Console.WriteLine("deltaPraiceTwoLast: " + deltaPraiceTwoLast);
-                    Console.WriteLine();
-
-                    Console.WriteLine("deltaPrice: " + deltaPrice);
-
-                    Console.WriteLine();
-                    Console.WriteLine("closePrice: " + closePrice);
-                    Console.WriteLine("lastPrise: " + lastPrice);                    
-                    Console.WriteLine("bid: " + bid);
-                    Console.WriteLine("ask: " + ask);
-                    Console.WriteLine();
-
-                    if (superTrand.Last().UpperBand != null)
-                    {
-                        Console.WriteLine("Go to Sell. UpperBand: " + superTrand.Last().UpperBand);
-                    }
-                    else 
-                    {
-                        Console.WriteLine("Go to Buy. LowerBand: " + superTrand.Last().LowerBand);
-                    }
-
-                    Console.WriteLine("SuperTrend: " + superTrand.Last().SuperTrend);
-                    Console.WriteLine();
-                    Console.WriteLine("*****");
-                    Console.WriteLine();
+                    decimal? IchimokuTenkansenPriceDelta = 100 - (ema.Last().Ema * 100 / deltaPrice); //Насколько далеко убежала цена от Ema
 
                     var portfolio = await context.PortfolioAsync();
+
+
+                    decimal? ichimokuTenkansenPriceDelta = 100 - (ichimoku.Last().TenkanSen * 100 / deltaPrice); //Насколько далеко убежала цена от Ichimoku TenkanSen
+
 
                     foreach (var item in portfolio.Positions)
                     {
@@ -306,56 +151,136 @@ namespace tradeSDK
                         }
                     }
 
-                    if (count == 0 
-                        && superTrand.Last().UpperBand == null 
+                    if (count == 0
+                        && superTrand.Last().UpperBand == null
                         && lastDpo >= longLastDpoCondition
-                        && EmaPriceDelta < EmaPriceDeltaCondition
-                        && deltaAngleFourDpo > deltaAngleFourDpoLongCondition
-                        && ichimokuLongLine(ichimoku)
-                        && ichmokuAngleLong(ichimoku, 3, 30)
-                        )              
+                        && IchimokuTenkansenPriceDelta < ichimokuTenkansenPriceDelta
+                        && DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong) > dpoAverageAngleConditionLong
+                        && ichimokuLongLine(ichimoku, deltaPrice)
+                        && ichmokuTenkansenDegreeAverageAngle(ichimoku, ichimokuDeltaAngleCountLong) > ichimokuTenkanSenAngleLong
+                        )
                     {
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Buy, ask));
                         using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
                         {
-                            sw.WriteLine(DateTime.Now + @" Buy  price: " + ask + " UpperBand: " + superTrand.Last().UpperBand + " LowerBand: " + superTrand.Last().LowerBand + " DPO: " + lastDpo + " SmaPriceDelta: " + EmaPriceDelta + " deltaAngleFourDpo: " + deltaAngleFourDpo);
+                            sw.WriteLine(DateTime.Now + @" Buy  price: " + ask + " UpperBand: " + superTrand.Last().UpperBand + " LowerBand: " + superTrand.Last().LowerBand + " DPO: " + lastDpo + " SmaPriceDelta: " + IchimokuTenkansenPriceDelta + " DpoDegreeAverageAngle: " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong));
+                            sw.WriteLine(@" Ichimoku: " + ichimoku.Last().TenkanSen + ichimoku.Last().KijunSen + ichimoku.Last().SenkouSpanA + ichimoku.Last().SenkouSpanB);
+
+                            sw.WriteLine();
                         }
                     }
-                    else if(count > 0 
-                            && (superTrand.Last().LowerBand == null 
+                    else if (count > 0
+                            && (superTrand.Last().LowerBand == null
                                 || lastDpo < fromLongDpoCondition
-                                || deltaAngleFourDpo < deltaAngleFourDpoFromLongCondition))
+                                || DpoDegreeAverageAngle(dpo, dpoAverageAngleCountFromLong) > dpoAverageAngleConditionFromLong))
                     {
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Sell, bid));
                         using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
                         {
-                            sw.WriteLine(DateTime.Now + @" Sell  price: " + bid + " UpperBand: " + superTrand.Last().UpperBand + " LowerBand: " + superTrand.Last().LowerBand + " DPO: " + lastDpo + " SmaPriceDelta: " + EmaPriceDelta + " deltaAngleFourDpo: " + deltaAngleFourDpo);
-                        }
+                            sw.WriteLine(DateTime.Now + @" Sell  price: " + bid + " UpperBand: " + superTrand.Last().UpperBand + " LowerBand: " + superTrand.Last().LowerBand + " DPO: " + lastDpo + " SmaPriceDelta: " + IchimokuTenkansenPriceDelta + " DpoDegreeAverageAngle: " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong));
+                            sw.WriteLine(@" Ichimoku: " + ichimoku.Last().TenkanSen + ichimoku.Last().KijunSen + ichimoku.Last().SenkouSpanA + ichimoku.Last().SenkouSpanB);
 
+                            sw.WriteLine();
+                        }
                     }
+
+                    Console.WriteLine("********");
+                    Console.WriteLine("Long condition:");
+                    Console.WriteLine();
+                    Console.WriteLine("Price: " + deltaPrice);
+                    Console.WriteLine();
+                    if (superTrand.Last().UpperBand != null)
+                    {
+                        Console.WriteLine("Go to Sell");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Go to Buy");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("lastDpo: " + lastDpo);
+                    Console.WriteLine();
+                    Console.WriteLine("IchimokuTenkansenPriceDelta: " + IchimokuTenkansenPriceDelta);
+                    Console.WriteLine();
+                    Console.WriteLine("DpoDegreeAverageAngle: " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong));
+                    Console.WriteLine("ichimoku: ");
+                    Console.WriteLine("     TenkanSen: " + ichimoku.Last().TenkanSen);
+                    Console.WriteLine("     KijunSen: " + ichimoku.Last().KijunSen);
+                    Console.WriteLine("     SenkouSpanA: " + ichimoku.Last().SenkouSpanA);
+                    Console.WriteLine("     SenkouSpanB: " + ichimoku.Last().SenkouSpanB);
+                    Console.WriteLine("     SenkouSpanB: " + ichimoku.Last().SenkouSpanB);
+                    Console.WriteLine("     ichmokuTenkansenAngleLong: " + ichmokuTenkansenDegreeAverageAngle(ichimoku, ichimokuDeltaAngleCountLong));
+
+                    //Console.WriteLine();
+                    //Console.WriteLine("lastDpo: " + lastDpo);
+                    //Console.WriteLine("deltaAngleFourDpo: " + deltaAngleFourDpo);
+                    //Console.WriteLine("SmaPriceDelta: " + EmaPriceDelta);
+                    //Console.WriteLine();
+                    
+
+                    //Console.WriteLine("lastDpo: " + lastDpo + dpo.Last().Dpo);
+                    //Console.WriteLine("twoLastDpo: " + twoLastDpo + " "+ dpo[dpo.Count - 2].Dpo);
+                    //Console.WriteLine("threeLastDpo: " + threeLastDpo + " " + dpo[dpo.Count - 3].Dpo);
+                    //Console.WriteLine("fourLastDpo: " + fourLastDpo + " " + dpo[dpo.Count - 4].Dpo);
+
+                    //Console.WriteLine();
+                    //Console.WriteLine("Ichimoku: " + ichimoku.Last().TenkanSen + " " + ichimoku.Last().KijunSen + " " + ichimoku.Last().SenkouSpanA + " " + ichimoku.Last().SenkouSpanB);
+
+                    //Console.WriteLine("Obv: " + obv.Last().Obv);
+                    //Console.WriteLine("ObvSma: " + obv.Last().ObvSma);
+                    //Console.WriteLine("deltaPriceOneLast: " + deltaPriceOneLast);
+                    //Console.WriteLine("deltaPraiceTwoLast: " + deltaPraiceTwoLast);
+                    //Console.WriteLine();
+
+                    //Console.WriteLine("deltaPrice: " + deltaPrice);
+
+                    //Console.WriteLine();
+                    //Console.WriteLine("closePrice: " + closePrice);
+                    //Console.WriteLine("lastPrise: " + lastPrice);
+                    //Console.WriteLine("bid: " + bid);
+                    //Console.WriteLine("ask: " + ask);
+                    //Console.WriteLine();
+
+                    //if (superTrand.Last().UpperBand != null)
+                    //{
+                    //    Console.WriteLine("Go to Sell. UpperBand: " + superTrand.Last().UpperBand);
+                    //}
+                    //else
+                    //{
+                    //    Console.WriteLine("Go to Buy. LowerBand: " + superTrand.Last().LowerBand);
+                    //}
+
+                    //Console.WriteLine("SuperTrend: " + superTrand.Last().SuperTrend);
+                    //Console.WriteLine();
+                    //Console.WriteLine("*****");
+                    //Console.WriteLine();
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
-                    sleep += 10;                    
+                    sleep += 10;
                 }
-
-                finally 
+                finally
                 {
-                }
+                }               
 
-                sleep -= 1;
-                Thread.Sleep(sleep);
                 Console.WriteLine("Sleep!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + sleep);
+                Thread.Sleep(sleep);
             }
-                
         }
 
-        private static async Task<List<CandlePayload>> GetAllCandles(Market market, SandboxContext context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
+        static int DynamicSleep(int sleep)
         {
-            CandleList candleListTemp = await market.GetCandleByFigi(context, figi, candleInterval, date);
-            AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
-            return AllCandlePayloadTemp;
+            sleep -= 1;
+            if (sleep < 0)
+            {
+                sleep = 0;
+            }
+            else if (sleep > 1000)
+            {
+                sleep = 1000;
+            }
+            return sleep;
         }
     }
 }

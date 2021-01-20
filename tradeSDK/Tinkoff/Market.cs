@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
@@ -9,7 +10,7 @@ namespace Tinkoff
 {
     public class Market
     {
-        public async Task<CandleList> GetCandleByFigi(Context context, string figi, CandleInterval interval, DateTime to)
+        async Task<CandleList> GetCandleByFigi(Context context, string figi, CandleInterval interval, DateTime to)
         {
             //DateTime to = DateTime.Now;
             DateTime from = to;
@@ -58,6 +59,58 @@ namespace Tinkoff
                 figi.Add(item.Figi);
             }
             return figi;
+        }
+
+
+        public async Task<CandleList> GetCandlesTinkoff(SandboxContext context, string figi, CandleInterval candleInterval, int CandlesCount)
+        {
+            var date = DateTime.Now;
+            List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
+
+            CandlePayloadEqualityComparer CandlePayloadEqC = new CandlePayloadEqualityComparer();
+
+            if (candleInterval == CandleInterval.Minute
+                || candleInterval == CandleInterval.TwoMinutes
+                || candleInterval == CandleInterval.ThreeMinutes
+                || candleInterval == CandleInterval.FiveMinutes
+                || candleInterval == CandleInterval.TenMinutes
+                || candleInterval == CandleInterval.QuarterHour
+                || candleInterval == CandleInterval.HalfHour)
+            {
+                while (AllCandlePayloadTemp.Count < CandlesCount)
+                {
+                    AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    date = date.AddDays(-1);
+                }
+            }
+            else if (candleInterval == CandleInterval.Hour)
+                while (AllCandlePayloadTemp.Count < CandlesCount)
+                {
+                    AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    date = date.AddDays(-7);
+                }
+            else if (candleInterval == CandleInterval.Day)
+            {
+                while (AllCandlePayloadTemp.Count < CandlesCount)
+                {
+                    AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    date = date.AddYears(-1);
+                }
+            }
+
+            List<CandlePayload> candlePayload = (from u in AllCandlePayloadTemp
+                                                 orderby u.Time
+                                                 select u).ToList();
+
+            CandleList candleList = new CandleList(figi, candleInterval, candlePayload);
+            return candleList;
+        }
+
+        async Task<List<CandlePayload>> GetUnionCandles(SandboxContext context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
+        {
+            CandleList candleListTemp = await GetCandleByFigi(context, figi, candleInterval, date);
+            AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
+            return AllCandlePayloadTemp;
         }
     }
 }
