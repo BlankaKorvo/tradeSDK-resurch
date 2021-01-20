@@ -107,7 +107,7 @@ namespace tradeSDK
 
                     double DpoDegreeAverageAngle(List<DpoResult> dpo, int anglesCount)
                     {
-                        List<DpoResult> skipDpo = dpo.Skip(dpo.Count - (anglesCount + 1)).ToList();
+                        List<DpoResult> skipDpo = dpo.Skip(dpo.Count - (anglesCount +1 )).ToList();
                         List<decimal?> values = new List<decimal?>();
                         foreach (var item in skipDpo)
                         {
