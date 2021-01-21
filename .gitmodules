@@ -1,0 +1,3 @@
+[submodule "Stock.Indicators"]
+	path = Stock.Indicators
+	url = E:\\git\\fin\\tradeSDK\\Stock.Indicators
