@@ -26,7 +26,7 @@ namespace tradeSDK
             //System config
             int sleep = DynamicSleep(0);
 
-            //DPO config
+            //DPO config 
             int dpoPeriod = 20;
             int dpoAverageAngleCountLong = 2;
             double dpoAverageAngleConditionLong = 20;
