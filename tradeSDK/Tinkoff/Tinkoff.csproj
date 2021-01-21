@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Stock.Indicators\indicators\SkenderIndicators.csproj" />
+    <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
   </ItemGroup>
 
 </Project>
