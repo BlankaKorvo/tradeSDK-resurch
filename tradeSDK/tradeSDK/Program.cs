@@ -20,7 +20,7 @@ namespace tradeSDK
             //Serialization ser = new Serialization();
 
             var figi = "BBG000BVPV84";
-            var candleInterval = CandleInterval.Minute;
+            var candleInterval = CandleInterval.Day;
             int CandleCount = 110;
 
             //System config
@@ -111,7 +111,7 @@ namespace tradeSDK
                         List<decimal?> values = new List<decimal?>();
                         foreach (var item in skipDpo)
                         {
-                            Console.WriteLine(item.Dpo);
+                            Console.WriteLine("Dpo: " + item.Date + " " + item.Dpo);
                             values.Add(item.Dpo);
                         }
 
