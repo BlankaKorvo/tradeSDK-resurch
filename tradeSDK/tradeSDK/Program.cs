@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Tinkoff;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
+using System.Diagnostics;
 
 namespace tradeSDK
 {
@@ -20,11 +21,11 @@ namespace tradeSDK
             //Serialization ser = new Serialization();
 
             var figi = "BBG000BVPV84";
-            var candleInterval = CandleInterval.Day;
+            var candleInterval = CandleInterval.Minute;
             int CandleCount = 110;
 
             //System config
-            int sleep = DynamicSleep(0);
+            int sleep = 0;
 
             //DPO config 
             int dpoPeriod = 20;
@@ -38,7 +39,7 @@ namespace tradeSDK
 
             //Ema config
             int emaPeriod = 10;
-            decimal EmaPriceDeltaCondition = 0.12M;
+            decimal ichimokuTenkansenPriceDeltaCount = 0.12M;
 
             //Super Trend config
             int superTrandPeriod = 20;
@@ -50,12 +51,14 @@ namespace tradeSDK
 
             while (true)
             {
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
                 try
                 {
                     int count = 0;
 
                     CandleList candleList = await market.GetCandlesTinkoff(context, figi, candleInterval, CandleCount);
-
+                    Console.WriteLine(stopWatch.ElapsedMilliseconds);
                     Orderbook orderbook = await context.MarketOrderbookAsync(figi, 1);
                     if (orderbook.Asks.Count == 0)
                     {
@@ -111,7 +114,6 @@ namespace tradeSDK
                         List<decimal?> values = new List<decimal?>();
                         foreach (var item in skipDpo)
                         {
-                            Console.WriteLine("Dpo: " + item.Date + " " + item.Dpo);
                             values.Add(item.Dpo);
                         }
 
@@ -135,7 +137,7 @@ namespace tradeSDK
                         return summ / (countDelta - 1);
                     }
 
-                    decimal? IchimokuTenkansenPriceDelta = 100 - (ema.Last().Ema * 100 / deltaPrice); //Насколько далеко убежала цена от Ema
+                    decimal? emaPriceDelta = 100 - (ema.Last().Ema * 100 / deltaPrice); //Насколько далеко убежала цена от Ema
 
                     var portfolio = await context.PortfolioAsync();
 
@@ -150,11 +152,11 @@ namespace tradeSDK
                             count = item.Lots;
                         }
                     }
-
+                    Console.WriteLine(stopWatch.ElapsedMilliseconds);
                     if (count == 0
                         && superTrand.Last().UpperBand == null
                         && lastDpo >= longLastDpoCondition
-                        && IchimokuTenkansenPriceDelta < ichimokuTenkansenPriceDelta
+                        && ichimokuTenkansenPriceDelta < ichimokuTenkansenPriceDeltaCount
                         && DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong) > dpoAverageAngleConditionLong
                         && ichimokuLongLine(ichimoku, deltaPrice)
                         && ichmokuTenkansenDegreeAverageAngle(ichimoku, ichimokuDeltaAngleCountLong) > ichimokuTenkanSenAngleLong
@@ -163,7 +165,7 @@ namespace tradeSDK
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Buy, ask));
                         using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
                         {
-                            sw.WriteLine(DateTime.Now + @" Buy  price: " + ask + " UpperBand: " + superTrand.Last().UpperBand + " LowerBand: " + superTrand.Last().LowerBand + " DPO: " + lastDpo + " SmaPriceDelta: " + IchimokuTenkansenPriceDelta + " DpoDegreeAverageAngle: " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong));
+                            sw.WriteLine(DateTime.Now + @" Buy  price: " + ask + " UpperBand: " + superTrand.Last().UpperBand + " LowerBand: " + superTrand.Last().LowerBand + " DPO: " + lastDpo + " SmaPriceDelta: " + ichimokuTenkansenPriceDelta + " DpoDegreeAverageAngle: " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong));
                             sw.WriteLine(@" Ichimoku: " + ichimoku.Last().TenkanSen + ichimoku.Last().KijunSen + ichimoku.Last().SenkouSpanA + ichimoku.Last().SenkouSpanB);
 
                             sw.WriteLine();
@@ -172,17 +174,19 @@ namespace tradeSDK
                     else if (count > 0
                             && (superTrand.Last().LowerBand == null
                                 || lastDpo < fromLongDpoCondition
-                                || DpoDegreeAverageAngle(dpo, dpoAverageAngleCountFromLong) > dpoAverageAngleConditionFromLong))
+                                || DpoDegreeAverageAngle(dpo, dpoAverageAngleCountFromLong) < dpoAverageAngleConditionFromLong))
                     {
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Sell, bid));
                         using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
                         {
-                            sw.WriteLine(DateTime.Now + @" Sell  price: " + bid + " UpperBand: " + superTrand.Last().UpperBand + " LowerBand: " + superTrand.Last().LowerBand + " DPO: " + lastDpo + " SmaPriceDelta: " + IchimokuTenkansenPriceDelta + " DpoDegreeAverageAngle: " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong));
+                            sw.WriteLine(DateTime.Now + @" Sell  price: " + bid + " UpperBand: " + superTrand.Last().UpperBand + " LowerBand: " + superTrand.Last().LowerBand + " DPO: " + lastDpo + " SmaPriceDelta: " + ichimokuTenkansenPriceDelta + " DpoDegreeAverageAngle: " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong));
                             sw.WriteLine(@" Ichimoku: " + ichimoku.Last().TenkanSen + ichimoku.Last().KijunSen + ichimoku.Last().SenkouSpanA + ichimoku.Last().SenkouSpanB);
 
                             sw.WriteLine();
                         }
                     }
+
+                    //Console.WriteLine(stopWatch.ElapsedMilliseconds);
 
                     Console.WriteLine("********");
                     Console.WriteLine("Long condition:");
@@ -200,7 +204,7 @@ namespace tradeSDK
                     Console.WriteLine();
                     Console.WriteLine("lastDpo: " + lastDpo);
                     Console.WriteLine();
-                    Console.WriteLine("IchimokuTenkansenPriceDelta: " + IchimokuTenkansenPriceDelta);
+                    Console.WriteLine("IchimokuTenkansenPriceDelta: " + ichimokuTenkansenPriceDelta);
                     Console.WriteLine();
                     Console.WriteLine("DpoDegreeAverageAngle: " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong));
                     Console.WriteLine("ichimoku: ");
@@ -262,10 +266,12 @@ namespace tradeSDK
                 }
                 finally
                 {
-                }               
-
+                }
+                DynamicSleep(sleep);
                 Console.WriteLine("Sleep!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: " + sleep);
                 Thread.Sleep(sleep);
+                stopWatch.Stop();
+                Console.WriteLine(stopWatch.ElapsedMilliseconds);
             }
         }
 
