@@ -9,6 +9,8 @@ using Tinkoff;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using System.Diagnostics;
+using Serilog;
+
 
 namespace tradeSDK
 {
@@ -16,6 +18,16 @@ namespace tradeSDK
     {
         static async Task Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            Log.Information("Hello, world!");
+
+
+
             Market market = new Market();
             SandboxContext context = new Auth().GetSanboxContext();
             //Serialization ser = new Serialization();
@@ -55,11 +67,14 @@ namespace tradeSDK
                 stopWatch.Start();
                 try
                 {
+
+                    Log.Information("Hello, world!");
                     int count = 0;
 
                     CandleList candleList = await market.GetCandlesTinkoff(context, figi, candleInterval, CandleCount);
                     Console.WriteLine(stopWatch.ElapsedMilliseconds);
                     Orderbook orderbook = await context.MarketOrderbookAsync(figi, 1);
+                    Console.WriteLine(stopWatch.ElapsedMilliseconds);
                     if (orderbook.Asks.Count == 0)
                     {
                         Console.WriteLine(DateTime.Now + "  биржа не фурычит");
@@ -110,7 +125,7 @@ namespace tradeSDK
 
                     double DpoDegreeAverageAngle(List<DpoResult> dpo, int anglesCount)
                     {
-                        List<DpoResult> skipDpo = dpo.Skip(dpo.Count - (anglesCount +1 )).ToList();
+                        List<DpoResult> skipDpo = dpo.Skip(dpo.Count - (anglesCount + 1)).ToList();
                         List<decimal?> values = new List<decimal?>();
                         foreach (var item in skipDpo)
                         {
@@ -139,6 +154,7 @@ namespace tradeSDK
 
                     decimal? emaPriceDelta = 100 - (ema.Last().Ema * 100 / deltaPrice); //Насколько далеко убежала цена от Ema
 
+                    Console.WriteLine(stopWatch.ElapsedMilliseconds);
                     var portfolio = await context.PortfolioAsync();
 
 
@@ -152,7 +168,7 @@ namespace tradeSDK
                             count = item.Lots;
                         }
                     }
-                    Console.WriteLine(stopWatch.ElapsedMilliseconds);
+                    //Console.WriteLine(stopWatch.ElapsedMilliseconds);
                     if (count == 0
                         && superTrand.Last().UpperBand == null
                         && lastDpo >= longLastDpoCondition
