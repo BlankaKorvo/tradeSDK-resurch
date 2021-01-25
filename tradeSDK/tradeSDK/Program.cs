@@ -24,7 +24,8 @@ namespace tradeSDK
                 .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
-            Log.Information("Hello, world!");
+            Log.Information("Hello, world!"); 
+            
 
 
 
