@@ -22,9 +22,9 @@ namespace tradeSDK
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day)
+                
                 .CreateLogger();        
-
-            Market market = new Market();
+                        Market market = new Market();
             SandboxContext context = new Auth().GetSanboxContext();
             //Serialization ser = new Serialization();
 
@@ -54,7 +54,7 @@ namespace tradeSDK
             int superTrandSensitive = 2;
 
             //Ichimoku
-            int ichimokuDeltaAngleCountLong = 2;
+            int ichimokuDeltaAngleCountLong = 3;
             double ichimokuTenkanSenAngleLong = 20;
 
             while (true)
@@ -84,7 +84,7 @@ namespace tradeSDK
 
                     List<SmaResult> smaForDpo = Serialization.SmaData(candleList, dpoPeriod, deltaPrice);
                     //List<EmaResult> ema = Serialization.EmaData(candleList, emaPeriod, deltaPrice);
-                    List<DpoResult> dpo = Serialization.DpoData(candleList, dpoPeriod, deltaPrice);
+                    List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
                     List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, superTrandPeriod, superTrandSensitive, deltaPrice);
                     List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
 
@@ -112,6 +112,7 @@ namespace tradeSDK
                         foreach (var item in skipIchimoku)
                         {
                             values.Add(item.TenkanSen);
+                            Log.Information("Tenkansen: " + item.Date + " " + item.TenkanSen);
                         }
 
                         return DeltaDegreeAngle(values);
@@ -124,6 +125,7 @@ namespace tradeSDK
                         foreach (var item in skipDpo)
                         {
                             values.Add(item.Dpo);
+                            Log.Information("DPO: " + item.Date + " " + item.Dpo);
                         }
 
                         return DeltaDegreeAngle(values);
@@ -137,13 +139,16 @@ namespace tradeSDK
                         var countDelta = values.Count;
                         double summ = 0;
                         for (int i = 1; i < countDelta; i++)
-                        {
+                        {                            
                             double deltaLeg = Convert.ToDouble(values[i] - values[i - 1]);
                             double legDifference = Math.Atan(deltaLeg);
                             double angle = legDifference * (180 / Math.PI);
+                            Log.Information("Angle: " + angle.ToString());
                             summ += angle;
                         }
-                        return summ / (countDelta - 1);
+                        double averageAngles = summ / (countDelta - 1);
+                        Log.Information("Average Angles: " + averageAngles.ToString());
+                        return averageAngles;
                     }
 
                     // decimal? emaPriceDelta = 100 - (ema.Last().Ema * 100 / deltaPrice); //Насколько далеко убежала цена от Ema
@@ -227,7 +232,7 @@ namespace tradeSDK
                 {
                 }
 
-                sleep = DSleep(sleep);
+                sleep = DynamicSleep(sleep);
 
                 stopWatch.Stop();
                 Log.Information(stopWatch.ElapsedMilliseconds.ToString());
@@ -238,7 +243,7 @@ namespace tradeSDK
             }
         }
 
-        private static int DSleep(int sleep)
+        private static int DynamicSleep(int sleep)
         {
             sleep -= 1;
             if (sleep < 0)
@@ -250,20 +255,6 @@ namespace tradeSDK
                 sleep = 1000;
             }
 
-            return sleep;
-        }
-
-        static int DynamicSleep(int sleep)
-        {
-            sleep -= 1;
-            if (sleep < 0)
-            {
-                sleep = 0;
-            }
-            else if (sleep > 1000)
-            {
-                sleep = 1000;
-            }
             return sleep;
         }
     }
