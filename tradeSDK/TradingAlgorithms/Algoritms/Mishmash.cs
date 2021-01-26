@@ -8,6 +8,13 @@ namespace TradingAlgorithms.Algoritms
 {
     internal class Mishmash
     {
+        internal bool Long()
+        {
+            if (true)
+            { return true; }
+            else 
+            { return false; }
+        }
 
     }
 }
