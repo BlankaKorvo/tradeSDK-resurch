@@ -10,11 +10,10 @@ using Tinkoff.Trading.OpenApi.Models;
 namespace TradingAlgorithms.IndicatorSignals
 {
     internal class SuperTrendSignal
-
     {
         //int superTrandPeriod = 20;
         //int superTrandSensitive = 2;
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice, int superTrandPeriod, int superTrandSensitive)
+        internal bool LongSignal(CandleList candleList, decimal deltaPrice, int superTrandPeriod = 20, int superTrandSensitive = 2)
         {
             List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, deltaPrice, superTrandPeriod,  superTrandSensitive);
             if (superTrand.Last().UpperBand == null)
@@ -26,7 +25,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 return false;
             }
         }
-        internal bool ShortgSignal(CandleList candleList, decimal deltaPrice, int superTrandPeriod, int superTrandSensitive)
+        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int superTrandPeriod = 20, int superTrandSensitive = 2)
         {
             List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, deltaPrice, superTrandPeriod, superTrandSensitive);
             if (superTrand.Last().LowerBand == null)

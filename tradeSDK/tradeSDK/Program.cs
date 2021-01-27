@@ -10,7 +10,7 @@ using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using System.Diagnostics;
 using Serilog;
-
+using TradingAlgorithms.Algoritms;
 
 namespace tradeSDK
 {
@@ -21,9 +21,9 @@ namespace tradeSDK
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
-                .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day)
-                
-                .CreateLogger();        
+                .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day)                
+                .CreateLogger();   
+            
                         Market market = new Market();
             SandboxContext context = new Auth().GetSanboxContext();
             //Serialization ser = new Serialization();
@@ -35,27 +35,30 @@ namespace tradeSDK
             //System config
             int sleep = 0;
 
+            
+
+
             //DPO config 
             int dpoPeriod = 20;
             int dpoAverageAngleCountLong = 3;
-            double dpoAverageAngleConditionLong = 30;
-            int dpoAverageAngleCountFromLong = 4;
-            double dpoAverageAngleConditionFromLong = -20;
+            double dpoAverageAngleConditionLong = 27;
+            int dpoAverageAngleCountFromLong = 3;
+            double dpoAverageAngleConditionFromLong = -15;
 
             decimal longLastDpoCondition = 0;
             decimal fromLongDpoCondition = 0;
 
             //Ema config
             //int emaPeriod = 10;
-            decimal ichimokuTenkansenPriceDeltaCount = 0.12M;
+            decimal ichimokuTenkansenPriceDeltaCount = 0.13M;
 
             //Super Trend config
             int superTrandPeriod = 20;
             int superTrandSensitive = 2;
 
             //Ichimoku
-            int ichimokuDeltaAngleCountLong = 3;
-            double ichimokuTenkanSenAngleLong = 20;
+            int ichimokuDeltaAngleCountLong = 2;
+            double ichimokuTenkanSenAngleLong = 30;
 
             while (true)
             {
@@ -66,6 +69,8 @@ namespace tradeSDK
                     int count = 0;
                     Log.Information("Start cicle");
                     CandleList candleList = await market.GetCandlesTinkoff(context, figi, candleInterval, CandleCount);
+
+                    //Mishmash mishmash = new Mishmash() { candleList = candleList };
                     Orderbook orderbook = await context.MarketOrderbookAsync(figi, 1);
                     if (orderbook.Asks.Count == 0)
                     {
@@ -172,8 +177,10 @@ namespace tradeSDK
                         && lastDpo >= longLastDpoCondition
                         && ichimokuTenkansenPriceDelta < ichimokuTenkansenPriceDeltaCount
                         && DpoDegreeAverageAngle(dpo, dpoAverageAngleCountLong) > dpoAverageAngleConditionLong
+                        && DpoDegreeAverageAngle(dpo, 1) > DpoDegreeAverageAngle(dpo, 2)
                         && ichimokuLongLine(ichimoku, deltaPrice)
                         && ichmokuTenkansenDegreeAverageAngle(ichimoku, ichimokuDeltaAngleCountLong) > ichimokuTenkanSenAngleLong
+                        && ichmokuTenkansenDegreeAverageAngle(ichimoku, 1) > ichmokuTenkansenDegreeAverageAngle(ichimoku, 2)
                         )
                     {
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Buy, ask));
@@ -188,7 +195,8 @@ namespace tradeSDK
                     else if (count > 0
                             && (
                             (lastDpo < fromLongDpoCondition && superTrand.Last().LowerBand == null)
-                                || (DpoDegreeAverageAngle(dpo, dpoAverageAngleCountFromLong) < dpoAverageAngleConditionFromLong) && superTrand.Last().LowerBand == null))
+                                || (DpoDegreeAverageAngle(dpo, dpoAverageAngleCountFromLong) < dpoAverageAngleConditionFromLong) && superTrand.Last().LowerBand == null)
+                                || ichmokuTenkansenDegreeAverageAngle(ichimoku, 1) < 0 )
                     {
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Sell, bid));
                         using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))

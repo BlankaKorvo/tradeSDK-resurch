@@ -13,11 +13,12 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     internal class DpoSignal : IndicatorSignalsHelper
     {
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod, decimal lastDpoCondition = 0, int averageAngleCount = 3, double averageAngleCondition = 30)
+        internal bool LongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod = 20, decimal lastDpoCondition = 0, int averageAngleCount = 3, double averageAngleCondition = 30)
         {
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo >= lastDpoCondition
-                && DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleCondition)
+                && DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleCondition
+                && DpoDegreeAverageAngle(dpo, 1) > DpoDegreeAverageAngle(dpo, 2))
             {
                 return true;
             }
@@ -27,7 +28,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod, decimal lastDpoCondition = 0, int averageAngleCount = 4, double averageAngleCondition = -30)
+        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod = 20, decimal lastDpoCondition = 0, int averageAngleCount = 4, double averageAngleCondition = -30)
         {
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo < lastDpoCondition

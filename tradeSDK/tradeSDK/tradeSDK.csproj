@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
     <ProjectReference Include="..\Tinkoff\Tinkoff.csproj" />
+    <ProjectReference Include="..\TradingAlgorithms\TradingAlgorithms.csproj" />
   </ItemGroup>
 
 </Project>
