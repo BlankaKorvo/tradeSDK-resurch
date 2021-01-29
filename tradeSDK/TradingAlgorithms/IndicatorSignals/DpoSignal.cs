@@ -20,10 +20,14 @@ namespace TradingAlgorithms.IndicatorSignals
                 && DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleCondition
                 && DpoDegreeAverageAngle(dpo, 1) > DpoDegreeAverageAngle(dpo, 2))
             {
+                Log.Information("Last DPO > lastDpoCondition");
+                Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration > " + averageAngleCondition);
+                Log.Information("Average Dpo Angle from 1 last iteration > from 2 last iteration");
                 return true;
             }
             else
             {
+                Log.Information("DPO Long signal not present");
                 return false;
             }
         }

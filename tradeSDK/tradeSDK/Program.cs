@@ -39,7 +39,7 @@ namespace tradeSDK
 
 
             //DPO config 
-            int dpoPeriod = 20;
+            int dpoPeriod = 10;
             int dpoAverageAngleCountLong = 3;
             double dpoAverageAngleConditionLong = 27;
             int dpoAverageAngleCountFromLong = 3;
@@ -50,7 +50,7 @@ namespace tradeSDK
 
             //Ema config
             //int emaPeriod = 10;
-            decimal ichimokuTenkansenPriceDeltaCount = 0.13M;
+            decimal ichimokuTenkansenPriceDeltaCount = 0.13M;  //tenkasen можно сделать 5
 
             //Super Trend config
             int superTrandPeriod = 20;
@@ -58,7 +58,7 @@ namespace tradeSDK
 
             //Ichimoku
             int ichimokuDeltaAngleCountLong = 2;
-            double ichimokuTenkanSenAngleLong = 30;
+            double ichimokuTenkanSenAngleLong = 20;
 
             while (true)
             {
@@ -90,7 +90,7 @@ namespace tradeSDK
                     List<SmaResult> smaForDpo = Serialization.SmaData(candleList, dpoPeriod, deltaPrice);
                     //List<EmaResult> ema = Serialization.EmaData(candleList, emaPeriod, deltaPrice);
                     List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
-                    List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, superTrandPeriod, superTrandSensitive, deltaPrice);
+                    List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, deltaPrice, superTrandPeriod, superTrandSensitive);
                     List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
 
                     bool ichimokuLongLine(List<IchimokuResult> ichimoku, decimal? price)
@@ -171,6 +171,7 @@ namespace tradeSDK
                             count = item.Lots;
                         }
                     }
+                    Log.Information(count.ToString());
                     //Console.WriteLine(stopWatch.ElapsedMilliseconds);
                     if (count == 0
                         && superTrand.Last().UpperBand == null
@@ -193,10 +194,9 @@ namespace tradeSDK
                         }
                     }
                     else if (count > 0
-                            && (
-                            (lastDpo < fromLongDpoCondition && superTrand.Last().LowerBand == null)
-                                || (DpoDegreeAverageAngle(dpo, dpoAverageAngleCountFromLong) < dpoAverageAngleConditionFromLong) && superTrand.Last().LowerBand == null)
-                                || ichmokuTenkansenDegreeAverageAngle(ichimoku, 1) < 0 )
+                            && ((lastDpo < fromLongDpoCondition && superTrand.Last().LowerBand == null)
+                                || (DpoDegreeAverageAngle(dpo, dpoAverageAngleCountFromLong) < dpoAverageAngleConditionFromLong) && superTrand.Last().LowerBand == null
+                                || ichmokuTenkansenDegreeAverageAngle(ichimoku, 1) < 0 ))
                     {
                         await context.PlaceLimitOrderAsync(new LimitOrder(figi, 1, OperationType.Sell, bid));
                         using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
@@ -209,14 +209,19 @@ namespace tradeSDK
                     }
                     Log.Information("Price: " + deltaPrice);
 
-                    if (superTrand.Last().UpperBand != null)
+                    if (superTrand.Last().UpperBand == null)
                     {
-                        Log.Information("SuperTrand: Sell");
+                        Log.Information("SuperTrand: Buy");
+                        Log.Information("SuperTrand: Lower: " + superTrand.Last().LowerBand);
+                        Log.Information("SuperTrand: Upper: " + superTrand.Last().UpperBand);
                     }
                     else
                     {
-                        Log.Information("SuperTrand: Buy");
+                        Log.Information("SuperTrand: Sell");
+                        Log.Information("SuperTrand: Lower: " + superTrand.Last().LowerBand);
+                        Log.Information("SuperTrand: Upper: " + superTrand.Last().UpperBand);
                     }
+
                     Log.Information("lastDpo: " + lastDpo);
                     Log.Information("IchimokuTenkansenPriceDelta: " + ichimokuTenkansenPriceDelta);
 

@@ -1,4 +1,5 @@
-﻿using Skender.Stock.Indicators;
+﻿using Serilog;
+using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,34 +87,86 @@ namespace Tinkoff
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
             return Indicator.GetDpo(candles, history).ToList();
         }
+
         public static List<DpoResult> DpoData(CandleList candleList, decimal realPrise, int history = 20)
         {
+            Log.Information("DPO real Prise = " + realPrise);
+            Log.Information("DPO history = " + history);
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
-            return Indicator.GetDpo(candles, history).ToList();
+            List <DpoResult> dpoData = Indicator.GetDpo(candles, history).ToList();
+
+            Log.Information("DPO history = " + dpoData.Last().Dpo + " " + dpoData.Last().Date);
+
+            return dpoData;
+
+
         }
 
         public static List<SuperTrendResult> SuperTrendData(CandleList candleList, int history = 20, decimal multiplier = 2)
         {
+            Log.Information("Super Trend History = " + history);
+            Log.Information("Super Trend Multiplier = " + multiplier);
+
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
-            return Indicator.GetSuperTrend(candles, history, multiplier).ToList();
+            List<SuperTrendResult> superTrandData = Indicator.GetSuperTrend(candles, history, multiplier).ToList();
+
+            Log.Information("Super Trend Value = " + superTrandData.Last().SuperTrend + " " + superTrandData.Last().Date);
+
+            return superTrandData;
         }
 
         public static List<SuperTrendResult> SuperTrendData(CandleList candleList, decimal realPrise, int history = 20, decimal multiplier = 2)
         {
+
+            Log.Information("realPrise = " + realPrise);
+            Log.Information("Super Trend History = " + history);
+            Log.Information("Super Trend Multiplier = " + multiplier);
+
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
-            return Indicator.GetSuperTrend(candles, history, multiplier).ToList();
+            List<SuperTrendResult> superTrandData = Indicator.GetSuperTrend(candles, history, multiplier).ToList();
+
+            Log.Information("Super Trend Value = " + superTrandData.Last().SuperTrend + " " + superTrandData.Last().Date);
+
+            return superTrandData;
         }
 
         public static List<IchimokuResult> IchimokudData(CandleList candleList, int signalPeriod = 9, int shortSpanPeriod = 26, int longSpanPeriod = 52)
         {
+
+            Log.Information("signalPeriod = " + signalPeriod);
+            Log.Information("shortSpanPeriod = " + shortSpanPeriod);
+            Log.Information("longSpanPeriod = " + longSpanPeriod);
+
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
-            return Indicator.GetIchimoku(candles, signalPeriod, shortSpanPeriod, longSpanPeriod).ToList();
+            List<IchimokuResult> ichimokuData = Indicator.GetIchimoku(candles, signalPeriod, shortSpanPeriod, longSpanPeriod).ToList();
+
+            Log.Information("TenkanSen = " + ichimokuData.Last().TenkanSen + " " + ichimokuData.Last().Date);
+            Log.Information("KijunSen = " + ichimokuData.Last().KijunSen + " " + ichimokuData.Last().Date);
+            Log.Information("SenkouSpanA = " + ichimokuData.Last().SenkouSpanA + " " + ichimokuData.Last().Date);
+            Log.Information("SenkouSpanB = " + ichimokuData.Last().SenkouSpanB + " " + ichimokuData.Last().Date);
+            Log.Information("ChikouSpan = " + ichimokuData.Last().ChikouSpan + " " + ichimokuData.Last().Date);
+
+            return ichimokuData;
         }
 
         public static List<IchimokuResult> IchimokuData(CandleList candleList, decimal realPrise, int signalPeriod = 9, int shortSpanPeriod = 26, int longSpanPeriod = 52)
         {
+
+            Log.Information("realPrise = " + realPrise);
+            Log.Information("signalPeriod = " + signalPeriod);
+            Log.Information("shortSpanPeriod = " + shortSpanPeriod);
+            Log.Information("longSpanPeriod = " + longSpanPeriod);
+
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
-            return Indicator.GetIchimoku(candles, signalPeriod, shortSpanPeriod, longSpanPeriod).ToList();
+            List<IchimokuResult> ichimokuData = Indicator.GetIchimoku(candles, signalPeriod, shortSpanPeriod, longSpanPeriod).ToList();
+
+            Log.Information("TenkanSen = " + ichimokuData.Last().TenkanSen + " " + ichimokuData.Last().Date);
+            Log.Information("KijunSen = " + ichimokuData.Last().KijunSen + " " + ichimokuData.Last().Date);
+            Log.Information("SenkouSpanA = " + ichimokuData.Last().SenkouSpanA + " " + ichimokuData.Last().Date);
+            Log.Information("SenkouSpanB = " + ichimokuData.Last().SenkouSpanB + " " + ichimokuData.Last().Date);
+            Log.Information("ChikouSpan = " + ichimokuData.Last().ChikouSpan + " " + ichimokuData.Last().Date);
+
+            return ichimokuData;
         }
     }
 }
