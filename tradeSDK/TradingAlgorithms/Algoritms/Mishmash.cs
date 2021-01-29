@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,18 +28,30 @@ namespace TradingAlgorithms.Algoritms
             if (dpoSignal.LongSignal(candleList, deltaPrice)
                 && superTrendSignal.LongSignal(candleList, deltaPrice)
                 && ichimokuSignal.LongSignal(candleList, deltaPrice))
-            { return true; }
+            {
+                Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);
+                return true; 
+            }
             else 
-            { return false; }
+            {
+                Log.Information("Mishmash Algoritms: Long - false " + candleList.Figi);
+                return false;
+            }
         }
         public bool FromLong()
         {
             if ((dpoSignal.FromLongSignal(candleList, deltaPrice) 
                     && superTrendSignal.FromLongSignal(candleList, deltaPrice))
                 || ichimokuSignal.FromLongSignal(candleList, deltaPrice))
-            { return true; }
+            {
+                Log.Information("Mishmash Algoritms: FromLong - true " + candleList.Figi);
+                return true; 
+            }
             else
-            { return false; }
+            {
+                Log.Information("Mishmash Algoritms: FromLong - false " + candleList.Figi);
+                return false; 
+            }
         }
     }
 }

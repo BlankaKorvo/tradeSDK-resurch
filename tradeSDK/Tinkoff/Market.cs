@@ -62,7 +62,7 @@ namespace Tinkoff
         }
 
 
-        public async Task<CandleList> GetCandlesTinkoff(SandboxContext context, string figi, CandleInterval candleInterval, int CandlesCount)
+        public async Task<CandleList> GetCandlesTinkoff(Context context, string figi, CandleInterval candleInterval, int CandlesCount)
         {
             var date = DateTime.Now;
             List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
@@ -106,7 +106,7 @@ namespace Tinkoff
             return candleList;
         }
 
-        async Task<List<CandlePayload>> GetUnionCandles(SandboxContext context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
+        async Task<List<CandlePayload>> GetUnionCandles(Context context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
         {
             CandleList candleListTemp = await GetCandleByFigi(context, figi, candleInterval, date);
             AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();

@@ -90,8 +90,8 @@ namespace Tinkoff
 
         public static List<DpoResult> DpoData(CandleList candleList, decimal realPrise, int history = 20)
         {
-            Log.Information("DPO real Prise = " + realPrise);
-            Log.Information("DPO history = " + history);
+            Log.Information("DPO set price = " + realPrise);
+            Log.Information("DPO set history = " + history);
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
             List <DpoResult> dpoData = Indicator.GetDpo(candles, history).ToList();
 

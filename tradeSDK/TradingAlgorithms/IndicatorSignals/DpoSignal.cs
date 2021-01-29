@@ -20,6 +20,10 @@ namespace TradingAlgorithms.IndicatorSignals
                 && DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleCondition
                 && DpoDegreeAverageAngle(dpo, 1) > DpoDegreeAverageAngle(dpo, 2))
             {
+                Log.Information("Dpo Period = " + dpoPeriod);
+                Log.Information("Last Dpo Condition = " + lastDpoCondition);
+                Log.Information("Average Angle Count" + averageAngleCount);
+                Log.Information("Average Angle Condition" + averageAngleCondition);
                 Log.Information("Last DPO > lastDpoCondition");
                 Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration > " + averageAngleCondition);
                 Log.Information("Average Dpo Angle from 1 last iteration > from 2 last iteration");
@@ -27,7 +31,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
             else
             {
-                Log.Information("DPO Long signal not present");
+                Log.Information("DPO Long Signal not present");
                 return false;
             }
         }
@@ -38,10 +42,17 @@ namespace TradingAlgorithms.IndicatorSignals
             if (dpo.Last().Dpo < lastDpoCondition
                 && DpoDegreeAverageAngle(dpo, averageAngleCount) < averageAngleCondition)
             {
+                Log.Information("Dpo Period = " + dpoPeriod);
+                Log.Information("Last Dpo Condition = " + lastDpoCondition);
+                Log.Information("Average Angle Count" + averageAngleCount);
+                Log.Information("Average Angle Condition" + averageAngleCondition);
+                Log.Information("Last DPO < lastDpoCondition");
+                Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration < " + averageAngleCondition);
                 return true;
             }
             else
             {
+                Log.Information("DPO From Long Signal not present");
                 return false;
             }
         }
@@ -53,7 +64,7 @@ namespace TradingAlgorithms.IndicatorSignals
             foreach (var item in skipDpo)
             {
                 values.Add(item.Dpo);
-                Log.Information("DPO: " + item.Date + " " + item.Dpo);
+                Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Dpo);
             }
 
             return DeltaDegreeAngle(values);

@@ -28,15 +28,20 @@ namespace TradingAlgorithms.IndicatorSignals
                             && ichmokuTenkansenDegreeAverageAngle(ichimoku, 1) > ichmokuTenkansenDegreeAverageAngle(ichimoku, 2)
                             && tenkansenPriceDelta < tenkansenPriceDeltaCount)
             {
+                Log.Information("Tenkansen Price Delta Count = " + tenkansenPriceDeltaCount);
+                Log.Information("Delta Angle Count Long = " + deltaAngleCountLong);
+                Log.Information("Ichimoku TenkanSen Angle Long = " + ichimokuTenkanSenAngleLong);
+                Log.Information("Ichimoku Long Signal = Buy");
                 return true;
             }
             else
             {
+                Log.Information("Ichimoku Long Signal = Not Buy");
                 return false;
             }
         }
 
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, decimal tenkansenPriceDeltaCount = 0.12M, int deltaAngleCountLong = 1, double ichimokuTenkanSenAngleLong = 0)
+        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int deltaAngleCountLong = 1, double ichimokuTenkanSenAngleLong = 0)
         {
             List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
             if (/*ichimoku.Last().TenkanSen < ichimoku.Last().KijunSen*/ //под вопросом на минунтных свечах. Достаточно отрицательный угол на последнем отрезке. Возможно, потребуется, если буду нормализовать свечи не по клозу, а по средней цене за свечу.
