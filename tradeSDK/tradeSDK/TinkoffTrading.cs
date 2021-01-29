@@ -41,11 +41,13 @@ namespace tradeSDK
 
             if (mishmash.Long())
             { 
-                BuyStoks(countStoks, ask); 
+                BuyStoks(countStoks, ask);
+                Log.Information("Go to Buy stoks: " + figi);
             }
             else if (mishmash.FromLong())
             { 
-                SellStoksFromLong(bid); 
+                SellStoksFromLong(bid);
+                Log.Information("Go to Sell stoks: " + figi);
             }
             Log.Information("Stop PurchaseDecision");
         }

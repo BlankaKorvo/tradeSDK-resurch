@@ -62,7 +62,22 @@ namespace tradeSDK
             double ichimokuTenkanSenAngleLong = 20;
 
             TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = figi, candleInterval = CandleInterval.Minute, countStoks = 3 };
-            await tinkoffTrading.PurchaseDecision();
+            while (true)
+            {
+                try
+                {
+                    await tinkoffTrading.PurchaseDecision();
+                }
+                catch (Exception ex)
+                {
+                    Log.Information(ex.ToString());
+                    sleep += 10;
+                }
+                finally
+                {
+                }
+            }
+
             //while (true)
             //{
             //    Stopwatch stopWatch = new Stopwatch();

@@ -20,7 +20,6 @@ namespace TradingAlgorithms.Algoritms
         public decimal deltaPrice { get; set; }
 
         //Тюнинг индикаторов
-        private int dpoPeriod = 20;
 
 
         public bool Long()
