@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TinkoffData\TinkoffData.csproj" />
-    <ProjectReference Include="..\TinkoffTrading\TinkoffTrade.csproj" />
     <ProjectReference Include="..\TradingAlgorithms\TradingAlgorithms.csproj" />
   </ItemGroup>
 

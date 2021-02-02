@@ -5,15 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff;
 using Tinkoff.Trading.OpenApi.Models;
+using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
     internal class IchimokuSignal : IndicatorSignalsHelper
     {
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice, decimal tenkansenPriceDeltaCount = 0.12M, int deltaAngleCountLong = 3, double ichimokuTenkanSenAngleLong = 20)
+        const decimal _tenkansenPriceDeltaCount = 0.12M;
+        const int _deltaAngleCountLong = 3;
+        const double _ichimokuTenkanSenAngleLong = 20;
+
+        const int _deltaAngleCountFromLong = 1;
+        const double _ichimokuTenkanSenAngleFromLong = 0;
+
+        internal bool LongSignal(CandleList candleList, decimal deltaPrice, decimal tenkansenPriceDeltaCount = _tenkansenPriceDeltaCount, int deltaAngleCountLong = _deltaAngleCountLong, double ichimokuTenkanSenAngleLong = _ichimokuTenkanSenAngleLong)
         {
             List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
             decimal? tenkansenPriceDelta = 100 - (ichimoku.Last().TenkanSen * 100 / deltaPrice); //Насколько далеко убежала цена от Ichimoku TenkanSen
@@ -30,18 +37,22 @@ namespace TradingAlgorithms.IndicatorSignals
             {
                 Log.Information("Tenkansen Price Delta Count = " + tenkansenPriceDeltaCount);
                 Log.Information("Delta Angle Count Long = " + deltaAngleCountLong);
-                Log.Information("Ichimoku TenkanSen Angle Long = " + ichimokuTenkanSenAngleLong);
+                Log.Information("Ichimoku TenkanSen Angle = " + ichimokuTenkanSenAngleLong);
+                Log.Information("Ichimoku TenkanSen Degree Average Angle ( " + deltaAngleCountLong + " ) = " + ichmokuTenkansenDegreeAverageAngle(ichimoku, deltaAngleCountLong));
                 Log.Information("Ichimoku Long Signal = Buy");
                 return true;
             }
             else
             {
+                Log.Information("Tenkansen Price Delta Count = " + tenkansenPriceDeltaCount);
+                Log.Information("Delta Angle Count = " + deltaAngleCountLong);
+                Log.Information("Ichimoku TenkanSen Angle = " + ichimokuTenkanSenAngleLong);
                 Log.Information("Ichimoku Long Signal = Not Buy");
                 return false;
             }
         }
 
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int deltaAngleCountLong = 1, double ichimokuTenkanSenAngleLong = 0)
+        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int deltaAngleCountFromLong = _deltaAngleCountFromLong, double ichimokuTenkanSenAngleFromLong = _ichimokuTenkanSenAngleFromLong)
         {
             List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
             if (/*ichimoku.Last().TenkanSen < ichimoku.Last().KijunSen*/ //под вопросом на минунтных свечах. Достаточно отрицательный угол на последнем отрезке. Возможно, потребуется, если буду нормализовать свечи не по клозу, а по средней цене за свечу.
@@ -50,7 +61,7 @@ namespace TradingAlgorithms.IndicatorSignals
                             || deltaPrice < ichimoku.Last().TenkanSen
                             || ichimoku.Last().TenkanSen < ichimoku.Last().SenkouSpanA
                             || ichimoku.Last().TenkanSen < ichimoku.Last().SenkouSpanB
-                            || ichmokuTenkansenDegreeAverageAngle(ichimoku, deltaAngleCountLong) < ichimokuTenkanSenAngleLong)
+                            || ichmokuTenkansenDegreeAverageAngle(ichimoku, deltaAngleCountFromLong) < ichimokuTenkanSenAngleFromLong)
             {
                 return true;
             }

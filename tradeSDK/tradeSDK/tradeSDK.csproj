@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TinkoffTrading.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
@@ -14,7 +18,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
-    <ProjectReference Include="..\Tinkoff\Tinkoff.csproj" />
+    <ProjectReference Include="..\ScreenerStocks\ScreenerStocks.csproj" />
+    <ProjectReference Include="..\TinkoffData\TinkoffData.csproj" />
+    <ProjectReference Include="..\TinkoffTrading\TinkoffTrade.csproj" />
     <ProjectReference Include="..\TradingAlgorithms\TradingAlgorithms.csproj" />
   </ItemGroup>
 

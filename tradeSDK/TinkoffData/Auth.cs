@@ -2,7 +2,7 @@
 using System.IO;
 using Tinkoff.Trading.OpenApi.Network;
 
-namespace Tinkoff
+namespace TinkoffData
 {
     public  class Auth
     {

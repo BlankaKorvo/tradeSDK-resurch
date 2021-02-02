@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 
-namespace Tinkoff
+namespace TinkoffData
 {
     public class Market
     {
@@ -65,6 +66,7 @@ namespace Tinkoff
         public async Task<CandleList> GetCandlesTinkoff(Context context, string figi, CandleInterval candleInterval, int CandlesCount)
         {
             var date = DateTime.Now;
+            int iterCount = 0;
             List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
 
             CandlePayloadEqualityComparer CandlePayloadEqC = new CandlePayloadEqualityComparer();
@@ -81,6 +83,9 @@ namespace Tinkoff
                 {
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-1);
+                    iterCount++;
+                    if (iterCount > 5)
+                    { return null; }
                 }
             }
             else if (candleInterval == CandleInterval.Hour)
@@ -88,6 +93,9 @@ namespace Tinkoff
                 {
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-7);
+                    iterCount++;
+                    if (iterCount > 5)
+                    { return null; }
                 }
             else if (candleInterval == CandleInterval.Day)
             {
@@ -95,6 +103,9 @@ namespace Tinkoff
                 {
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddYears(-1);
+                    iterCount++;
+                    if (iterCount > 5)
+                    { return null; }
                 }
             }
 
@@ -111,6 +122,30 @@ namespace Tinkoff
             CandleList candleListTemp = await GetCandleByFigi(context, figi, candleInterval, date);
             AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
             return AllCandlePayloadTemp;
+        }
+        public async Task<Orderbook> GetOrderbook(Context context, string figi, int depth)
+        {
+            Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
+            if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
+            {
+                Log.Error("Биржа по инструменту " + figi + " не работает");
+                return null;
+            }
+            Log.Information("Orderbook Figi: " + orderbook.Figi);
+            Log.Information("Orderbook Depth: " + orderbook.Depth);
+            Log.Information("Orderbook Asks Price: " + orderbook.Asks.FirstOrDefault().Price);
+            Log.Information("Orderbook Asks Quantity: " + orderbook.Asks.FirstOrDefault().Quantity);
+
+            Log.Information("Orderbook Bids Price: " + orderbook.Bids.Last().Price);
+            Log.Information("Orderbook Bids Quantity: " + orderbook.Bids.Last().Quantity);
+
+            Log.Information("Orderbook ClosePrice: " + orderbook.ClosePrice);
+            Log.Information("Orderbook LastPrice: " + orderbook.LastPrice);
+            Log.Information("Orderbook LimitDown: " + orderbook.LimitDown);
+            Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
+            Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
+            Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
+            return orderbook;
         }
     }
 }

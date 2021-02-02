@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using Tinkoff.Trading.OpenApi.Models;
 
-namespace Tinkoff
+namespace TinkoffData
 {
     public static class Serialization
     {
@@ -118,7 +118,7 @@ namespace Tinkoff
         public static List<SuperTrendResult> SuperTrendData(CandleList candleList, decimal realPrise, int history = 20, decimal multiplier = 2)
         {
 
-            Log.Information("realPrise = " + realPrise);
+            Log.Information("Average (Bid, Ask) Prise = " + realPrise);
             Log.Information("Super Trend History = " + history);
             Log.Information("Super Trend Multiplier = " + multiplier);
 

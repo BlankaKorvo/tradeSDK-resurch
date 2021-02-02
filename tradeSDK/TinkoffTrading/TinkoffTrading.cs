@@ -6,19 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Tinkoff;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
+using TinkoffData;
 using TradingAlgorithms.Algoritms;
 
-namespace tradeSDK
+namespace TinkoffTrade
 {
-    internal class TinkoffTrading
+    public class TinkoffTrading
     {
-        internal string figi { get; set; }
-        internal CandleInterval candleInterval { get; set; }
-        int CandleCount { get; set; } = 110;
-        internal int countStoks { get; set; }
+        public string figi { get; set; }
+        public CandleInterval candleInterval { get; set; }
+        public int countStoks { get; set; }
+        public int CandleCount { get; set; } = 120;
 
         //время ожидания между следующим циклом
         int sleep { get; set; } = 0;
@@ -27,7 +27,7 @@ namespace tradeSDK
         Market market = new Market();
         SandboxContext context = new Auth().GetSanboxContext();
         //Mishmash mishmash = new Mishmash();
-        internal async Task PurchaseDecision()
+        public async Task PurchaseDecision()
         {
             Log.Information("Start PurchaseDecision");
             //Получаем свечи

@@ -5,20 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff;
 using Tinkoff.Trading.OpenApi.Models;
+using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
     internal class DpoSignal : IndicatorSignalsHelper
     {
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod = 20, decimal lastDpoCondition = 0, int averageAngleCount = 3, double averageAngleCondition = 30)
+        const int _dpoPeriod = 20;
+        const decimal _lastDpoCondition = 0;
+        const int _averageAngleCount = 3;
+        const double _averageAngleConditionLong = 30;
+        const double _averageAngleConditionFromLong = -30;
+
+        internal bool LongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod = _dpoPeriod, decimal lastDpoCondition = _lastDpoCondition, int averageAngleCount = _averageAngleCount, double averageAngleCondition = _averageAngleConditionLong)
         {
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo >= lastDpoCondition
                 && DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleCondition
-                && DpoDegreeAverageAngle(dpo, 1) > DpoDegreeAverageAngle(dpo, 2))
+                && DpoDegreeAverageAngle(dpo, 1) >= DpoDegreeAverageAngle(dpo, 2))
             {
                 Log.Information("Dpo Period = " + dpoPeriod);
                 Log.Information("Last Dpo Condition = " + lastDpoCondition);
@@ -36,7 +42,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod = 20, decimal lastDpoCondition = 0, int averageAngleCount = 4, double averageAngleCondition = -30)
+        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod = _dpoPeriod, decimal lastDpoCondition = _lastDpoCondition, int averageAngleCount = _averageAngleCount, double averageAngleCondition = _averageAngleConditionFromLong)
         {
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo < lastDpoCondition
