@@ -38,11 +38,11 @@ namespace ScreenerStocks
                         Log.Error("Candle " + item.Figi +" = null");
                         continue;
                     }
-                    else if( candleList.Candles.Last().Time < DateTime.Now.ToUniversalTime().AddMinutes(-10) )
+                    else if( candleList.Candles.Last().Time < DateTime.Now.ToUniversalTime().AddMinutes(-70) )
                     {
                         Log.Information("Last time candle of " + item.Figi + " is " + candleList.Candles.Last().Time.ToString() +" menshe then " + DateTime.Now.AddMinutes(-10));
                         Log.Information("Last time candle of " + item.Figi + " is " + candleList.Candles.Last().Time.ToString());
-                        Log.Error(item.Figi + " not trading last 10 minutes");
+                        Log.Error(item.Figi + " not trading last hour minutes");
                         continue;
                     }
                     Orderbook orderbook = await market.GetOrderbook(context, item.Figi, 1);

@@ -29,12 +29,17 @@ namespace TinkoffTrade
         //Mishmash mishmash = new Mishmash();
         public async Task PurchaseDecision()
         {
-            Log.Information("Start PurchaseDecision");
+            Log.Information("Start PurchaseDecision for: " + figi);
             //Получаем свечи
             CandleList candleList = await market.GetCandlesTinkoff(context, figi, candleInterval, CandleCount);
 
             //Получаем стакан
             Orderbook orderbook = await GetOrderbook(figi, 1);
+            if (orderbook == null)
+            {
+                Log.Information("Orderbook " + figi + " is null");
+                return; 
+            }
             decimal ask = orderbook.Asks.Last().Price;
             decimal bid = orderbook.Bids.Last().Price;
             decimal deltaPrice = (ask + bid) / 2;
@@ -50,15 +55,16 @@ namespace TinkoffTrade
                 SellStoksFromLong(bid);
                 Log.Information("Go from Long: " + figi);
             }
-            Log.Information("Stop PurchaseDecision");
+            Log.Information("Stop PurchaseDecision for: " + figi);
         }
 
         private async Task<Orderbook> GetOrderbook(string figi, int depth)
         {
             Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
-            if (orderbook.Asks.Count == 0)
+            if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
             {
                 Log.Information("Биржа по инструменту " + figi + " не работает");
+                return null;
             }
             Log.Information("Orderbook Figi: " + orderbook.Figi);
             Log.Information("Orderbook Depth: " + orderbook.Depth);
@@ -89,10 +95,12 @@ namespace TinkoffTrade
                 }
             }
             int countStocksBuyDeal = await CalculationStocksBuyDeal(figi, countLots);
+            if (countStocksBuyDeal == 0)
+            { return; }
             await context.PlaceLimitOrderAsync(new LimitOrder(figi, countStocksBuyDeal, OperationType.Buy, price));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Sell  price: " + price);
+                sw.WriteLine(DateTime.Now + @" Buy " + figi + " price: " + price + " mzda: " + (price*0.02m)/100m);
                 sw.WriteLine();
             }
             Log.Information("Create order for Buy " + countLots + " lots " + "figi: " + figi + "price: " + price);
@@ -115,7 +123,7 @@ namespace TinkoffTrade
             await context.PlaceLimitOrderAsync(new LimitOrder(figi, countLots, OperationType.Sell, price));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Buy  price: " + price);
+                sw.WriteLine(DateTime.Now + @" Sell " + figi + " price: " + price + " mzda: " + (price * 0.02m) / 100m);
                 sw.WriteLine();
             }
             Log.Information("Create order for Sell " + countLots + " stocks " + "figi: " + figi + "price: " + price);

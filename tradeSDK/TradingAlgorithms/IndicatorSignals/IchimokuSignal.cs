@@ -14,8 +14,8 @@ namespace TradingAlgorithms.IndicatorSignals
     internal class IchimokuSignal : IndicatorSignalsHelper
     {
         const decimal _tenkansenPriceDeltaCount = 0.12M;
-        const int _deltaAngleCountLong = 3;
-        const double _ichimokuTenkanSenAngleLong = 20;
+        const int _deltaAngleCountLong = 1;
+        const double _ichimokuTenkanSenAngleLong = 0;
 
         const int _deltaAngleCountFromLong = 1;
         const double _ichimokuTenkanSenAngleFromLong = 0;
@@ -39,7 +39,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Delta Angle Count Long = " + deltaAngleCountLong);
                 Log.Information("Ichimoku TenkanSen Angle = " + ichimokuTenkanSenAngleLong);
                 Log.Information("Ichimoku TenkanSen Degree Average Angle ( " + deltaAngleCountLong + " ) = " + ichmokuTenkansenDegreeAverageAngle(ichimoku, deltaAngleCountLong));
-                Log.Information("Ichimoku Long Signal = Buy");
+                Log.Information("Ichimoku = Long true");
                 return true;
             }
             else
@@ -47,7 +47,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Tenkansen Price Delta Count = " + tenkansenPriceDeltaCount);
                 Log.Information("Delta Angle Count = " + deltaAngleCountLong);
                 Log.Information("Ichimoku TenkanSen Angle = " + ichimokuTenkanSenAngleLong);
-                Log.Information("Ichimoku Long Signal = Not Buy");
+                Log.Information("Ichimoku = Long false");
                 return false;
             }
         }
@@ -63,10 +63,12 @@ namespace TradingAlgorithms.IndicatorSignals
                             || ichimoku.Last().TenkanSen < ichimoku.Last().SenkouSpanB
                             || ichmokuTenkansenDegreeAverageAngle(ichimoku, deltaAngleCountFromLong) < ichimokuTenkanSenAngleFromLong)
             {
+                Log.Information("Ichimoku = FromLong true");
                 return true;
             }
             else
             {
+                Log.Information("Ichimoku = FromLong false");
                 return false;
             }
         }

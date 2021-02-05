@@ -14,6 +14,9 @@ namespace TradingAlgorithms.Algoritms
         DpoSignal dpoSignal = new DpoSignal();
         SuperTrendSignal superTrendSignal = new SuperTrendSignal();
         IchimokuSignal ichimokuSignal = new IchimokuSignal();
+        MacdSignal macdSignal = new MacdSignal();
+        BollingerBandsSignal bollingerBandsSignal = new BollingerBandsSignal();
+        AroonSignal aroonSignal = new AroonSignal();
 
         //Передаваемые при создании объекта параметры
         public CandleList candleList { get; set; }
@@ -25,8 +28,11 @@ namespace TradingAlgorithms.Algoritms
         public bool Long()
         {
             if (dpoSignal.LongSignal(candleList, deltaPrice)
-                && superTrendSignal.LongSignal(candleList, deltaPrice)
-                && ichimokuSignal.LongSignal(candleList, deltaPrice))
+                //&& superTrendSignal.LongSignal(candleList, deltaPrice)
+                && ichimokuSignal.LongSignal(candleList, deltaPrice)
+                && macdSignal.LongSignal(candleList, deltaPrice)
+                && bollingerBandsSignal.LongSignal(candleList, deltaPrice)
+                && aroonSignal.LongSignal(candleList, deltaPrice))
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);
                 return true; 
@@ -39,9 +45,11 @@ namespace TradingAlgorithms.Algoritms
         }
         public bool FromLong()
         {
-            if ((dpoSignal.FromLongSignal(candleList, deltaPrice) 
-                    && superTrendSignal.FromLongSignal(candleList, deltaPrice))
-                || ichimokuSignal.FromLongSignal(candleList, deltaPrice))
+            if (//dpoSignal.FromLongSignal(candleList, deltaPrice) 
+                //&& superTrendSignal.FromLongSignal(candleList, deltaPrice))
+                //|| 
+                ichimokuSignal.FromLongSignal(candleList, deltaPrice)
+                || macdSignal.FromLongSignal(candleList,deltaPrice))
             {
                 Log.Information("Mishmash Algoritms: FromLong - true " + candleList.Figi);
                 return true; 

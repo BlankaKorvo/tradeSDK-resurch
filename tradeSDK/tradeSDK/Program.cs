@@ -31,10 +31,13 @@ namespace tradeSDK
             //Serialization ser = new Serialization();
 
 
-           // var figi = "BBG000BVPV84";
-            var candleInterval = CandleInterval.Minute;
+            //var figi = "BBG000BVPV84"; //AMZN
+            //var figi = "BBG0013HGFT4"; //USDRUS
+            var figi = "BBG0018SLC07"; //SQ
+            var candleInterval = CandleInterval.FiveMinutes;
             int CandleCount = 110;
 
+            List<string> Figis = new List<string>() { "BBG0018SLC07", "BBG000BVPV84", "BBG00HTN2CQ3", "BBG009S3NB30" };
             //System config
             int sleep = 0;
 
@@ -65,35 +68,12 @@ namespace tradeSDK
 
             MishMashScreener mishMashScreener = new MishMashScreener();
 
-            
-            while (true)
-            {
-                try
-                {
-                    await mishMashScreener.Screener(context, candleInterval, 120);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.ToString());
-                    sleep += 10;
-                }
-                finally
-                {
-                }
-                sleep = DynamicSleep(sleep);
-                Log.Information("Sleep = " + sleep);
-                Thread.Sleep(sleep);
-            }
 
-            //var x = await market.GetCandlesTinkoff(context, "BBG000C1JTL6", candleInterval, CandleCount);
-
-
-            //TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = figi, candleInterval = CandleInterval.Minute, countStoks = 3 };
             //while (true)
             //{
             //    try
             //    {
-            //        await tinkoffTrading.PurchaseDecision();
+            //        await mishMashScreener.Screener(context, candleInterval, 120);
             //    }
             //    catch (Exception ex)
             //    {
@@ -107,6 +87,34 @@ namespace tradeSDK
             //    Log.Information("Sleep = " + sleep);
             //    Thread.Sleep(sleep);
             //}
+
+            //var x = await market.GetCandlesTinkoff(context, "BBG000C1JTL6", candleInterval, CandleCount);
+
+
+            //TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = figi, candleInterval = candleInterval, countStoks = 3 };
+            while (true)
+            {
+                try
+                {
+                    foreach (string item in Figis)
+                    {
+                        TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = item, candleInterval = candleInterval, countStoks = 3 };
+                        await tinkoffTrading.PurchaseDecision();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex.ToString());
+                    sleep += 30;
+                }
+                finally
+                {
+                }
+                sleep = DynamicSleep(sleep);
+                Log.Information("Sleep = " + sleep);
+                Thread.Sleep(sleep);
+            }
 
             //while (true)
             //{

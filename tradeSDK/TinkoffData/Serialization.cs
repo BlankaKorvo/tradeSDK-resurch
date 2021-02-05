@@ -47,16 +47,45 @@ namespace TinkoffData
             return quotes;
         }
 
+        public static List<AroonResult> AroonData(CandleList candleList, int lookbackPeriod = 7)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<AroonResult> aroon = Indicator.GetAroon(candles, lookbackPeriod).ToList();
+            return aroon;
+        }
+
+        public static List<AroonResult> AroonData(CandleList candleList, decimal realPrise, int lookbackPeriod = 7)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<AroonResult> aroon = Indicator.GetAroon(candles, lookbackPeriod).ToList();
+            return aroon;
+        }
+
+        public static List<BollingerBandsResult> BollingerBandsData(CandleList candleList, decimal realPrise, int lookbackPeriod = 20, decimal standardDeviations = 2m)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<BollingerBandsResult> bollingerBands = Indicator.GetBollingerBands(candles, lookbackPeriod, standardDeviations).ToList();
+            return bollingerBands;
+        }
+        public static List<BollingerBandsResult> BollingerBandsData(CandleList candleList, int lookbackPeriod = 20, decimal standardDeviations = 2m)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<BollingerBandsResult> bollingerBands = Indicator.GetBollingerBands(candles, lookbackPeriod, standardDeviations).ToList();
+            return bollingerBands;
+        }
+
         public static List<MacdResult> MacdData(CandleList candleList)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
-            return Indicator.GetMacd(candles).ToList();
+            List<MacdResult> macdResult = Indicator.GetMacd(candles).ToList();
+            return macdResult;
         }
 
-        public static List<MacdResult> MacdData(CandleList candleList, decimal realPrise)
+        public static List<MacdResult> MacdData(CandleList candleList, decimal realPrise, int fastPeriod = 12, int slowPeriod = 26, int signalPeriod = 9)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
-            return Indicator.GetMacd(candles).ToList();
+            List <MacdResult> macdResult = Indicator.GetMacd(candles, fastPeriod, slowPeriod, signalPeriod).ToList();
+            return macdResult;
         }
 
         public static List<EmaResult> EmaData(CandleList candleList, int lookbackPeriod)
