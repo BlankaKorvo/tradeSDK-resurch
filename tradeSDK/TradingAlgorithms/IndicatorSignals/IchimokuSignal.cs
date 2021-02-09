@@ -13,14 +13,14 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     internal class IchimokuSignal : IndicatorSignalsHelper
     {
-        const decimal _tenkansenPriceDeltaCount = 0.12M;
-        const int _deltaAngleCountLong = 1;
-        const double _ichimokuTenkanSenAngleLong = 0;
+        const decimal tenkansenPriceDeltaCount = 0.12M;
+        const int deltaAngleCountLong = 1;
+        const double ichimokuTenkanSenAngleLong = 0;
 
-        const int _deltaAngleCountFromLong = 1;
-        const double _ichimokuTenkanSenAngleFromLong = 0;
+        const int deltaAngleCountFromLong = 1;
+        const double ichimokuTenkanSenAngleFromLong = 0;
 
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice, decimal tenkansenPriceDeltaCount = _tenkansenPriceDeltaCount, int deltaAngleCountLong = _deltaAngleCountLong, double ichimokuTenkanSenAngleLong = _ichimokuTenkanSenAngleLong)
+        internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
             decimal? tenkansenPriceDelta = 100 - (ichimoku.Last().TenkanSen * 100 / deltaPrice); //Насколько далеко убежала цена от Ichimoku TenkanSen
@@ -52,7 +52,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int deltaAngleCountFromLong = _deltaAngleCountFromLong, double ichimokuTenkanSenAngleFromLong = _ichimokuTenkanSenAngleFromLong)
+        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
             if (/*ichimoku.Last().TenkanSen < ichimoku.Last().KijunSen*/ //под вопросом на минунтных свечах. Достаточно отрицательный угол на последнем отрезке. Возможно, потребуется, если буду нормализовать свечи не по клозу, а по средней цене за свечу.
