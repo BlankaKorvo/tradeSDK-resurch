@@ -17,6 +17,8 @@ namespace TradingAlgorithms.Algoritms
         MacdSignal macdSignal = new MacdSignal();
         BollingerBandsSignal bollingerBandsSignal = new BollingerBandsSignal();
         AroonSignal aroonSignal = new AroonSignal();
+        AdxSignal adxSignal = new AdxSignal();
+
 
         //Передаваемые при создании объекта параметры
         public CandleList candleList { get; set; }
@@ -32,7 +34,8 @@ namespace TradingAlgorithms.Algoritms
                 && ichimokuSignal.LongSignal(candleList, deltaPrice)
                 && macdSignal.LongSignal(candleList, deltaPrice)
                 && bollingerBandsSignal.LongSignal(candleList, deltaPrice)
-                && aroonSignal.LongSignal(candleList, deltaPrice))
+                && aroonSignal.LongSignal(candleList, deltaPrice)
+                && adxSignal.LongSignal(candleList, deltaPrice))
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);
                 return true; 

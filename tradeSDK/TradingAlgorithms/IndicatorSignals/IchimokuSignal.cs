@@ -32,7 +32,7 @@ namespace TradingAlgorithms.IndicatorSignals
                             && ichimoku.Last().TenkanSen > ichimoku.Last().SenkouSpanA
                             && ichimoku.Last().TenkanSen > ichimoku.Last().SenkouSpanB
                             && ichmokuTenkansenDegreeAverageAngle(ichimoku, deltaAngleCountLong) > ichimokuTenkanSenAngleLong
-                            && ichmokuTenkansenDegreeAverageAngle(ichimoku, 1) > ichmokuTenkansenDegreeAverageAngle(ichimoku, 2)
+                            //&& ichmokuTenkansenDegreeAverageAngle(ichimoku, 1) > ichmokuTenkansenDegreeAverageAngle(ichimoku, 2)
                             && tenkansenPriceDelta < tenkansenPriceDeltaCount)
             {
                 Log.Information("Tenkansen Price Delta Count = " + tenkansenPriceDeltaCount);

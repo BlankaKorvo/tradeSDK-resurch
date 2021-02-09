@@ -47,6 +47,20 @@ namespace TinkoffData
             return quotes;
         }
 
+        public static List<AdxResult> AdxData(CandleList candleList, int lookbackPeriod = 14)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<AdxResult> adx = Indicator.GetAdx(candles, lookbackPeriod).ToList();
+            return adx;
+        }
+
+        public static List<AdxResult> AdxData(CandleList candleList, decimal realPrise, int lookbackPeriod = 14)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<AdxResult> adx = Indicator.GetAdx(candles, lookbackPeriod).ToList();
+            return adx;
+        }
+
         public static List<AroonResult> AroonData(CandleList candleList, int lookbackPeriod = 7)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);

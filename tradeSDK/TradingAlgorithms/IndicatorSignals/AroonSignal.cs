@@ -20,7 +20,11 @@ namespace TradingAlgorithms.IndicatorSignals
 
             if (
                 aroon.Last().AroonUp > aroon.Last().AroonDown
-                //&& aroon.Last().AroonUp == 100
+                && 
+                aroon.Last().AroonUp == 100
+                //&& 
+                //aroon.Last().AroonDown == 0
+
                 )
             {
                 Log.Information("Aroon Up = " + aroon.Last().AroonUp + " " + aroon.Last().Date);

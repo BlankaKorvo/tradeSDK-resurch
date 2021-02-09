@@ -59,7 +59,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 macd.Last().Macd < macd.Last().Signal
                 || macd.Last().Histogram < 0
                 || MacdDegreeAverageAngle(macd, averageAngleCount) < averageAngleCondition
-                || macd.Last().Histogram < macd[macd.Count - 2].Histogram
+                //|| macd.Last().Histogram < macd[macd.Count - 2].Histogram
                 //|| MacdHistogramDegreeAverageAngle(macd, 1) < MacdHistogramDegreeAverageAngle(macd, 2)
                 )
             {
