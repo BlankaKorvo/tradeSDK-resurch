@@ -15,6 +15,7 @@ namespace TinkoffTrade
 {
     public class TinkoffTrading
     {
+        public SandboxContext context { get; set; }
         public string figi { get; set; }
         public CandleInterval candleInterval { get; set; }
         public int countStoks { get; set; }
@@ -25,7 +26,7 @@ namespace TinkoffTrade
 
 
         Market market = new Market();
-        SandboxContext context = new Auth().GetSanboxContext();
+        //SandboxContext context = new Auth().GetSanboxContext();
         //Mishmash mishmash = new Mishmash();
         public async Task PurchaseDecision()
         {

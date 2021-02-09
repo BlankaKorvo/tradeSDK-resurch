@@ -98,7 +98,7 @@ namespace tradeSDK
                 {
                     foreach (string item in Figis)
                     {
-                        TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = item, candleInterval = candleInterval, countStoks = 3 };
+                        TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = item, candleInterval = candleInterval, countStoks = 3, context = context, CandleCount = 120 };
                         await tinkoffTrading.PurchaseDecision();
                     }
 

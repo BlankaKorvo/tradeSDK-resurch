@@ -36,12 +36,12 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Last DPO > lastDpoCondition");
                 Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration > " + averageAngleCondition);
                 Log.Information("Average Dpo Angle from 1 last iteration > from 2 last iteration");
-                Log.Information("DPO = Long true");
+                Log.Information("DPO = Long - true");
                 return true;
             }
             else
             {
-                Log.Information("DPO = Long false");
+                Log.Information("DPO = Long - false");
                 return false;
             }
         }
@@ -58,12 +58,12 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleCondition);
                 Log.Information("Last DPO < lastDpoCondition");
                 Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration < " + averageAngleCondition);
-                Log.Information("DPO = FromLong true");
+                Log.Information("DPO = FromLong - true");
                 return true;
             }
             else
             {
-                Log.Information("DPO = FromLong false");
+                Log.Information("DPO = FromLong - false");
                 return false;
             }
         }
