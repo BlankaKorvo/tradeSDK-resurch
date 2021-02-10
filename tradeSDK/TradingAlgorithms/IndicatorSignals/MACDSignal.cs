@@ -16,7 +16,7 @@ namespace TradingAlgorithms.IndicatorSignals
         int fastPeriod = 6;
         int slowPeriod = 13;
         int signalPeriod = 9;
-        int averageAngleCount = 3;
+        int averageAngleCount = 2;
         double averageAngleCondition = 0;
         internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {

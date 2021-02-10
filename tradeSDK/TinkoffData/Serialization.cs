@@ -131,7 +131,7 @@ namespace TinkoffData
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
             return Indicator.GetSma(candles, lookbackPeriod).ToList();
         }
-        public static List<SmaResult> SmaData(CandleList candleList, int lookbackPeriod, decimal realPrise)
+        public static List<SmaResult> SmaData(CandleList candleList, decimal realPrise, int lookbackPeriod)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
             return Indicator.GetSma(candles, lookbackPeriod).ToList();

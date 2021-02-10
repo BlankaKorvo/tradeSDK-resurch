@@ -18,6 +18,7 @@ namespace TradingAlgorithms.Algoritms
         BollingerBandsSignal bollingerBandsSignal = new BollingerBandsSignal();
         AroonSignal aroonSignal = new AroonSignal();
         AdxSignal adxSignal = new AdxSignal();
+        SmaSignal smaSignal = new SmaSignal();
 
 
         //Передаваемые при создании объекта параметры
@@ -29,13 +30,23 @@ namespace TradingAlgorithms.Algoritms
 
         public bool Long()
         {
-            if (dpoSignal.LongSignal(candleList, deltaPrice)
+            if (
+                dpoSignal.LongSignal(candleList, deltaPrice)
                 //&& superTrendSignal.LongSignal(candleList, deltaPrice)
-                && ichimokuSignal.LongSignal(candleList, deltaPrice)
-                && macdSignal.LongSignal(candleList, deltaPrice)
-                && bollingerBandsSignal.LongSignal(candleList, deltaPrice)
-                && aroonSignal.LongSignal(candleList, deltaPrice)
-                && adxSignal.LongSignal(candleList, deltaPrice))
+                //&& ichimokuSignal.LongSignal(candleList, deltaPrice)
+                &&
+                macdSignal.LongSignal(candleList, deltaPrice)
+                &&
+                aroonSignal.LongSignal(candleList, deltaPrice)
+                &&
+                adxSignal.LongSignal(candleList, deltaPrice)
+                //Проверка на отсутствие боковика
+                &&
+                bollingerBandsSignal.LongSignal(candleList, deltaPrice)
+                //Проверка на отсутсвие гэпа
+                &&
+                smaSignal.LongSignal(candleList, deltaPrice)
+                )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);
                 return true; 
@@ -51,8 +62,14 @@ namespace TradingAlgorithms.Algoritms
             if (//dpoSignal.FromLongSignal(candleList, deltaPrice) 
                 //&& superTrendSignal.FromLongSignal(candleList, deltaPrice))
                 //|| 
-                ichimokuSignal.FromLongSignal(candleList, deltaPrice)
-                || macdSignal.FromLongSignal(candleList,deltaPrice))
+                //ichimokuSignal.FromLongSignal(candleList, deltaPrice)
+                //|| 
+                macdSignal.FromLongSignal(candleList, deltaPrice)
+                ||
+                adxSignal.FromLongSignal(candleList, deltaPrice)
+                ||
+                aroonSignal.FromLongSignal(candleList, deltaPrice)
+                )
             {
                 Log.Information("Mishmash Algoritms: FromLong - true " + candleList.Figi);
                 return true; 

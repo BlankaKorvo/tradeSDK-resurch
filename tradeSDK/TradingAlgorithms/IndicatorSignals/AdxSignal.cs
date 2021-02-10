@@ -13,8 +13,9 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     class AdxSignal : IndicatorSignalsHelper
     {
-        int lookbackPeriod = 14;
+        int lookbackPeriod = 8;
         int averageAngleCount = 2;
+        int fromLongAverageAngleCount = 1;
         internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<AdxResult> adx = Serialization.AdxData(candleList, deltaPrice, lookbackPeriod);
@@ -52,6 +53,42 @@ namespace TradingAlgorithms.IndicatorSignals
             }
 
         }
+
+        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice)
+        {
+            List<AdxResult> adx = Serialization.AdxData(candleList, deltaPrice, lookbackPeriod);
+            if (
+                    AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Adx) < 0
+                    ||
+                    (
+                        AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Pdi) < 0
+                        &&
+                        AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Mdi) > 0
+                    )
+               )
+            {
+                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date );
+                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date );
+                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date );
+                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Adx = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Adx) + " Должна быть меньше 0");
+                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Pdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Pdi) + " Должна быть меньше 0");
+                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Mdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Mdi) + " Должна быть больше 0");
+                Log.Information("Adx = FromLong - true");
+                return true;
+            }
+            else
+            {
+                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date + " должен быть больше Adx Mdi");
+                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date + " должен быть меньше Adx Pdi и Adx");
+                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " должен быть больше Adx Mdi");
+                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Adx = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Adx) + " Должна быть больше 0");
+                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Pdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Pdi) + " Должна быть больше 0");
+                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Mdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Mdi) + " Должна быть меньше 0");
+                Log.Information("Adx = FromLong - false");
+                return false;
+            }
+
+        }
         private double AdxDegreeAverageAngle(List<AdxResult> AdxValue, int anglesCount, Adx adxLine)
         {
             List<AdxResult> skipAdx = AdxValue.Skip(AdxValue.Count - (anglesCount + 1)).ToList();
@@ -59,7 +96,7 @@ namespace TradingAlgorithms.IndicatorSignals
             foreach (var item in skipAdx)
             {
                 switch (adxLine)
-                { 
+                {
                     case Adx.Pdi:
                         values.Add(item.Pdi);
                         Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Pdi);

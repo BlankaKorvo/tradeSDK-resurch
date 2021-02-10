@@ -106,7 +106,7 @@ namespace tradeSDK
                 catch (Exception ex)
                 {
                     Log.Error(ex.ToString());
-                    sleep += 30;
+                    sleep += 10;
                 }
                 finally
                 {
