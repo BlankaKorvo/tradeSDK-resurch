@@ -34,9 +34,9 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Aroon Up = " + aroon.Last().AroonUp + " " + aroon.Last().Date);
                 Log.Information("Aroon Down = " + aroon.Last().AroonDown + " " + aroon.Last().Date);
                 Log.Information("Aroon Oscillator = " + aroon.Last().Oscillator + " " + aroon.Last().Date);
-                Log.Information("Должно быть: " + aroon.Last().AroonUp + " > " + aroon.Last().AroonDown);
-                Log.Information("Должно быть: " + aroon.Last().AroonUp + " = " + aroonUpValueLong);
-                Log.Information("Должно быть: " + aroon.Last().AroonDown + " < " + aroonDownValue);
+                Log.Information("Should be: " + aroon.Last().AroonUp + " > " + aroon.Last().AroonDown);
+                Log.Information("Should be: " + aroon.Last().AroonUp + " = " + aroonUpValueLong);
+                Log.Information("Should be: " + aroon.Last().AroonDown + " < " + aroonDownValue);
                 Log.Information("Aroon = Long - true");
                 return true;
             }
@@ -45,10 +45,9 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Aroon Up = " + aroon.Last().AroonUp + " " + aroon.Last().Date);
                 Log.Information("Aroon Down = " + aroon.Last().AroonDown + " " + aroon.Last().Date);
                 Log.Information("Aroon Oscillator = " + aroon.Last().Oscillator + " " + aroon.Last().Date);
-                Log.Information("Aroon Oscillator = " + aroon.Last().Oscillator + " " + aroon.Last().Date);
-                Log.Information("Должно быть: " + aroon.Last().AroonUp + " > " + aroon.Last().AroonDown);
-                Log.Information("Должно быть: " + aroon.Last().AroonUp + " = " + aroonUpValueLong);
-                Log.Information("Должно быть: " + aroon.Last().AroonDown + " < " + aroonDownValue);
+                Log.Information("Should be: " + aroon.Last().AroonUp + " > " + aroon.Last().AroonDown);
+                Log.Information("Should be: " + aroon.Last().AroonUp + " = " + aroonUpValueLong);
+                Log.Information("Should be: " + aroon.Last().AroonDown + " < " + aroonDownValue);
                 Log.Information("Aroon = Long - false");
                 return false;
             }
@@ -70,9 +69,9 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Aroon Up = " + aroon.Last().AroonUp + " " + aroon.Last().Date);
                 Log.Information("Aroon Down = " + aroon.Last().AroonDown + " " + aroon.Last().Date);
                 Log.Information("Aroon Oscillator = " + aroon.Last().Oscillator + " " + aroon.Last().Date);
-                Log.Information("Должно быть: " + aroon.Last().AroonUp + " < " + aroon.Last().AroonDown);
-                Log.Information("Должно быть: " + aroon.Last().AroonUp + " < " + aroonUpValueFromLong);
-                Log.Information("Должно быть: " + aroon.Last().AroonDown + " > " + aroonUpValueFromLong);
+                Log.Information("Should be: " + aroon.Last().AroonUp + " < " + aroon.Last().AroonDown);
+                Log.Information("Should be: " + aroon.Last().AroonUp + " < " + aroonUpValueFromLong);
+                Log.Information("Should be: " + aroon.Last().AroonDown + " > " + aroonUpValueFromLong);
                 Log.Information("Aroon = FromLong - true");
                 return true;
             }
@@ -81,9 +80,9 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Aroon Up = " + aroon.Last().AroonUp + " " + aroon.Last().Date);
                 Log.Information("Aroon Down = " + aroon.Last().AroonDown + " " + aroon.Last().Date);
                 Log.Information("Aroon Oscillator = " + aroon.Last().Oscillator + " " + aroon.Last().Date);
-                Log.Information("Должно быть: " + aroon.Last().AroonUp + " < " + aroon.Last().AroonDown);
-                Log.Information("Должно быть: " + aroon.Last().AroonUp + " < " + aroonUpValueFromLong);
-                Log.Information("Должно быть: " + aroon.Last().AroonDown + " > " + aroonUpValueFromLong);
+                Log.Information("Should be: " + aroon.Last().AroonUp + " < " + aroon.Last().AroonDown);
+                Log.Information("Should be: " + aroon.Last().AroonUp + " < " + aroonUpValueFromLong);
+                Log.Information("Should be: " + aroon.Last().AroonDown + " > " + aroonUpValueFromLong);
                 Log.Information("Aroon = FromLong - false");
                 return false;
             }

@@ -23,7 +23,7 @@ namespace tradeSDK
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
-                .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day, fileSizeLimitBytes: 104857600, rollOnFileSizeLimit: true)
                 .CreateLogger();   
             
             Market market = new Market();
@@ -33,11 +33,12 @@ namespace tradeSDK
 
             //var figi = "BBG000BVPV84"; //AMZN
             //var figi = "BBG0013HGFT4"; //USDRUS
-            var figi = "BBG0018SLC07"; //SQ
+            //var figi = "BBG0018SLC07"; //SQ
             var candleInterval = CandleInterval.FiveMinutes;
-            int CandleCount = 110;
+            int candleCount = 50;
 
-            List<string> Figis = new List<string>() { "BBG0018SLC07", "BBG000BVPV84", "BBG00HTN2CQ3", "BBG009S3NB30" };
+            decimal budget = 5000;
+            List<string> Figis = new List<string>() { "BBG000B9XRY4", "BBG000NS03H7", "BBG000BPH459", "BBG000D8RG11", "BBG0016SSV00", "BBG000BM6N47", "BBG000HL7499" };
             //System config
             int sleep = 0;
 
@@ -98,7 +99,7 @@ namespace tradeSDK
                 {
                     foreach (string item in Figis)
                     {
-                        TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = item, candleInterval = candleInterval, countStoks = 3, context = context, CandleCount = 120 };
+                        TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = item, candleInterval = candleInterval, countStoks = 3, context = context, CandleCount = candleCount, budget = budget};
                         await tinkoffTrading.PurchaseDecision();
                     }
 

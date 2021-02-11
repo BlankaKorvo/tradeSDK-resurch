@@ -23,19 +23,19 @@ namespace TradingAlgorithms.IndicatorSignals
                 smaPriceDelta < smaPriceDeltaCount
                )
             {
-                Log.Information("Проверка на отсутсвие гэпа через SMA");
+                Log.Information("Checking for the absence of a gap via SMA");
                 Log.Information("smaPriceDelta = " + smaPriceDelta);
                 Log.Information("smaPriceDeltaCount = " + smaPriceDeltaCount);
-                Log.Information("Должно быть: smaPriceDelta < smaPriceDeltaCount");
+                Log.Information("Should be: smaPriceDelta < smaPriceDeltaCount");
                 Log.Information("Sma = Long - true");
                 return true; 
             }
             else
             {
-                Log.Information("Проверка на отсутсвие гэпа через SMA");
+                Log.Information("Checking for the absence of a gap via SMA");
                 Log.Information("smaPriceDelta = " + smaPriceDelta);
                 Log.Information("smaPriceDeltaCount = " + smaPriceDeltaCount);
-                Log.Information("Должно быть: smaPriceDelta < smaPriceDeltaCount");
+                Log.Information("Should be: smaPriceDelta < smaPriceDeltaCount");
                 Log.Information("Sma = Long - falce");
                 return false; 
             }

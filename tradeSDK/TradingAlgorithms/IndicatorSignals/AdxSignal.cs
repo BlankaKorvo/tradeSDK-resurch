@@ -31,23 +31,23 @@ namespace TradingAlgorithms.IndicatorSignals
                             AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Mdi) < 0
                             )
             {
-                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date + " должен быть больше Adx Mdi");
-                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date + " должен быть меньше Adx Pdi и Adx");
-                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " должен быть больше Adx Mdi");
-                Log.Information("Adx угол " + averageAngleCount + "прямых Adx = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Adx) + " Должна быть больше 0");
-                Log.Information("Adx угол " + averageAngleCount + "прямых Pdi = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Pdi) + " Должна быть больше 0");
-                Log.Information("Adx угол " + averageAngleCount + "прямых Mdi = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Mdi) + " Должна быть меньше 0");
+                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date + " should be more then Adx Mdi");
+                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date + " should be less then Adx Pdi и Adx");
+                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " should be more Adx then Mdi");
+                Log.Information("Adx angle " + averageAngleCount + "straights Adx = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Adx) + " should be more then 0");
+                Log.Information("Adx angle " + averageAngleCount + "straights Pdi = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Pdi) + " should be more then 0");
+                Log.Information("Adx angle " + averageAngleCount + "straights Mdi = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Mdi) + " should be less then 0");
                 Log.Information("Adx = Long - true");
                 return true;
             }
             else
             {
-                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date + " должен быть больше Adx Mdi");
-                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date + " должен быть меньше Adx Pdi и Adx");
-                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " должен быть больше Adx Mdi");
-                Log.Information("Adx угол " + averageAngleCount + "прямых Adx = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Adx) + " Должна быть больше 0");
-                Log.Information("Adx угол " + averageAngleCount + "прямых Pdi = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Pdi) + " Должна быть больше 0");
-                Log.Information("Adx угол " + averageAngleCount + "прямых Mdi = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Mdi) + " Должна быть меньше 0");
+                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date + " should be more then Adx Mdi");
+                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date + " should be less then Adx Pdi и Adx");
+                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " should be more then Adx Mdi");
+                Log.Information("Adx angle " + averageAngleCount + "straights Adx = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Adx) + " should be more then 0");
+                Log.Information("Adx angle " + averageAngleCount + "straights Pdi = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Pdi) + " should be more then 0");
+                Log.Information("Adx angle " + averageAngleCount + "straights Mdi = " + AdxDegreeAverageAngle(adx, averageAngleCount, Adx.Mdi) + " should be less then 0");
                 Log.Information("Adx = Long - false");
                 return false;
             }
@@ -70,20 +70,20 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date );
                 Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date );
                 Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date );
-                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Adx = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Adx) + " Должна быть меньше 0");
-                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Pdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Pdi) + " Должна быть меньше 0");
-                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Mdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Mdi) + " Должна быть больше 0");
+                Log.Information("Adx angle " + fromLongAverageAngleCount + "straights Adx = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Adx) + " should be less then 0");
+                Log.Information("Adx angle " + fromLongAverageAngleCount + "straights Pdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Pdi) + " should be less then 0");
+                Log.Information("Adx angle " + fromLongAverageAngleCount + "straights Mdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Mdi) + " should be more then 0");
                 Log.Information("Adx = FromLong - true");
                 return true;
             }
             else
             {
-                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date + " должен быть больше Adx Mdi");
-                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date + " должен быть меньше Adx Pdi и Adx");
-                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " должен быть больше Adx Mdi");
-                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Adx = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Adx) + " Должна быть больше 0");
-                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Pdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Pdi) + " Должна быть больше 0");
-                Log.Information("Adx угол " + fromLongAverageAngleCount + "прямых Mdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Mdi) + " Должна быть меньше 0");
+                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date + " should be more then Adx Mdi");
+                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date + " should be less then Adx Pdi & Adx");
+                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " should be more then Adx Mdi");
+                Log.Information("Adx angle " + fromLongAverageAngleCount + "straights Adx = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Adx) + " should be more then 0");
+                Log.Information("Adx angle " + fromLongAverageAngleCount + "straights Pdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Pdi) + " should be more then 0");
+                Log.Information("Adx angle " + fromLongAverageAngleCount + "straights Mdi = " + AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Mdi) + " should be less then 0");
                 Log.Information("Adx = FromLong - false");
                 return false;
             }
