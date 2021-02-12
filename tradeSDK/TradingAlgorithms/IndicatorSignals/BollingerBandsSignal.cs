@@ -56,7 +56,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 foreach (var item in skipbollingerBands)
                 {
                     values.Add(item.Width);
-                    Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Width);
+                    Log.Information("Bollinger Bands Width for Degree Average Angle: " + item.Date + " " + item.Width);
                 }
                 return DeltaDegreeAngle(values);
             }

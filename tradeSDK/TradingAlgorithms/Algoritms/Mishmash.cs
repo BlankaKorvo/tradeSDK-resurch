@@ -32,17 +32,17 @@ namespace TradingAlgorithms.Algoritms
         {
             if (
                 dpoSignal.LongSignal(candleList, deltaPrice)
-                //&& superTrendSignal.LongSignal(candleList, deltaPrice)
-                //&& ichimokuSignal.LongSignal(candleList, deltaPrice)
                 &&
                 macdSignal.LongSignal(candleList, deltaPrice)
                 &&
                 aroonSignal.LongSignal(candleList, deltaPrice)
                 &&
                 adxSignal.LongSignal(candleList, deltaPrice)
+                
                 //Проверка на отсутствие боковика
                 &&
                 bollingerBandsSignal.LongSignal(candleList, deltaPrice)
+                
                 //Проверка на отсутсвие гэпа
                 &&
                 smaSignal.LongSignal(candleList, deltaPrice)
@@ -59,11 +59,7 @@ namespace TradingAlgorithms.Algoritms
         }
         public bool FromLong()
         {
-            if (//dpoSignal.FromLongSignal(candleList, deltaPrice) 
-                //&& superTrendSignal.FromLongSignal(candleList, deltaPrice))
-                //|| 
-                //ichimokuSignal.FromLongSignal(candleList, deltaPrice)
-                //|| 
+            if (
                 macdSignal.FromLongSignal(candleList, deltaPrice)
                 ||
                 adxSignal.FromLongSignal(candleList, deltaPrice)

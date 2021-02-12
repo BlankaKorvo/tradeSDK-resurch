@@ -15,7 +15,7 @@ namespace TradingAlgorithms.IndicatorSignals
     {
         int lookbackPeriod = 8;
         int averageAngleCount = 2;
-        int fromLongAverageAngleCount = 1;
+        int fromLongAverageAngleCount = 2;
         internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<AdxResult> adx = Serialization.AdxData(candleList, deltaPrice, lookbackPeriod);
@@ -99,15 +99,15 @@ namespace TradingAlgorithms.IndicatorSignals
                 {
                     case Adx.Pdi:
                         values.Add(item.Pdi);
-                        Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Pdi);
+                        Log.Information("ADX +DI for Degree Average Angle: " + item.Date + " " + item.Pdi);
                         break;
                     case Adx.Mdi:
                         values.Add(item.Mdi);
-                        Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Mdi);
+                        Log.Information("ADX -DI for Degree Average Angle: " + item.Date + " " + item.Mdi);
                         break;
                     case Adx.Adx:
                         values.Add(item.Adx);
-                        Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Adx);
+                        Log.Information("ADX for Degree Average Angle: " + item.Date + " " + item.Adx);
                         break;
                 }
             }

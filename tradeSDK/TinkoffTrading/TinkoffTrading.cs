@@ -43,6 +43,7 @@ namespace TinkoffTrade
             decimal ask = orderbook.Asks.FirstOrDefault().Price;
             decimal bid = orderbook.Bids.FirstOrDefault().Price;
             int quantityAskFirst = orderbook.Asks.FirstOrDefault().Quantity;
+            int quantityBidsFirst = orderbook.Bids.FirstOrDefault().Quantity;
             decimal deltaPrice = (ask + bid) / 2;
             Mishmash mishmash = new Mishmash() { candleList = candleList, deltaPrice = deltaPrice };
 
@@ -54,7 +55,7 @@ namespace TinkoffTrade
             }
             else if (mishmash.FromLong())
             { 
-                SellStoksFromLong(bid);
+                SellStoksFromLong(bid, quantityBidsFirst);
                 Log.Information("Go from Long: " + figi);
             }
             Log.Information("Stop PurchaseDecision for: " + figi);
@@ -85,28 +86,28 @@ namespace TinkoffTrade
             return orderbook;
         }
 
-        private async void BuyStoks(int countLots, decimal price)
-        {
-            List<Order> orders = await context.OrdersAsync();
-            foreach (Order order in orders)
-            {
-                if (order.Figi == figi)
-                {
-                    await context.CancelOrderAsync(order.OrderId);
-                    Log.Information("Delete order by figi: " + figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
-                }
-            }
-            int countStocksBuyDeal = await CalculationStocksBuyCount(figi, countLots);
-            if (countStocksBuyDeal == 0)
-            { return; }
-            await context.PlaceLimitOrderAsync(new LimitOrder(figi, countStocksBuyDeal, OperationType.Buy, price));
-            using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
-            {
-                sw.WriteLine(DateTime.Now + @" Buy " + figi + " price: " + price + " mzda: " + (price*0.02m)/100m);
-                sw.WriteLine();
-            }
-            Log.Information("Create order for Buy " + countLots + " lots " + "figi: " + figi + "price: " + price);
-        }
+        //private async void BuyStoks(int countLots, decimal price)
+        //{
+        //    List<Order> orders = await context.OrdersAsync();
+        //    foreach (Order order in orders)
+        //    {
+        //        if (order.Figi == figi)
+        //        {
+        //            await context.CancelOrderAsync(order.OrderId);
+        //            Log.Information("Delete order by figi: " + figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
+        //        }
+        //    }
+        //    int countStocksBuyDeal = await CalculationStocksBuyCount(figi, countLots);
+        //    if (countStocksBuyDeal == 0)
+        //    { return; }
+        //    await context.PlaceLimitOrderAsync(new LimitOrder(figi, countStocksBuyDeal, OperationType.Buy, price));
+        //    using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
+        //    {
+        //        sw.WriteLine(DateTime.Now + @" Buy " + figi + " price: " + price + " mzda: " + (price*0.02m)/100m);
+        //        sw.WriteLine();
+        //    }
+        //    Log.Information("Create order for Buy " + countLots + " lots " + "figi: " + figi + "price: " + price);
+        //}
 
         private async void BuyStoks(decimal budget, int quantityAskFirst, decimal price)
         {
@@ -132,27 +133,18 @@ namespace TinkoffTrade
             Log.Information("Create order for Buy " + stocksBuyBudget + " lots " + "figi: " + figi + "price: " + price);
         }
 
-        private async void SellStoksFromLong(decimal price)
+        private async void SellStoksFromLong(decimal bid, int quantityBidsFirst)
         {
-            List<Order> orders = await context.OrdersAsync();
-            foreach (Order order in orders)
-            {
-                if (order.Figi == figi)
-                {
-                    await context.CancelOrderAsync(order.OrderId);
-                    Log.Information("Delete order by figi: " + figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
-                }
-            }
-            int countLots = await CountLotsInPortfolio(figi);
+            int countLots = await CalculationStocksSellBudget(figi, quantityBidsFirst);
             if (countLots == 0)
             { return; }
-            await context.PlaceLimitOrderAsync(new LimitOrder(figi, countLots, OperationType.Sell, price));
+            await context.PlaceLimitOrderAsync(new LimitOrder(figi, countLots, OperationType.Sell, bid));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Sell " + figi + " price: " + price + " mzda: " + (price * 0.02m) / 100m);
+                sw.WriteLine(DateTime.Now + @" Sell " + figi + " price: " + bid + " mzda: " + (bid * 0.02m) / 100m);
                 sw.WriteLine();
             }
-            Log.Information("Create order for Sell " + countLots + " stocks " + "figi: " + figi + "price: " + price);
+            Log.Information("Create order for Sell " + countLots + " stocks " + "figi: " + figi + "price: " + bid);
         }
         
         private async Task<int> CalculationStocksBuyCount(string figi, int countLotsToBuy)
@@ -184,6 +176,21 @@ namespace TinkoffTrade
             }
         }
 
+        private async Task<int> CalculationStocksSellBudget(string figi, int quantityBidFirst)
+        {
+            int lots = await CountLotsInPortfolio(figi);
+            Log.Information("Lots " + figi + " in portfolio: " + lots);
+            if (lots <= quantityBidFirst)
+            {
+                Log.Information("Need to sell: " + lots);
+                return lots;
+            }
+            else
+            {
+                Log.Information("Need to buy: " + quantityBidFirst);
+                return quantityBidFirst;
+            }
+        }
         private async Task<int> CountLotsInPortfolio(string figi)
         {
             var portfolio = await context.PortfolioAsync();

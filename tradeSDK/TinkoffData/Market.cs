@@ -125,7 +125,10 @@ namespace TinkoffData
         }
         public async Task<Orderbook> GetOrderbook(Context context, string figi, int depth)
         {
-            Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
+            try
+            {
+                Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
+         
             if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
             {
                 Log.Error("Биржа по инструменту " + figi + " не работает");
@@ -146,6 +149,13 @@ namespace TinkoffData
             Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
             Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
             return orderbook;
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {  }
         }
     }
 }

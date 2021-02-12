@@ -13,56 +13,59 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     internal class DpoSignal : IndicatorSignalsHelper
     {
-        const int _dpoPeriod = 10;
-        const decimal _lastDpoCondition = 0;
-        const int _averageAngleCount = 3;
-        const double _averageAngleConditionLong = 0;
-        const double _averageAngleConditionFromLong = -30;
+        int dpoPeriod = 10;
+        decimal lastDpoCondition = 0;
+        int averageAngleCount = 3;
+        double averageAngleConditionLong = 0;
+        double averageAngleConditionFromLong = -30;
 
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod = _dpoPeriod, decimal lastDpoCondition = _lastDpoCondition, int averageAngleCount = _averageAngleCount, double averageAngleCondition = _averageAngleConditionLong)
+        internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (
-                //dpo.Last().Dpo >= lastDpoCondition && 
-                DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleCondition
-                && DpoDegreeAverageAngle(dpo, 1) > averageAngleCondition
-                //&& DpoDegreeAverageAngle(dpo, 1) >= DpoDegreeAverageAngle(dpo, 2)
+                DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleConditionLong
+                && DpoDegreeAverageAngle(dpo, 1) > averageAngleConditionLong
                 )
             {
-                Log.Information("Dpo Period = " + dpoPeriod);
-                Log.Information("Last Dpo Condition = " + lastDpoCondition);
                 Log.Information("Average Angle Count" + averageAngleCount);
-                Log.Information("Average Angle Condition" + averageAngleCondition);
-                Log.Information("Last DPO > lastDpoCondition");
-                Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration > " + averageAngleCondition);
-                Log.Information("Average Dpo Angle from 1 last iteration > from 2 last iteration");
+                Log.Information("Average Angle Condition" + averageAngleConditionLong);
+                Log.Information("Dpo Degree Average Angle = " + DpoDegreeAverageAngle(dpo, averageAngleCount) + " it should be more then: Average Angle Condition");
+                Log.Information("Dpo Degree Last Average Angle = " + DpoDegreeAverageAngle(dpo, 1) + " it should be more then: Average Angle Condition");
                 Log.Information("DPO = Long - true");
                 return true;
             }
             else
             {
+                Log.Information("Average Angle Count" + averageAngleCount);
+                Log.Information("Average Angle Condition" + averageAngleConditionLong);
+                Log.Information("Dpo Degree Average Angle = " + DpoDegreeAverageAngle(dpo, averageAngleCount) + " it should be more then: Average Angle Condition");
+                Log.Information("Dpo Degree Last Average Angle = " + DpoDegreeAverageAngle(dpo, 1) + " it should be more then: Average Angle Condition");
                 Log.Information("DPO = Long - false");
                 return false;
             }
         }
 
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int dpoPeriod = _dpoPeriod, decimal lastDpoCondition = _lastDpoCondition, int averageAngleCount = _averageAngleCount, double averageAngleCondition = _averageAngleConditionFromLong)
+        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo < lastDpoCondition
-                || DpoDegreeAverageAngle(dpo, averageAngleCount) < averageAngleCondition)
+                || DpoDegreeAverageAngle(dpo, averageAngleCount) < averageAngleConditionFromLong)
             {
-                Log.Information("Dpo Period = " + dpoPeriod);
                 Log.Information("Last Dpo Condition = " + lastDpoCondition);
                 Log.Information("Average Angle Count" + averageAngleCount);
-                Log.Information("Average Angle Condition" + averageAngleCondition);
-                Log.Information("Last DPO < lastDpoCondition");
-                Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration < " + averageAngleCondition);
+                Log.Information("Average Angle Condition" + averageAngleConditionFromLong);
+                Log.Information("Last DPO should be less then Last Dpo Condition");
+                Log.Information("Dpo Degree Average Angle should be less then Average Angle Condition");
                 Log.Information("DPO = FromLong - true");
                 return true;
             }
             else
             {
+                Log.Information("Last Dpo Condition = " + lastDpoCondition);
+                Log.Information("Average Angle Count" + averageAngleCount);
+                Log.Information("Average Angle Condition" + averageAngleConditionFromLong);
+                Log.Information("Last DPO should be less then Last Dpo Condition");
+                Log.Information("Dpo Degree Average Angle should be less then Average Angle Condition");
                 Log.Information("DPO = FromLong - false");
                 return false;
             }
@@ -77,23 +80,22 @@ namespace TradingAlgorithms.IndicatorSignals
                 values.Add(item.Dpo);
                 Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Dpo);
             }
-
             return DeltaDegreeAngle(values);
         }
 
-        internal bool LongSignalUltimate(CandleList candleList, decimal deltaPrice, int dpoPeriod = _dpoPeriod, decimal lastDpoCondition = _lastDpoCondition, int averageAngleCount = _averageAngleCount, double averageAngleCondition = _averageAngleConditionLong)
+        internal bool LongSignalUltimate(CandleList candleList, decimal deltaPrice, double averageAngleConditionLong)
         {
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo >= lastDpoCondition
-                && DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleCondition
+                && DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleConditionLong
                 && DpoDegreeAverageAngle(dpo, 1) >= DpoDegreeAverageAngle(dpo, 2))
             {
                 Log.Information("Dpo Period = " + dpoPeriod);
                 Log.Information("Last Dpo Condition = " + lastDpoCondition);
                 Log.Information("Average Angle Count" + averageAngleCount);
-                Log.Information("Average Angle Condition" + averageAngleCondition);
+                Log.Information("Average Angle Condition" + averageAngleConditionLong);
                 Log.Information("Last DPO > lastDpoCondition");
-                Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration > " + averageAngleCondition);
+                Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration > " + averageAngleConditionLong);
                 Log.Information("Average Dpo Angle from 1 last iteration > from 2 last iteration");
                 Log.Information("DPO = Long true");
                 return true;
@@ -105,18 +107,18 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool FromLongSignalUltimate(CandleList candleList, decimal deltaPrice, int dpoPeriod = _dpoPeriod, decimal lastDpoCondition = _lastDpoCondition, int averageAngleCount = _averageAngleCount, double averageAngleCondition = _averageAngleConditionFromLong)
+        internal bool FromLongSignalUltimate(CandleList candleList, decimal deltaPrice, double averageAngleConditionFromLong)
         {
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo < lastDpoCondition
-                && DpoDegreeAverageAngle(dpo, averageAngleCount) < averageAngleCondition)
+                && DpoDegreeAverageAngle(dpo, averageAngleCount) < averageAngleConditionFromLong)
             {
                 Log.Information("Dpo Period = " + dpoPeriod);
                 Log.Information("Last Dpo Condition = " + lastDpoCondition);
                 Log.Information("Average Angle Count" + averageAngleCount);
-                Log.Information("Average Angle Condition" + averageAngleCondition);
+                Log.Information("Average Angle Condition" + averageAngleConditionFromLong);
                 Log.Information("Last DPO < lastDpoCondition");
-                Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration < " + averageAngleCondition);
+                Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration < " + averageAngleConditionFromLong);
                 Log.Information("DPO = FromLong true");
                 return true;
             }

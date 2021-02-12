@@ -88,7 +88,7 @@ namespace TradingAlgorithms.IndicatorSignals
             foreach (var item in skipMacd)
             {
                 values.Add(item.Macd);
-                Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Macd);
+                Log.Information("MACD for Degree Average Angle: " + item.Date + " " + item.Macd);
             }
             return DeltaDegreeAngle(values);
         }
@@ -99,7 +99,7 @@ namespace TradingAlgorithms.IndicatorSignals
             foreach (var item in skipMacd)
             {
                 values.Add(item.Histogram);
-                Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Histogram);
+                Log.Information("MACD Histogram for Degree Average Angle: " + item.Date + " " + item.Histogram);
             }
             return DeltaDegreeAngle(values);
         }

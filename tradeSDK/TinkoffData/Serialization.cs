@@ -146,15 +146,11 @@ namespace TinkoffData
         public static List<DpoResult> DpoData(CandleList candleList, decimal realPrise, int lookbackPeriod)
         {
             Log.Information("DPO set price = " + realPrise);
-            Log.Information("DPO set history = " + lookbackPeriod);
+            Log.Information("DPO set lookbackPeriod = " + lookbackPeriod);
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
             List <DpoResult> dpoData = Indicator.GetDpo(candles, lookbackPeriod).ToList();
-
-            Log.Information("DPO history = " + dpoData.Last().Dpo + " " + dpoData.Last().Date);
-
+            Log.Information("Last Dpo = " + dpoData.Last().Dpo + " " + dpoData.Last().Date);
             return dpoData;
-
-
         }
 
         public static List<SuperTrendResult> SuperTrendData(CandleList candleList, int lookbackPeriod = 20, decimal multiplier = 2)
