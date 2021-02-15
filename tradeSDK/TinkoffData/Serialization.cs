@@ -28,6 +28,7 @@ namespace TinkoffData
             return quotes;
         }
 
+
         public static List<Quote> ConvertTinkoffCandlesToQuote(List<CandlePayload> candles, decimal realClose)
         {
             List<Quote> quotes = new List<Quote>();
@@ -46,6 +47,17 @@ namespace TinkoffData
             quotes.Last().Close = realClose;
             return quotes;
         }
+
+
+        public static List<AdxResult> TsiData(CandleList candleList, int lookbackPeriod)
+        {
+            throw new NotImplementedException();
+        }
+        public static List<AdxResult> TsiData(CandleList candleList, decimal deltaPrice, int lookbackPeriod)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public static List<AdxResult> AdxData(CandleList candleList, int lookbackPeriod = 14)
         {
@@ -120,7 +132,7 @@ namespace TinkoffData
             return Indicator.GetObv(candles, lookbackPeriod).ToList();
         }
         
-        public static List<ObvResult> ObvData(CandleList candleList, int lookbackPeriod, decimal realPrise)
+        public static List<ObvResult> ObvData(CandleList candleList, decimal realPrise, int lookbackPeriod)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
             return Indicator.GetObv(candles, lookbackPeriod).ToList();

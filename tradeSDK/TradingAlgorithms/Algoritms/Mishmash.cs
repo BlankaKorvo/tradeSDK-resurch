@@ -19,6 +19,7 @@ namespace TradingAlgorithms.Algoritms
         AroonSignal aroonSignal = new AroonSignal();
         AdxSignal adxSignal = new AdxSignal();
         SmaSignal smaSignal = new SmaSignal();
+        ObvSignal obvSignal = new ObvSignal();
 
 
         //Передаваемые при создании объекта параметры
@@ -38,6 +39,8 @@ namespace TradingAlgorithms.Algoritms
                 aroonSignal.LongSignal(candleList, deltaPrice)
                 &&
                 adxSignal.LongSignal(candleList, deltaPrice)
+                &&
+                obvSignal.LongSignal(candleList, deltaPrice)
                 
                 //Проверка на отсутствие боковика
                 &&
