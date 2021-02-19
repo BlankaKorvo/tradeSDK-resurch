@@ -65,7 +65,7 @@ namespace ScreenerStocks
                         }
                         catch (Exception ex)
                         {
-                            Log.Information(ex.ToString());
+                            Log.Error(ex.ToString());
                             if (ex.Message.Contains("TooManyRequests: Too many requests.."))
                             {
                                 Log.Error(ex.ToString());
@@ -95,7 +95,7 @@ namespace ScreenerStocks
                 }
                 catch (Exception ex)
                 {
-                    Log.Information(ex.ToString());
+                    Log.Error(ex.ToString());
                     if (ex.Message.Contains("TooManyRequests: Too many requests.."))
                     {
                         sleep += 10;

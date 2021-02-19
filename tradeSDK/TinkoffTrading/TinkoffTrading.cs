@@ -11,7 +11,7 @@ using TradingAlgorithms.Algoritms;
 
 namespace TinkoffTrade
 {
-    public class TinkoffTrading
+    public class TinkoffTrading 
     {
         public SandboxContext context { get; set; }
         public string figi { get; set; }
@@ -27,8 +27,9 @@ namespace TinkoffTrade
         Market market = new Market();
         //SandboxContext context = new Auth().GetSanboxContext();
         //Mishmash mishmash = new Mishmash();
-        public async Task PurchaseDecision()
+        public async Task<TransactionModel> PurchaseDecision()
         {
+            TransactionModel transactionModel = new TransactionModel();
             Log.Information("Start PurchaseDecision for: " + figi);
             //Получаем свечи
             CandleList candleList = await market.GetCandlesTinkoff(context, figi, candleInterval, CandleCount);
@@ -38,27 +39,37 @@ namespace TinkoffTrade
             if (orderbook == null)
             {
                 Log.Information("Orderbook " + figi + " is null");
-                return; 
+                return null; 
             }
             decimal ask = orderbook.Asks.FirstOrDefault().Price;
             decimal bid = orderbook.Bids.FirstOrDefault().Price;
-            int quantityAskFirst = orderbook.Asks.FirstOrDefault().Quantity;
+            int quantityAsksFirst = orderbook.Asks.FirstOrDefault().Quantity;
             int quantityBidsFirst = orderbook.Bids.FirstOrDefault().Quantity;
             decimal deltaPrice = (ask + bid) / 2;
+
+            transactionModel.Price = (ask + bid) / 2;
+            transactionModel.Figi = figi;
             Mishmash mishmash = new Mishmash() { candleList = candleList, deltaPrice = deltaPrice };
 
             if (mishmash.Long())
             {
                 //BuyStoks(countStoks, ask);
-                BuyStoks(budget, quantityAskFirst, ask);
+                BuyStoks(budget, quantityAsksFirst, ask);
                 Log.Information("Go to Long: " + figi);
+                transactionModel.Quantity = quantityAsksFirst;
+                transactionModel.Operation = Operation.toLong;
+                return transactionModel;
             }
             else if (mishmash.FromLong())
-            { 
+            {
                 SellStoksFromLong(bid, quantityBidsFirst);
                 Log.Information("Go from Long: " + figi);
+                transactionModel.Quantity = quantityBidsFirst;
+                transactionModel.Operation = Operation.fromLong;
+                return transactionModel;
             }
             Log.Information("Stop PurchaseDecision for: " + figi);
+            return null;
         }
 
         private async Task<Orderbook> GetOrderbook(string figi, int depth)
@@ -135,7 +146,7 @@ namespace TinkoffTrade
 
         private async void SellStoksFromLong(decimal bid, int quantityBidsFirst)
         {
-            int countLots = await CalculationStocksSellBudget(figi, quantityBidsFirst);
+            int countLots = await CalculationStocksFromLong(figi, quantityBidsFirst);
             if (countLots == 0)
             { return; }
             await context.PlaceLimitOrderAsync(new LimitOrder(figi, countLots, OperationType.Sell, bid));
@@ -176,7 +187,7 @@ namespace TinkoffTrade
             }
         }
 
-        private async Task<int> CalculationStocksSellBudget(string figi, int quantityBidFirst)
+        private async Task<int> CalculationStocksFromLong(string figi, int quantityBidFirst)
         {
             int lots = await CountLotsInPortfolio(figi);
             Log.Information("Lots " + figi + " in portfolio: " + lots);

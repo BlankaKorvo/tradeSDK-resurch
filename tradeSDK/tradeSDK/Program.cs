@@ -99,22 +99,36 @@ namespace tradeSDK
                 {
                     foreach (string item in Figis)
                     {
-                        TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = item, candleInterval = candleInterval, countStoks = 3, context = context, CandleCount = candleCount, budget = budget};
-                        await tinkoffTrading.PurchaseDecision();
+                        again:
+                        try
+                        {
+                            sleep = DynamicSleep(sleep);
+                            Log.Information("Sleep = " + sleep);
+                            Thread.Sleep(sleep);
+                            TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = item, candleInterval = candleInterval, countStoks = 3, context = context, CandleCount = candleCount, budget = budget };
+                            await tinkoffTrading.PurchaseDecision();                            
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.Message.Contains("TooManyRequests: Too many requests.."))
+                            {
+                                sleep += 10;
+                                Log.Error(ex.ToString());
+                                Log.Information("Retray with: " + item);
+                                goto again;
+                            }
+                        }
                     }
-
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex.ToString());
-                    sleep += 10;
+                    
                 }
                 finally
                 {
                 }
-                sleep = DynamicSleep(sleep);
-                Log.Information("Sleep = " + sleep);
-                Thread.Sleep(sleep);
+                
             }
 
             //while (true)
