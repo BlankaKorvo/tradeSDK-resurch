@@ -79,5 +79,15 @@ namespace TradingAlgorithms.Algoritms
                 return false; 
             }
         }
+
+        public bool Short()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FromShort()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -8,13 +8,14 @@ namespace TinkoffTrade
 {
     public class TransactionModel
     {
-        internal string Figi { get; set; }
-        internal decimal Price { get; set; }
-        internal int Quantity { get; set; }
-        internal Operation Operation { get; set; }
+        public string Figi { get; set; }
+        public decimal Price { get; set; }
+        public decimal Margin { get; set; }
+        public int Quantity { get; set; }
+        public Operation Operation { get; set; }
 
     }
-    enum Operation
+    public enum Operation
     {
         toLong,
         fromLong,

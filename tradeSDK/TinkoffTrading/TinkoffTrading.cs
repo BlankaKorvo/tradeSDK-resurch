@@ -11,34 +11,75 @@ using TradingAlgorithms.Algoritms;
 
 namespace TinkoffTrade
 {
-    public class TinkoffTrading 
+    public class TinkoffTrading : TransactionModel
     {
         public SandboxContext context { get; set; }
-        public string figi { get; set; }
+        //public string figi { get; set; }
         public CandleInterval candleInterval { get; set; }
         public int countStoks { get; set; }
         public int CandleCount { get; set; } = 120;
-        public decimal budget { get; set; }
+        //public decimal budget { get; set; }
 
         //время ожидания между следующим циклом
         int sleep { get; set; } = 0;
 
 
         Market market = new Market();
-        //SandboxContext context = new Auth().GetSanboxContext();
-        //Mishmash mishmash = new Mishmash();
+        TransactionModel transactionModel = new TransactionModel();
+
+        public void Transaction(TransactionModel transactionModel)
+        {
+            if (
+                transactionModel == null
+                ||
+                transactionModel.Figi == null
+                ||
+                transactionModel.Margin == 0
+                ||
+                transactionModel.Price == 0
+                ||
+                transactionModel.Quantity == 0)
+            {
+                Log.Error("Transaction is not implemented");
+                return;
+            }
+
+            switch (transactionModel.Operation)
+            {
+                case Operation.toLong:
+                    BuyStoks(transactionModel);
+                    Log.Information("Start Buy Stoks to Long");
+                    break;
+
+                case Operation.fromLong:
+                    SellStoksFromLong(transactionModel);
+                    Log.Information("Start Sell Stoks from Long");
+                    break;
+
+                case Operation.toShort:
+                    //not implemented
+                    Log.Error("Sell to short is not implemented");
+                    break;
+                case Operation.fromShort:
+                    Log.Error("By from short is not implemented");
+                    break;
+            }
+
+        }
+
         public async Task<TransactionModel> PurchaseDecision()
         {
-            TransactionModel transactionModel = new TransactionModel();
-            Log.Information("Start PurchaseDecision for: " + figi);
+            transactionModel.Figi = this.Figi;
+            transactionModel.Margin = this.Margin;
+            Log.Information("Start PurchaseDecision for: " + transactionModel.Figi);
             //Получаем свечи
-            CandleList candleList = await market.GetCandlesTinkoff(context, figi, candleInterval, CandleCount);
+            CandleList candleList = await market.GetCandlesTinkoff(context, transactionModel.Figi, candleInterval, CandleCount);
 
             //Получаем стакан
-            Orderbook orderbook = await GetOrderbook(figi, 1);
+            Orderbook orderbook = await GetOrderbook(transactionModel.Figi, 1);
             if (orderbook == null)
             {
-                Log.Information("Orderbook " + figi + " is null");
+                Log.Information("Orderbook " + transactionModel.Figi + " is null");
                 return null; 
             }
             decimal ask = orderbook.Asks.FirstOrDefault().Price;
@@ -47,29 +88,39 @@ namespace TinkoffTrade
             int quantityBidsFirst = orderbook.Bids.FirstOrDefault().Quantity;
             decimal deltaPrice = (ask + bid) / 2;
 
-            transactionModel.Price = (ask + bid) / 2;
-            transactionModel.Figi = figi;
             Mishmash mishmash = new Mishmash() { candleList = candleList, deltaPrice = deltaPrice };
 
             if (mishmash.Long())
             {
-                //BuyStoks(countStoks, ask);
-                BuyStoks(budget, quantityAsksFirst, ask);
-                Log.Information("Go to Long: " + figi);
+                Log.Information("Go to Long: " + transactionModel.Figi);
                 transactionModel.Quantity = quantityAsksFirst;
                 transactionModel.Operation = Operation.toLong;
-                return transactionModel;
+                transactionModel.Price = ask;
             }
             else if (mishmash.FromLong())
-            {
-                SellStoksFromLong(bid, quantityBidsFirst);
-                Log.Information("Go from Long: " + figi);
+            {                
+                Log.Information("Go from Long: " + transactionModel.Figi);
                 transactionModel.Quantity = quantityBidsFirst;
                 transactionModel.Operation = Operation.fromLong;
-                return transactionModel;
+                transactionModel.Price = bid;
             }
-            Log.Information("Stop PurchaseDecision for: " + figi);
-            return null;
+            //Заглушка
+            else if(mishmash.Short())
+            {
+                Log.Information("Go to Long: " + transactionModel.Figi);
+                transactionModel.Quantity = quantityAsksFirst;
+                transactionModel.Operation = Operation.toLong;
+                transactionModel.Price = ask;
+            }
+            else if (mishmash.FromShort())
+            {
+                Log.Information("Go from Long: " + transactionModel.Figi);
+                transactionModel.Quantity = quantityBidsFirst;
+                transactionModel.Operation = Operation.fromLong;
+                transactionModel.Price = bid;
+            }
+            Log.Information("Stop PurchaseDecision for: " + transactionModel.Figi);
+            return transactionModel;
         }
 
         private async Task<Orderbook> GetOrderbook(string figi, int depth)
@@ -97,65 +148,46 @@ namespace TinkoffTrade
             return orderbook;
         }
 
-        //private async void BuyStoks(int countLots, decimal price)
-        //{
-        //    List<Order> orders = await context.OrdersAsync();
-        //    foreach (Order order in orders)
-        //    {
-        //        if (order.Figi == figi)
-        //        {
-        //            await context.CancelOrderAsync(order.OrderId);
-        //            Log.Information("Delete order by figi: " + figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
-        //        }
-        //    }
-        //    int countStocksBuyDeal = await CalculationStocksBuyCount(figi, countLots);
-        //    if (countStocksBuyDeal == 0)
-        //    { return; }
-        //    await context.PlaceLimitOrderAsync(new LimitOrder(figi, countStocksBuyDeal, OperationType.Buy, price));
-        //    using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
-        //    {
-        //        sw.WriteLine(DateTime.Now + @" Buy " + figi + " price: " + price + " mzda: " + (price*0.02m)/100m);
-        //        sw.WriteLine();
-        //    }
-        //    Log.Information("Create order for Buy " + countLots + " lots " + "figi: " + figi + "price: " + price);
-        //}
 
-        private async void BuyStoks(decimal budget, int quantityAskFirst, decimal price)
+        private async void BuyStoks(TransactionModel transactionModel)
         {
             List<Order> orders = await context.OrdersAsync();
             foreach (Order order in orders)
             {
-                if (order.Figi == figi)
+                if (order.Figi == transactionModel.Figi)
                 {
                     await context.CancelOrderAsync(order.OrderId);
-                    Log.Information("Delete order by figi: " + figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
+                    Log.Information("Delete order by figi: " + transactionModel.Figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
                 }
             }
-            int stocksBuyBudget = await CalculationStocksBuyBudget(figi, budget, quantityAskFirst, price);
-            if (stocksBuyBudget == 0)
-            { return; }
+            int lots = await CalculationLotsByMargin(transactionModel);
+            //transactionModel.Quantity = await CalculationLotsByMargin(transactionModel);
+            if (lots == 0)
+            {
+                Log.Information("Not any lot in margin: " + transactionModel.Margin);
+                return; }
 
-            await context.PlaceLimitOrderAsync(new LimitOrder(figi, stocksBuyBudget, OperationType.Buy, price));
+            await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Buy, transactionModel.Price));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Buy " + figi + " price: " + price + " mzda: " + (price * 0.02m) / 100m);
+                sw.WriteLine(DateTime.Now + @" Buy " + transactionModel.Figi + "Quantity: " + transactionModel.Quantity +  " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
                 sw.WriteLine();
             }
-            Log.Information("Create order for Buy " + stocksBuyBudget + " lots " + "figi: " + figi + "price: " + price);
+            Log.Information("Create order for Buy " + lots + " lots " + "figi: " + transactionModel.Figi + "price: " + transactionModel.Price);
         }
 
-        private async void SellStoksFromLong(decimal bid, int quantityBidsFirst)
+        private async void SellStoksFromLong(TransactionModel transactionModel)
         {
-            int countLots = await CalculationStocksFromLong(figi, quantityBidsFirst);
-            if (countLots == 0)
+            int lots = await CalculationStocksFromLong(transactionModel);
+            if (lots == 0)
             { return; }
-            await context.PlaceLimitOrderAsync(new LimitOrder(figi, countLots, OperationType.Sell, bid));
+            await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Sell, transactionModel.Price));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Sell " + figi + " price: " + bid + " mzda: " + (bid * 0.02m) / 100m);
+                sw.WriteLine(DateTime.Now + @" Sell " + transactionModel.Figi + "Quantity: " + transactionModel.Quantity + " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
                 sw.WriteLine();
             }
-            Log.Information("Create order for Sell " + countLots + " stocks " + "figi: " + figi + "price: " + bid);
+            Log.Information("Create order for Sell " + lots + " stocks " + "figi: " + transactionModel.Figi + "price: " + transactionModel.Price);
         }
         
         private async Task<int> CalculationStocksBuyCount(string figi, int countLotsToBuy)
@@ -168,38 +200,42 @@ namespace TinkoffTrade
 
             return countLotsToBuyReal;
         }
-        private async Task<int> CalculationStocksBuyBudget(string figi, decimal budget, int quantityAskFirst, decimal price)
+        private async Task<int> CalculationLotsByMargin(TransactionModel transactionModel)
         {
-            int lots = await CountLotsInPortfolio(figi);
-            Log.Information("Lots " + figi + " in portfolio: " + lots);
-            decimal sumCostLotsInPorfolio = price * Convert.ToDecimal(lots);
-            decimal remainingCostLots = budget - sumCostLotsInPorfolio;
-            int countLotsToBuy = Convert.ToInt32(Math.Floor(remainingCostLots / price));
-            if (countLotsToBuy <= quantityAskFirst)
+            int lots = await CountLotsInPortfolio(transactionModel.Figi);
+            Log.Information("Lots " + transactionModel.Figi + " in portfolio: " + lots);
+            decimal sumCostLotsInPorfolio = transactionModel.Price * Convert.ToDecimal(lots);
+            decimal remainingCostLots = transactionModel.Margin - sumCostLotsInPorfolio;
+            if (remainingCostLots <= 0)
+            {
+                return 0;
+            }
+            int countLotsToBuy = Convert.ToInt32(Math.Floor(remainingCostLots / transactionModel.Price));
+            if (countLotsToBuy <= transactionModel.Quantity)
             {
                 Log.Information("Need to buy: " + countLotsToBuy);
                 return countLotsToBuy;
             }
             else
             {
-                Log.Information("Need to buy: " + quantityAskFirst);
-                return quantityAskFirst;
+                Log.Information("Need to buy: " + transactionModel.Quantity);
+                return transactionModel.Quantity;
             }
         }
 
-        private async Task<int> CalculationStocksFromLong(string figi, int quantityBidFirst)
+        private async Task<int> CalculationStocksFromLong(TransactionModel transactionModel)
         {
-            int lots = await CountLotsInPortfolio(figi);
-            Log.Information("Lots " + figi + " in portfolio: " + lots);
-            if (lots <= quantityBidFirst)
+            int lots = await CountLotsInPortfolio(transactionModel.Figi);
+            Log.Information("Lots " + transactionModel.Figi + " in portfolio: " + lots);
+            if (lots <= transactionModel.Quantity)
             {
                 Log.Information("Need to sell: " + lots);
                 return lots;
             }
             else
             {
-                Log.Information("Need to buy: " + quantityBidFirst);
-                return quantityBidFirst;
+                Log.Information("Need to buy: " + transactionModel.Quantity);
+                return transactionModel.Quantity;
             }
         }
         private async Task<int> CountLotsInPortfolio(string figi)

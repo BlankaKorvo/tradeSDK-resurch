@@ -37,7 +37,7 @@ namespace tradeSDK
             var candleInterval = CandleInterval.FiveMinutes;
             int candleCount = 20;
 
-            decimal budget = 5000;
+            decimal margin = 5000;
             List<string> Figis = new List<string>() { "BBG000B9XRY4", "BBG000NS03H7", "BBG000BPH459", "BBG000D8RG11", "BBG0016SSV00", "BBG000BM6N47", "BBG000HL7499" };
             //System config
             int sleep = 0;
@@ -46,26 +46,26 @@ namespace tradeSDK
 
 
             //DPO config 
-            int dpoPeriod = 20;
-            int dpoAverageAngleCountLong = 3;
-            double dpoAverageAngleConditionLong = 27;
-            int dpoAverageAngleCountFromLong = 3;
-            double dpoAverageAngleConditionFromLong = -15;
+            //int dpoPeriod = 20;
+            //int dpoAverageAngleCountLong = 3;
+            //double dpoAverageAngleConditionLong = 27;
+            //int dpoAverageAngleCountFromLong = 3;
+            //double dpoAverageAngleConditionFromLong = -15;
 
-            decimal longLastDpoCondition = 0;
-            decimal fromLongDpoCondition = 0;
+            //decimal longLastDpoCondition = 0;
+            //decimal fromLongDpoCondition = 0;
 
-            //Ema config
-            //int emaPeriod = 10;
-            decimal ichimokuTenkansenPriceDeltaCount = 0.13M;  //tenkasen можно сделать 5
+            ////Ema config
+            ////int emaPeriod = 10;
+            //decimal ichimokuTenkansenPriceDeltaCount = 0.13M;  //tenkasen можно сделать 5
 
-            //Super Trend config
-            int superTrandPeriod = 20;
-            int superTrandSensitive = 2;
+            ////Super Trend config
+            //int superTrandPeriod = 20;
+            //int superTrandSensitive = 2;
 
-            //Ichimoku
-            int ichimokuDeltaAngleCountLong = 2;
-            double ichimokuTenkanSenAngleLong = 20;
+            ////Ichimoku
+            //int ichimokuDeltaAngleCountLong = 2;
+            //double ichimokuTenkanSenAngleLong = 20;
 
             MishMashScreener mishMashScreener = new MishMashScreener();
 
@@ -105,8 +105,9 @@ namespace tradeSDK
                             sleep = DynamicSleep(sleep);
                             Log.Information("Sleep = " + sleep);
                             Thread.Sleep(sleep);
-                            TinkoffTrading tinkoffTrading = new TinkoffTrading() { figi = item, candleInterval = candleInterval, countStoks = 3, context = context, CandleCount = candleCount, budget = budget };
-                            await tinkoffTrading.PurchaseDecision();                            
+                            TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item, candleInterval = candleInterval, countStoks = 3, context = context, CandleCount = candleCount, Margin = margin };
+                            TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
+                            tinkoffTrading.Transaction(transactionData);
                         }
                         catch (Exception ex)
                         {
