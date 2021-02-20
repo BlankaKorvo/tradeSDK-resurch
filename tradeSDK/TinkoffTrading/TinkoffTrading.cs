@@ -13,16 +13,15 @@ namespace TinkoffTrade
 {
     public class TinkoffTrading : TransactionModel
     {
-        public SandboxContext context { get; set; }
-        //public string figi { get; set; }
+        public Context context { get; set; }
+        public string figi { get; set; }
         public CandleInterval candleInterval { get; set; }
-        public int countStoks { get; set; }
+        //public int countStoks { get; set; }
         public int CandleCount { get; set; } = 120;
         //public decimal budget { get; set; }
 
         //время ожидания между следующим циклом
         int sleep { get; set; } = 0;
-
 
         Market market = new Market();
         TransactionModel transactionModel = new TransactionModel();
@@ -64,7 +63,6 @@ namespace TinkoffTrade
                     Log.Error("By from short is not implemented");
                     break;
             }
-
         }
 
         public async Task<TransactionModel> PurchaseDecision()
@@ -147,7 +145,6 @@ namespace TinkoffTrade
             Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
             return orderbook;
         }
-
 
         private async void BuyStoks(TransactionModel transactionModel)
         {

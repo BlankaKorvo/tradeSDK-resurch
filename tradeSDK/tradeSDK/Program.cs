@@ -105,7 +105,7 @@ namespace tradeSDK
                             sleep = DynamicSleep(sleep);
                             Log.Information("Sleep = " + sleep);
                             Thread.Sleep(sleep);
-                            TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item, candleInterval = candleInterval, countStoks = 3, context = context, CandleCount = candleCount, Margin = margin };
+                            TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item, candleInterval = candleInterval, context = context, CandleCount = candleCount, Margin = margin };
                             TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
                             tinkoffTrading.Transaction(transactionData);
                         }

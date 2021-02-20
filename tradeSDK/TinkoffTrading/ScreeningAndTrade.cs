@@ -8,5 +8,6 @@ namespace TinkoffTrade
 {
     class ScreeningAndTrade
     {
+
     }
 }
