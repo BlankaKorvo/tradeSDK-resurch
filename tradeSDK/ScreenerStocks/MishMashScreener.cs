@@ -13,6 +13,7 @@ using Tinkoff.Trading.OpenApi.Network;
 using TinkoffData;
 using TinkoffTrade;
 using TradingAlgorithms.Algoritms;
+using Quartz;
 
 namespace ScreenerStocks
 {
@@ -20,9 +21,13 @@ namespace ScreenerStocks
     {
         Market market = new Market();
 
-        public void Trade()
+        public async Task Trade(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
-
+            var candleLists = await SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
+            while(true)
+            {
+                await ScreenerStocks(context, candleInterval, candleCount, margin, candleLists);
+            }
         }
 
         public async Task ScreenerStocks(Context context, CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
