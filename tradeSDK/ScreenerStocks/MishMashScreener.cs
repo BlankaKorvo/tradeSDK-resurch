@@ -24,21 +24,31 @@ namespace ScreenerStocks
         public async Task Trade(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             var candleLists = await SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
+            Log.Information("Get Sort USD candles");
+
             while(true)
             {
+                Log.Information("Start Screener Stoks");
                 await ScreenerStocks(context, candleInterval, candleCount, margin, candleLists);
+
             }
         }
 
         public async Task ScreenerStocks(Context context, CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
         {
             foreach (var item in CandleLists)
-            {
-                var date = DateTime.Now;
+            {                
                 TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandleCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
+                Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
+                Log.Information("Get object TransactionModel for Figi: " + item.Figi);
+                Log.Information("TransactionModel margin = " + transactionData.Margin);
+                Log.Information("TransactionModel operation = " + transactionData.Operation);
+                Log.Information("TransactionModel price = " + transactionData.Price);
+                Log.Information("TransactionModel quantity = " + transactionData.Quantity);
                 if (transactionData.Operation == TinkoffTrade.Operation.toLong)
                 {
+                    Log.Information("Start first transaction");
                     tinkoffTrading.Transaction(transactionData);
                     while (transactionData.Operation == TinkoffTrade.Operation.fromLong)
                     {
@@ -56,7 +66,9 @@ namespace ScreenerStocks
         async Task<List<CandleList>> SortUsdCandles(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             List<CandleList> allUsdCandles = await AllUsdCandles(context, candleInterval, candleCount);
+            Log.Information("Get All USD candles");
             List<CandleList> CandleLists = AllValidCandles(context, allUsdCandles, margin, notTradeMinuts);
+            Log.Information("Get Valid candles");            
             return CandleLists;
         }
 

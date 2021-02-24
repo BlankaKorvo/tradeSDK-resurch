@@ -47,6 +47,7 @@ namespace ScreenerStocks.Helpers
                 catch
                 { }
             }
+            Log.Information("Return All USD candles");
             return usdCandels;
         }
         internal List<CandleList> AllValidCandles(Context context, List<CandleList> listCandleLists, decimal price, int minutes)
