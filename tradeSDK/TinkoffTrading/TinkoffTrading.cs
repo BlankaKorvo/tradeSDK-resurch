@@ -103,20 +103,20 @@ namespace TinkoffTrade
                 transactionModel.Price = bid;
             }
             //Заглушка
-            else if(mishmash.Short())
-            {
-                Log.Information("Go to Long: " + transactionModel.Figi);
-                transactionModel.Quantity = quantityAsksFirst;
-                transactionModel.Operation = Operation.toLong;
-                transactionModel.Price = ask;
-            }
-            else if (mishmash.FromShort())
-            {
-                Log.Information("Go from Long: " + transactionModel.Figi);
-                transactionModel.Quantity = quantityBidsFirst;
-                transactionModel.Operation = Operation.fromLong;
-                transactionModel.Price = bid;
-            }
+            //else if(mishmash.Short())
+            //{
+            //    Log.Information("Go to Long: " + transactionModel.Figi);
+            //    transactionModel.Quantity = quantityAsksFirst;
+            //    transactionModel.Operation = Operation.toLong;
+            //    transactionModel.Price = ask;
+            //}
+            //else if (mishmash.FromShort())
+            //{
+            //    Log.Information("Go from Long: " + transactionModel.Figi);
+            //    transactionModel.Quantity = quantityBidsFirst;
+            //    transactionModel.Operation = Operation.fromLong;
+            //    transactionModel.Price = bid;
+            //}
             Log.Information("Stop PurchaseDecision for: " + transactionModel.Figi);
             return transactionModel;
         }

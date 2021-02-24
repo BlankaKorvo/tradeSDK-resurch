@@ -48,7 +48,9 @@ namespace TinkoffData
                     from = to.AddYears(-10);
                     break;
             }
-            var candle = await context.MarketCandlesAsync(figi, from, to, interval);
+            Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
+            CandleList candle = context.MarketCandlesAsync(figi, from, to, interval).GetAwaiter().GetResult();
+            Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
             return candle;
         }
 
@@ -67,6 +69,7 @@ namespace TinkoffData
         {
             var date = DateTime.Now;
             int iterCount = 0;
+            int finalIterCount = 5;
             List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
 
             CandlePayloadEqualityComparer CandlePayloadEqC = new CandlePayloadEqualityComparer();
@@ -84,8 +87,11 @@ namespace TinkoffData
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-1);
                     iterCount++;
-                    if (iterCount > 5)
-                    { return null; }
+                    if (iterCount > finalIterCount)
+                    {
+                        Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        return null; 
+                    }
                 }
             }
             else if (candleInterval == CandleInterval.Hour)
@@ -94,8 +100,11 @@ namespace TinkoffData
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-7);
                     iterCount++;
-                    if (iterCount > 5)
-                    { return null; }
+                    if (iterCount > finalIterCount)
+                    {
+                        Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        return null;
+                    }
                 }
             else if (candleInterval == CandleInterval.Day)
             {
@@ -104,8 +113,11 @@ namespace TinkoffData
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddYears(-1);
                     iterCount++;
-                    if (iterCount > 5)
-                    { return null; }
+                    if (iterCount > finalIterCount)
+                    {
+                        Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        return null;
+                    }
                 }
             }
 
@@ -119,8 +131,13 @@ namespace TinkoffData
 
         async Task<List<CandlePayload>> GetUnionCandles(Context context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
         {
+            Log.Information("Start GetUnionCandles method with figi: " + figi);
+            Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
             CandleList candleListTemp = await GetCandleByFigi(context, figi, candleInterval, date);
+            Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
             AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
+            Log.Information("GetUnionCandles return: " + AllCandlePayloadTemp.Count + " count candles");
+            Log.Information("Stop GetUnionCandles method with figi: " + figi);
             return AllCandlePayloadTemp;
         }
         public async Task<Orderbook> GetOrderbook(Context context, string figi, int depth)

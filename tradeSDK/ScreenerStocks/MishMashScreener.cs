@@ -21,44 +21,78 @@ namespace ScreenerStocks
     {
         Market market = new Market();
 
-        public async Task Trade(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
+        public async Task Trade (Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
-            var candleLists = await SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
+            List<CandleList> candleLists = await SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
             Log.Information("Get Sort USD candles");
-
-            while(true)
+            Log.Information("Start of sorted candleLists");
+            Log.Information("Count = " + candleLists.Count);
+            string nameOfFile = "stoks " + DateTime.Now;
+            using (StreamWriter sw = new StreamWriter(nameOfFile.Replace(":", "_").Replace(".", "_"), true, System.Text.Encoding.Default))
+            {
+                sw.WriteLine("Count = " + candleLists.Count);
+                sw.WriteLine("Margin: " + margin);
+                sw.WriteLine("NotTradeMinuts: " + notTradeMinuts);
+                foreach (var item in candleLists)
+                {
+                    sw.WriteLine(item.Figi);
+                    Log.Information(item.Figi);
+                }
+            }
+            Log.Information("Stop of sorted candleLists");
+            while (true)
             {
                 Log.Information("Start Screener Stoks");
                 await ScreenerStocks(context, candleInterval, candleCount, margin, candleLists);
-
             }
         }
 
         public async Task ScreenerStocks(Context context, CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
         {
+            int sleep = 0;
             foreach (var item in CandleLists)
-            {                
-                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandleCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
-                Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
-                TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
-                Log.Information("Get object TransactionModel for Figi: " + item.Figi);
-                Log.Information("TransactionModel margin = " + transactionData.Margin);
-                Log.Information("TransactionModel operation = " + transactionData.Operation);
-                Log.Information("TransactionModel price = " + transactionData.Price);
-                Log.Information("TransactionModel quantity = " + transactionData.Quantity);
-                if (transactionData.Operation == TinkoffTrade.Operation.toLong)
+            {
+            again:
+                try
                 {
-                    Log.Information("Start first transaction");
-                    tinkoffTrading.Transaction(transactionData);
-                    while (transactionData.Operation == TinkoffTrade.Operation.fromLong)
+                    sleep = DynamicSleep(sleep);
+                    Log.Information("Sleep = " + sleep);
+                    Thread.Sleep(sleep);
+                    TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandleCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
+                    Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
+                    TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
+                    if (transactionData == null)
+                    { continue; }
+                    Log.Information("TransactionModel margin = " + transactionData.Margin);
+                    Log.Information("TransactionModel operation = " + transactionData.Operation);
+                    Log.Information("TransactionModel price = " + transactionData.Price);
+                    Log.Information("TransactionModel quantity = " + transactionData.Quantity);
+                    if (transactionData.Operation == TinkoffTrade.Operation.toLong)
                     {
-                        transactionData = await tinkoffTrading.PurchaseDecision();
+                        Log.Information("Start first transaction");
                         tinkoffTrading.Transaction(transactionData);
+                        int i = 2;
+                        while (transactionData.Operation == TinkoffTrade.Operation.fromLong)
+                        {
+                            Log.Information("Start " + i + " transaction");
+                            transactionData = await tinkoffTrading.PurchaseDecision();
+                            tinkoffTrading.Transaction(transactionData);
+                        }
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
-                else 
+                catch (Exception ex)
                 {
-                    continue;
+                    if (ex.Message.Contains("TooManyRequests: Too many requests.."))
+                    {
+                        sleep += 10;
+                        Log.Error(ex.ToString());
+                        Log.Information("Retray with: " + item);
+                        goto again;
+                    }
                 }
             }
         }
@@ -67,9 +101,34 @@ namespace ScreenerStocks
         {
             List<CandleList> allUsdCandles = await AllUsdCandles(context, candleInterval, candleCount);
             Log.Information("Get All USD candles");
-            List<CandleList> CandleLists = AllValidCandles(context, allUsdCandles, margin, notTradeMinuts);
+            List<CandleList> CandleLists = AllValidCandles(allUsdCandles, margin, notTradeMinuts);
             Log.Information("Get Valid candles");            
             return CandleLists;
+        }
+
+        private static int DynamicSleep(int sleep)
+        {
+            sleep -= 1;
+            if (sleep < 0)
+            {
+                sleep = 0;
+            }
+            else if (sleep > 1000)
+            {
+                sleep = 1000;
+            }
+
+            return sleep;
+        }
+
+        bool TimeStart(DateTime dateTime)
+        {
+            var x = dateTime;
+            if ((dateTime.Hour > 10.05 || dateTime.Hour > 14.05 || dateTime.Hour > 17.35)
+                )
+            { return true; }
+            else
+            { return false; }
         }
 
         //public async Task Screener(Context context, CandleInterval candleInterval, int candleCount)
