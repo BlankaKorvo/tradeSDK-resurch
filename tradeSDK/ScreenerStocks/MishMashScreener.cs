@@ -67,6 +67,11 @@ namespace ScreenerStocks
                     Log.Information("TransactionModel operation = " + transactionData.Operation);
                     Log.Information("TransactionModel price = " + transactionData.Price);
                     Log.Information("TransactionModel quantity = " + transactionData.Quantity);
+
+
+                    //переписать логику нахрен....
+
+
                     if (transactionData.Operation == TinkoffTrade.Operation.toLong)
                     {
                         Log.Information("Start first transaction");
@@ -77,6 +82,7 @@ namespace ScreenerStocks
                             Log.Information("Start " + i + " transaction");
                             transactionData = await tinkoffTrading.PurchaseDecision();
                             tinkoffTrading.Transaction(transactionData);
+                            i++;
                         }
                     }
                     else
