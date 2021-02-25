@@ -20,6 +20,8 @@ namespace tradeSDK
     {
         static async Task Main(string[] args)
         {
+
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
@@ -50,7 +52,13 @@ namespace tradeSDK
             await mishMashScreener.Trade(context, candleInterval, candleCount, margin, 15);
 
 
-
+            //var marInstr = await context.MarketStocksAsync();
+            //foreach (var item in marInstr.Instruments)
+            //{
+            //    Log.Information("Start " + item.Figi);
+            //    await context.MarketCandlesAsync(item.Figi, DateTime.Now.AddDays(-20), DateTime.Now, CandleInterval.Day);
+            //    Log.Information("Stop " + item.Figi);
+            //}
 
 
             //while (true)

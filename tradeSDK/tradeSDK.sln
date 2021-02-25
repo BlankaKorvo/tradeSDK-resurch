@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinkoffTrade", "TinkoffTrad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Indicators", "..\Stock.Indicators\tests\indicators\Tests.Indicators.csproj", "{E2B835FE-2430-4149-B4F5-FB80002F0F7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryPolicyModel", "RetryPolicyModel\RetryPolicyModel.csproj", "{726C53C3-0EA9-40E1-9643-D3A733602D2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{E2B835FE-2430-4149-B4F5-FB80002F0F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2B835FE-2430-4149-B4F5-FB80002F0F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2B835FE-2430-4149-B4F5-FB80002F0F7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{726C53C3-0EA9-40E1-9643-D3A733602D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{726C53C3-0EA9-40E1-9643-D3A733602D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{726C53C3-0EA9-40E1-9643-D3A733602D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{726C53C3-0EA9-40E1-9643-D3A733602D2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

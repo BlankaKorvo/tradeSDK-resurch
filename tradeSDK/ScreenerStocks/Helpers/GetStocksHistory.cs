@@ -9,12 +9,13 @@ using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using TinkoffData;
 
+
 namespace ScreenerStocks.Helpers
 {
     public class GetStocksHistory
     {
         Market market = new Market();
-        internal async Task<List<MarketInstrument>> AllUsdStocks(Context context)
+        async internal Task<List<MarketInstrument>> AllUsdStocks(Context context)
         {
             List<MarketInstrument> usdStocks = new List<MarketInstrument>();
             MarketInstrumentList stocks = await context.MarketStocksAsync();
@@ -57,8 +58,11 @@ namespace ScreenerStocks.Helpers
                         Log.Information("Get Candle for: " + item.Figi);
                     }
                 }
-                catch
-                { }
+                catch(Exception ex)
+                {
+                    Log.Error(ex.Message);
+                    Log.Error(ex.StackTrace);
+                }
             }
             Log.Information("Return " + usdCandels.Count + " USD candles");
             return usdCandels;

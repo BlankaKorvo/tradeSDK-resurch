@@ -23,7 +23,7 @@ namespace ScreenerStocks
 
         public async Task Trade (Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
-            List<CandleList> candleLists = await SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
+            List<CandleList> candleLists = SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
             Log.Information("Get Sort USD candles");
             Log.Information("Start of sorted candleLists");
             Log.Information("Count = " + candleLists.Count);
@@ -95,7 +95,7 @@ namespace ScreenerStocks
                     if (ex.Message.Contains("TooManyRequests: Too many requests.."))
                     {
                         sleep += 10;
-                        Log.Error(ex.ToString());
+                        Log.Error(ex.Message);
                         Log.Information("Retray with: " + item);
                         goto again;
                     }
@@ -103,9 +103,9 @@ namespace ScreenerStocks
             }
         }
 
-        async Task<List<CandleList>> SortUsdCandles(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
+        List<CandleList> SortUsdCandles(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
-            List<CandleList> allUsdCandles = await AllUsdCandles(context, candleInterval, candleCount);
+            List<CandleList> allUsdCandles = AllUsdCandles(context, candleInterval, candleCount).GetAwaiter().GetResult();
             Log.Information("Get All USD candles");
             List<CandleList> CandleLists = AllValidCandles(allUsdCandles, margin, notTradeMinuts);
             Log.Information("Get Valid candles");            

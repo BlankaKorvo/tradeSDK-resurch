@@ -11,8 +11,10 @@ namespace TinkoffData
 {
     public class Market
     {
-        async Task<CandleList> GetCandleByFigi(Context context, string figi, CandleInterval interval, DateTime to)
+        async Task<CandleList> GetCandleByFigiAsync(Context context, string figi, CandleInterval interval, DateTime to)
         {
+
+            Log.Information(" Start GetCandleByFigiAsync method whith figi: " + figi);
             //DateTime to = DateTime.Now;
             DateTime from = to;
             switch (interval)
@@ -49,8 +51,11 @@ namespace TinkoffData
                     break;
             }
             Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
-            CandleList candle = context.MarketCandlesAsync(figi, from, to, interval).GetAwaiter().GetResult();
+            Console.WriteLine("Start " + figi);
+            CandleList candle = await context.MarketCandlesAsync(figi, from, to, interval);
             Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
+            Log.Information("Stop GetCandleByFigiAsync method");
+            Console.WriteLine("Stop " + figi);
             return candle;
         }
 
@@ -65,7 +70,7 @@ namespace TinkoffData
         }
 
 
-        public async Task<CandleList> GetCandlesTinkoff(Context context, string figi, CandleInterval candleInterval, int CandlesCount)
+        async public Task<CandleList> GetCandlesTinkoff(Context context, string figi, CandleInterval candleInterval, int candlesCount)
         {
             var date = DateTime.Now;
             int iterCount = 0;
@@ -82,7 +87,7 @@ namespace TinkoffData
                 || candleInterval == CandleInterval.QuarterHour
                 || candleInterval == CandleInterval.HalfHour)
             {
-                while (AllCandlePayloadTemp.Count < CandlesCount)
+                while (AllCandlePayloadTemp.Count < candlesCount)
                 {
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-1);
@@ -90,12 +95,12 @@ namespace TinkoffData
                     if (iterCount > finalIterCount)
                     {
                         Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
-                        return null; 
+                        return null;
                     }
                 }
             }
             else if (candleInterval == CandleInterval.Hour)
-                while (AllCandlePayloadTemp.Count < CandlesCount)
+                while (AllCandlePayloadTemp.Count < candlesCount)
                 {
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-7);
@@ -108,7 +113,7 @@ namespace TinkoffData
                 }
             else if (candleInterval == CandleInterval.Day)
             {
-                while (AllCandlePayloadTemp.Count < CandlesCount)
+                while (AllCandlePayloadTemp.Count < candlesCount)
                 {
                     AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddYears(-1);
@@ -133,9 +138,10 @@ namespace TinkoffData
         {
             Log.Information("Start GetUnionCandles method with figi: " + figi);
             Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
-            CandleList candleListTemp = await GetCandleByFigi(context, figi, candleInterval, date);
+            CandleList candleListTemp = await GetCandleByFigiAsync(context, figi, candleInterval, date);//.GetAwaiter().GetResult();
             Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
-            AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
+            AllCandlePayloadTemp = await Task.Run(() => AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList());
+            //AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
             Log.Information("GetUnionCandles return: " + AllCandlePayloadTemp.Count + " count candles");
             Log.Information("Stop GetUnionCandles method with figi: " + figi);
             return AllCandlePayloadTemp;
@@ -145,34 +151,35 @@ namespace TinkoffData
             try
             {
                 Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
-         
-            if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
-            {
-                Log.Error("Биржа по инструменту " + figi + " не работает");
-                return null;
-            }
-            Log.Information("Orderbook Figi: " + orderbook.Figi);
-            Log.Information("Orderbook Depth: " + orderbook.Depth);
-            Log.Information("Orderbook Asks Price: " + orderbook.Asks.FirstOrDefault().Price);
-            Log.Information("Orderbook Asks Quantity: " + orderbook.Asks.FirstOrDefault().Quantity);
 
-            Log.Information("Orderbook Bids Price: " + orderbook.Bids.Last().Price);
-            Log.Information("Orderbook Bids Quantity: " + orderbook.Bids.Last().Quantity);
+                if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
+                {
+                    Log.Error("Биржа по инструменту " + figi + " не работает");
+                    return null;
+                }
+                Log.Information("Orderbook Figi: " + orderbook.Figi);
+                Log.Information("Orderbook Depth: " + orderbook.Depth);
+                Log.Information("Orderbook Asks Price: " + orderbook.Asks.FirstOrDefault().Price);
+                Log.Information("Orderbook Asks Quantity: " + orderbook.Asks.FirstOrDefault().Quantity);
 
-            Log.Information("Orderbook ClosePrice: " + orderbook.ClosePrice);
-            Log.Information("Orderbook LastPrice: " + orderbook.LastPrice);
-            Log.Information("Orderbook LimitDown: " + orderbook.LimitDown);
-            Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
-            Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
-            Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
-            return orderbook;
+                Log.Information("Orderbook Bids Price: " + orderbook.Bids.Last().Price);
+                Log.Information("Orderbook Bids Quantity: " + orderbook.Bids.Last().Quantity);
+
+                Log.Information("Orderbook ClosePrice: " + orderbook.ClosePrice);
+                Log.Information("Orderbook LastPrice: " + orderbook.LastPrice);
+                Log.Information("Orderbook LimitDown: " + orderbook.LimitDown);
+                Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
+                Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
+                Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
+                return orderbook;
             }
-            catch
+            catch (Exception ex)
             {
+                Log.Error(ex.Message);
                 return null;
             }
             finally
-            {  }
+            { }
         }
     }
 }
