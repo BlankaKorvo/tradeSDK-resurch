@@ -27,7 +27,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("smaPriceDelta = " + smaPriceDelta);
                 Log.Information("smaPriceDeltaCount = " + smaPriceDeltaCount);
                 Log.Information("Should be: smaPriceDelta < smaPriceDeltaCount");
-                Log.Information("Sma = Long - true");
+                Log.Information("Sma = Long - true for: " + candleList.Figi);
                 return true; 
             }
             else
@@ -36,7 +36,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("smaPriceDelta = " + smaPriceDelta);
                 Log.Information("smaPriceDeltaCount = " + smaPriceDeltaCount);
                 Log.Information("Should be: smaPriceDelta < smaPriceDeltaCount");
-                Log.Information("Sma = Long - falce");
+                Log.Information("Sma = Long - falce for: " + candleList.Figi);
                 return false; 
             }
         }

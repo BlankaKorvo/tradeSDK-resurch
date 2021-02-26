@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Polly;
 using Serilog;
 
@@ -6,17 +7,31 @@ namespace RetryPolicy
 {
     static public class Model
     {
-        static public Polly.Retry.RetryPolicy RetryTooManyRequest()
+        public static Polly.Retry.AsyncRetryPolicy RetryToManyReq()
         {
-            Polly.Retry.RetryPolicy retryPolicy = Policy
-            .Handle<Exception>(ex => ex.Message.Contains("Too many requests"))
-            .WaitAndRetryForever(retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-            (exception, timespan) =>
-            {
-                Log.Error(exception.Message);
-                Log.Error(exception.StackTrace);
-                Log.Information("Start retray. Timespan = " + timespan);
-            });       
+            Polly.Retry.AsyncRetryPolicy retryPolicy = Policy
+                .Handle<Exception>(ex => ex.Message.Contains("Too many requests"))
+                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Pow(1, retryAttempt)),
+                (exception, timespan) =>
+                {
+                    Log.Error(exception.Message);
+                    Log.Information("Start retray. Timespan = " + timespan);
+                });
+
+            return retryPolicy;
+        }
+
+        public static Polly.Retry.AsyncRetryPolicy Retry1()
+        {
+            Polly.Retry.AsyncRetryPolicy retryPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromMilliseconds(Math.Pow(2, retryAttempt)),
+                (exception, timespan) =>
+                {
+                    Log.Error(exception.Message);
+                    Log.Information("Start retray. Timespan = " + timespan);
+                });
+
             return retryPolicy;
         }
     }

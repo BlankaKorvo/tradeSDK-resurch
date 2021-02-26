@@ -7,17 +7,27 @@ using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using RetryPolicy;
-
+using Polly;
+using Context = Tinkoff.Trading.OpenApi.Network.Context;
 namespace TinkoffData
 {
     
     public class Market
     {
+        Polly.Retry.AsyncRetryPolicy retryPolicy = Policy
+.Handle<Exception>(ex => ex.Message.Contains("Too many requests"))            
+.WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromMilliseconds(Math.Pow(2, retryAttempt)), 
+(exception, timespan) => 
+{
+    Log.Error(exception.Message);
+    Log.Error(exception.StackTrace);
+    Log.Error("Start retray. Timespan = " + timespan);
+});
         //var retry = RetryPolicy.Model.getRetry();
         async Task<CandleList> GetCandleByFigiAsync(Context context, string figi, CandleInterval interval, DateTime to)
         {
 
-            Log.Information(" Start GetCandleByFigiAsync method whith figi: " + figi);
+            Log.Information("Start GetCandleByFigiAsync method whith figi: " + figi);
             //DateTime to = DateTime.Now;
             DateTime from = to;
             switch (interval)
@@ -54,14 +64,13 @@ namespace TinkoffData
                     break;
             }
             Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
-            Console.WriteLine("Start " + figi);
-            CandleList candle = await RetryPolicy.Model.RetryTooManyRequest().Execute(async () => 
-            await context.MarketCandlesAsync(figi, from, to, interval));
-           // CandleList candle = await context.MarketCandlesAsync(figi, from, to, interval);
+
+            CandleList candle = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketCandlesAsync(figi, from, to, interval));
+
             Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
-            Log.Information("Stop GetCandleByFigiAsync method");
-            Console.WriteLine("Stop " + figi);
+            Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
             return candle;
+
         }
 
         public List<string> FigiFromCandleList(List<CandleList> Stocks)
@@ -155,7 +164,7 @@ namespace TinkoffData
         {
             try
             {
-                Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
+                Orderbook orderbook = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async ()=> await context.MarketOrderbookAsync(figi, depth));
 
                 if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
                 {
@@ -181,6 +190,7 @@ namespace TinkoffData
             catch (Exception ex)
             {
                 Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
                 return null;
             }
             finally

@@ -37,7 +37,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Should be: " + aroon.Last().AroonUp + " > " + aroon.Last().AroonDown);
                 Log.Information("Should be: " + aroon.Last().AroonUp + " = " + aroonUpValueLong);
                 Log.Information("Should be: " + aroon.Last().AroonDown + " < " + aroonDownValue);
-                Log.Information("Aroon = Long - true");
+                Log.Information("Aroon = Long - true for: " + candleList.Figi);
                 return true;
             }
             else
@@ -48,7 +48,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Should be: " + aroon.Last().AroonUp + " > " + aroon.Last().AroonDown);
                 Log.Information("Should be: " + aroon.Last().AroonUp + " = " + aroonUpValueLong);
                 Log.Information("Should be: " + aroon.Last().AroonDown + " < " + aroonDownValue);
-                Log.Information("Aroon = Long - false");
+                Log.Information("Aroon = Long - false for: " + candleList.Figi);
                 return false;
             }
         }
@@ -72,7 +72,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Should be: " + aroon.Last().AroonUp + " < " + aroon.Last().AroonDown);
                 Log.Information("Should be: " + aroon.Last().AroonUp + " < " + aroonUpValueFromLong);
                 Log.Information("Should be: " + aroon.Last().AroonDown + " > " + aroonUpValueFromLong);
-                Log.Information("Aroon = FromLong - true");
+                Log.Information("Aroon = FromLong - true for: " + candleList.Figi);
                 return true;
             }
             else
@@ -83,7 +83,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Should be: " + aroon.Last().AroonUp + " < " + aroon.Last().AroonDown);
                 Log.Information("Should be: " + aroon.Last().AroonUp + " < " + aroonUpValueFromLong);
                 Log.Information("Should be: " + aroon.Last().AroonDown + " > " + aroonUpValueFromLong);
-                Log.Information("Aroon = FromLong - false");
+                Log.Information("Aroon = FromLong - false for: " + candleList.Figi);
                 return false;
             }
         }

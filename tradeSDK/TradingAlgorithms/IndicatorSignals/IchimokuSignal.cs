@@ -39,7 +39,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Delta Angle Count Long = " + deltaAngleCountLong);
                 Log.Information("Ichimoku TenkanSen Angle = " + ichimokuTenkanSenAngleLong);
                 Log.Information("Ichimoku TenkanSen Degree Average Angle ( " + deltaAngleCountLong + " ) = " + ichmokuTenkansenDegreeAverageAngle(ichimoku, deltaAngleCountLong));
-                Log.Information("Ichimoku = Long - true");
+                Log.Information("Ichimoku = Long - true for: " + candleList.Figi);
                 return true;
             }
             else
@@ -47,7 +47,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Tenkansen Price Delta Count = " + tenkansenPriceDeltaCount);
                 Log.Information("Delta Angle Count = " + deltaAngleCountLong);
                 Log.Information("Ichimoku TenkanSen Angle = " + ichimokuTenkanSenAngleLong);
-                Log.Information("Ichimoku = Long - false");
+                Log.Information("Ichimoku = Long - false for: " + candleList.Figi);
                 return false;
             }
         }
@@ -63,12 +63,12 @@ namespace TradingAlgorithms.IndicatorSignals
                             || ichimoku.Last().TenkanSen < ichimoku.Last().SenkouSpanB
                             || ichmokuTenkansenDegreeAverageAngle(ichimoku, deltaAngleCountFromLong) < ichimokuTenkanSenAngleFromLong)
             {
-                Log.Information("Ichimoku = FromLong - true");
+                Log.Information("Ichimoku = FromLong - true for: " + candleList.Figi);
                 return true;
             }
             else
             {
-                Log.Information("Ichimoku = FromLong - false");
+                Log.Information("Ichimoku = FromLong - false for: " + candleList.Figi);
                 return false;
             }
         }

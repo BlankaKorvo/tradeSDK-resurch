@@ -17,52 +17,53 @@ namespace ScreenerStocks.Helpers
         Market market = new Market();
         async internal Task<List<MarketInstrument>> AllUsdStocks(Context context)
         {
+            Log.Information("Start AllUsdStocks");
             List<MarketInstrument> usdStocks = new List<MarketInstrument>();
-            MarketInstrumentList stocks = await context.MarketStocksAsync();
-            Log.Information("Get All MarketInstruments ");
+            MarketInstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketStocksAsync());
+            Log.Information("Get All MarketInstruments. Count =  " + stocks.Instruments.Count);
             foreach (MarketInstrument item in stocks.Instruments)
             {
                 if (item.Currency == Currency.Usd)
                 {
                     usdStocks.Add(item);
-                    Log.Information("Find USD MarketInstrument: " + item.Figi);
+                    Log.Information("Find " + item.Currency.ToString() + " MarketInstrument: " + item.Figi);
+                }
+                else
+                {
+                    Log.Information("Find " + item.Currency.ToString() + " MarketInstrument: " + item.Figi);
+                    continue; 
                 }
             }
-            Log.Information("Return " + usdStocks.Count + " USD MarketInstruments");
+            Log.Information("Return  USD MarketInstruments. Count: " + usdStocks.Count);
+            Log.Information("Stop AllUsdStocks");
             return usdStocks;
         }
 
         internal async Task<List<CandleList>> AllUsdCandles(Context context, CandleInterval candleInterval, int candelCount)
         {
+            Log.Information("Start AllUsdCandles");
             List<MarketInstrument> stocks = await AllUsdStocks(context);
-            Log.Information("Get " + stocks.Count + " USD MarketInstruments");
+            Log.Information("Get All MarketInstruments. Count =  " + stocks.Count);
             List<CandleList> usdCandels = new List<CandleList>();
             foreach (var item in stocks)
             {
-                try
+                CandleList candle = await market.GetCandlesTinkoff(context, item.Figi, candleInterval, candelCount);
+                if (candle == null)
                 {
-                    CandleList candle = await market.GetCandlesTinkoff(context, item.Figi, candleInterval, candelCount);
-                    if (candle == null)
-                    {
-                        Log.Information("Candle is null");
-                        continue;
-                    }
-                    else if (candle.Candles.Count < candelCount)
-                    {
-                        Log.Information(item.Figi + " is shortly then candle count");
-                        continue;
-                    }
-                    else
-                    {
-                        usdCandels.Add(candle);
-                        Log.Information("Get Candle for: " + item.Figi);
-                    }
+                    Log.Information("Candle is null");
+                    continue;
                 }
-                catch(Exception ex)
+                else if (candle.Candles.Count < candelCount)
                 {
-                    Log.Error(ex.Message);
-                    Log.Error(ex.StackTrace);
+                    Log.Information(item.Figi + " is shortly then candle count");
+                    continue;
                 }
+                else
+                {
+                    usdCandels.Add(candle);
+                    Log.Information("Get Candle for: " + item.Figi);
+                }
+
             }
             Log.Information("Return " + usdCandels.Count + " USD candles");
             return usdCandels;

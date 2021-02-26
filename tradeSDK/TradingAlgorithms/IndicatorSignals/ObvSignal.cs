@@ -57,7 +57,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Obv degree average angle obv( lookback period = " + lookbackPeriodSecond + "; anglesCount = " + anglesCount + " ) = " + ObvDegreeAverageAngle(obvSecond, anglesCount, obv.obv));
                 Log.Information("Obv degree average angle obv sma( lookback period = " + lookbackPeriodSecond + "; anglesCount = " + anglesCount + " ) = " + ObvDegreeAverageAngle(obvSecond, anglesCount, obv.ObvSma));
                 Log.Information("Obv degree average angle Obv Sma denominator( lookback period = " + lookbackPeriodSecond + "; anglesCount = " + anglesCount + " ) = " + ObvDegreeAverageAngle(obvSecond, anglesCount, obv.ObvSmaDenominator));
-                Log.Information("ObvSignal = Long - true");
+                Log.Information("ObvSignal = Long - true for: " + candleList.Figi);
                 Log.Information("Stop ObvSignal");
                 return true;
             }
@@ -77,7 +77,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Obv degree average angle obv( lookback period = " + lookbackPeriodSecond + "; anglesCount = " + anglesCount + " ) = " + ObvDegreeAverageAngle(obvSecond, anglesCount, obv.obv));
                 Log.Information("Obv degree average angle obv sma( lookback period = " + lookbackPeriodSecond + "; anglesCount = " + anglesCount + " ) = " + ObvDegreeAverageAngle(obvSecond, anglesCount, obv.ObvSma));
                 Log.Information("Obv degree average angle Obv Sma denominator( lookback period = " + lookbackPeriodSecond + "; anglesCount = " + anglesCount + " ) = " + ObvDegreeAverageAngle(obvSecond, anglesCount, obv.ObvSmaDenominator));
-                Log.Information("ObvSignal = Long - false");
+                Log.Information("ObvSignal = Long - false for: " + candleList.Figi);
                 Log.Information("Stop ObvSignal");
                 return false;
             }

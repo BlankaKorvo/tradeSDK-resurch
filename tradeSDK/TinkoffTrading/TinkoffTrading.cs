@@ -74,7 +74,7 @@ namespace TinkoffTrade
             CandleList candleList = await market.GetCandlesTinkoff(context, transactionModel.Figi, candleInterval, CandleCount);
 
             //Получаем стакан
-            Orderbook orderbook = await GetOrderbook(transactionModel.Figi, 1);
+            Orderbook orderbook = await market.GetOrderbook(context, transactionModel.Figi, 1);
             if (orderbook == null)
             {
                 Log.Information("Orderbook " + transactionModel.Figi + " is null");
@@ -121,39 +121,40 @@ namespace TinkoffTrade
             return transactionModel;
         }
 
-        private async Task<Orderbook> GetOrderbook(string figi, int depth)
-        {
-            Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
-            if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
-            {
-                Log.Information("Exchange by instrument " + figi + " not working");
-                return null;
-            }
-            Log.Information("Orderbook Figi: " + orderbook.Figi);
-            Log.Information("Orderbook Depth: " + orderbook.Depth);
-            Log.Information("Orderbook Asks Price: " + orderbook.Asks.FirstOrDefault().Price);
-            Log.Information("Orderbook Asks Quantity: " + orderbook.Asks.FirstOrDefault().Quantity);
+        //private async Task<Orderbook> GetOrderbook(string figi, int depth)
+        //{
+        //    Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
+        //    if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
+        //    {
+        //        Log.Information("Exchange by instrument " + figi + " not working");
+        //        return null;
+        //    }
+        //    Log.Information("Orderbook Figi: " + orderbook.Figi);
+        //    Log.Information("Orderbook Depth: " + orderbook.Depth);
+        //    Log.Information("Orderbook Asks Price: " + orderbook.Asks.FirstOrDefault().Price);
+        //    Log.Information("Orderbook Asks Quantity: " + orderbook.Asks.FirstOrDefault().Quantity);
 
-            Log.Information("Orderbook Bids Price: " + orderbook.Bids.FirstOrDefault().Price);
-            Log.Information("Orderbook Bids Quantity: " + orderbook.Bids.FirstOrDefault().Quantity);
+        //    Log.Information("Orderbook Bids Price: " + orderbook.Bids.FirstOrDefault().Price);
+        //    Log.Information("Orderbook Bids Quantity: " + orderbook.Bids.FirstOrDefault().Quantity);
 
-            Log.Information("Orderbook ClosePrice: " + orderbook.ClosePrice);
-            Log.Information("Orderbook LastPrice: " + orderbook.LastPrice);
-            Log.Information("Orderbook LimitDown: " + orderbook.LimitDown);
-            Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
-            Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
-            Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
-            return orderbook;
-        }
+        //    Log.Information("Orderbook ClosePrice: " + orderbook.ClosePrice);
+        //    Log.Information("Orderbook LastPrice: " + orderbook.LastPrice);
+        //    Log.Information("Orderbook LimitDown: " + orderbook.LimitDown);
+        //    Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
+        //    Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
+        //    Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
+        //    return orderbook;
+        //}
 
         private async void BuyStoks(TransactionModel transactionModel)
         {
-            List<Order> orders = await context.OrdersAsync();
+            Log.Information("Start BuyStoks: " + transactionModel.Figi);
+            List<Order> orders = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.OrdersAsync());
             foreach (Order order in orders)
             {
                 if (order.Figi == transactionModel.Figi)
                 {
-                    await context.CancelOrderAsync(order.OrderId);
+                    await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.CancelOrderAsync(order.OrderId));
                     Log.Information("Delete order by figi: " + transactionModel.Figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
                 }
             }
@@ -164,27 +165,30 @@ namespace TinkoffTrade
                 Log.Information("Not any lot in margin: " + transactionModel.Margin);
                 return; }
 
-            await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Buy, transactionModel.Price));
+            await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Buy, transactionModel.Price)));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Buy " + transactionModel.Figi + "Quantity: " + transactionModel.Quantity +  " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
+                sw.WriteLine(DateTime.Now + @" Buy " + transactionModel.Figi + " Quantity: " + transactionModel.Quantity +  " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
                 sw.WriteLine();
             }
             Log.Information("Create order for Buy " + lots + " lots " + "figi: " + transactionModel.Figi + "price: " + transactionModel.Price);
+            Log.Information("Stop BuyStoks: " + transactionModel.Figi);
         }
 
         private async void SellStoksFromLong(TransactionModel transactionModel)
         {
+            Log.Information("Start SellStoksFromLong: " + transactionModel.Figi);
             int lots = await CalculationStocksFromLong(transactionModel);
             if (lots == 0)
             { return; }
-            await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Sell, transactionModel.Price));
+            await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Sell, transactionModel.Price)));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
                 sw.WriteLine(DateTime.Now + @" Sell " + transactionModel.Figi + "Quantity: " + transactionModel.Quantity + " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
                 sw.WriteLine();
             }
             Log.Information("Create order for Sell " + lots + " stocks " + "figi: " + transactionModel.Figi + "price: " + transactionModel.Price);
+            Log.Information("Stop SellStoksFromLong: " + transactionModel.Figi);
         }
         
         private async Task<int> CalculationStocksBuyCount(string figi, int countLotsToBuy)
@@ -237,7 +241,7 @@ namespace TinkoffTrade
         }
         private async Task<int> CountLotsInPortfolio(string figi)
         {
-            var portfolio = await context.PortfolioAsync();
+            var portfolio = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PortfolioAsync());
             int lots = 0;
             foreach (var item in portfolio.Positions)
             {

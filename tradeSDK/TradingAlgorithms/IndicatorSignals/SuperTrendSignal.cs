@@ -25,7 +25,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Super Trand Period = " + superTrandPeriod);
                 Log.Information("Super Trand Sensitive = " + superTrandSensitive);
                 Log.Information("super Trand LowerBand = " + superTrand.Last().LowerBand.ToString());
-                Log.Information("Super Trand = Long - true");
+                Log.Information("Super Trand = Long - true for: " + candleList.Figi);
                 return true;
             }
             else 
@@ -33,7 +33,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Super Trand Period = " + superTrandPeriod);
                 Log.Information("Super Trand Sensitive = " + superTrandSensitive);
                 Log.Information("super Trand LowerBand = " + superTrand.Last().UpperBand.ToString());
-                Log.Information("Super Trand = Long - false");
+                Log.Information("Super Trand = Long - false for: " + candleList.Figi);
                 return false;
             }
         }
@@ -45,7 +45,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Super Trand Period = " + superTrandPeriod);
                 Log.Information("Super Trand Sensitive = " + superTrandSensitive);
                 Log.Information("super Trand LowerBand = " + superTrand.Last().UpperBand.ToString());
-                Log.Information("Super Trand = FromLong - true");
+                Log.Information("Super Trand = FromLong - true for: " + candleList.Figi);
                 return true;
             }
             else
@@ -53,7 +53,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Super Trand Period = " + superTrandPeriod);
                 Log.Information("Super Trand Sensitive = " + superTrandSensitive);
                 Log.Information("super Trand LowerBand = " + superTrand.Last().LowerBand.ToString());
-                Log.Information("Super Trand = FromLong - false");
+                Log.Information("Super Trand = FromLong - false for: " + candleList.Figi);
                 return false;
             }
         }

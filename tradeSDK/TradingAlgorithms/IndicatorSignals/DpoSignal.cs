@@ -31,7 +31,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionLong);
                 Log.Information("Dpo Degree Average Angle = " + DpoDegreeAverageAngle(dpo, averageAngleCount) + " it should be more then: Average Angle Condition");
                 Log.Information("Dpo Degree Last Average Angle = " + DpoDegreeAverageAngle(dpo, 1) + " it should be more then: Average Angle Condition");
-                Log.Information("DPO = Long - true");
+                Log.Information("DPO = Long - true for: " + candleList.Figi);
                 return true;
             }
             else
@@ -40,7 +40,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionLong);
                 Log.Information("Dpo Degree Average Angle = " + DpoDegreeAverageAngle(dpo, averageAngleCount) + " it should be more then: Average Angle Condition");
                 Log.Information("Dpo Degree Last Average Angle = " + DpoDegreeAverageAngle(dpo, 1) + " it should be more then: Average Angle Condition");
-                Log.Information("DPO = Long - false");
+                Log.Information("DPO = Long - false for: " + candleList.Figi);
                 return false;
             }
         }
@@ -56,7 +56,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionFromLong);
                 Log.Information("Last DPO should be less then Last Dpo Condition");
                 Log.Information("Dpo Degree Average Angle should be less then Average Angle Condition");
-                Log.Information("DPO = FromLong - true");
+                Log.Information("DPO = FromLong - true for: " + candleList.Figi);
                 return true;
             }
             else
@@ -66,7 +66,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionFromLong);
                 Log.Information("Last DPO should be less then Last Dpo Condition");
                 Log.Information("Dpo Degree Average Angle should be less then Average Angle Condition");
-                Log.Information("DPO = FromLong - false");
+                Log.Information("DPO = FromLong - false for: " + candleList.Figi);
                 return false;
             }
         }
@@ -97,7 +97,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Last DPO > lastDpoCondition");
                 Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration > " + averageAngleConditionLong);
                 Log.Information("Average Dpo Angle from 1 last iteration > from 2 last iteration");
-                Log.Information("DPO = Long true");
+                Log.Information("DPO = Long true for: " + candleList.Figi);
                 return true;
             }
             else
@@ -119,7 +119,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionFromLong);
                 Log.Information("Last DPO < lastDpoCondition");
                 Log.Information("Average Dpo Angle from " + averageAngleCount + " last iteration < " + averageAngleConditionFromLong);
-                Log.Information("DPO = FromLong true");
+                Log.Information("DPO = FromLong true for: " + candleList.Figi);
                 return true;
             }
             else
