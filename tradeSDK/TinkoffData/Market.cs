@@ -6,11 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
+using RetryPolicy;
 
 namespace TinkoffData
 {
+    
     public class Market
     {
+        //var retry = RetryPolicy.Model.getRetry();
         async Task<CandleList> GetCandleByFigiAsync(Context context, string figi, CandleInterval interval, DateTime to)
         {
 
@@ -52,7 +55,9 @@ namespace TinkoffData
             }
             Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
             Console.WriteLine("Start " + figi);
-            CandleList candle = await context.MarketCandlesAsync(figi, from, to, interval);
+            CandleList candle = await RetryPolicy.Model.RetryTooManyRequest().Execute(async () => 
+            await context.MarketCandlesAsync(figi, from, to, interval));
+           // CandleList candle = await context.MarketCandlesAsync(figi, from, to, interval);
             Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
             Log.Information("Stop GetCandleByFigiAsync method");
             Console.WriteLine("Stop " + figi);

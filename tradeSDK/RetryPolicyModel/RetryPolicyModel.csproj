@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Polly" Version="7.2.1" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
   </ItemGroup>
 
 </Project>

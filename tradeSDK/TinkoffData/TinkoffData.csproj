@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
+    <ProjectReference Include="..\RetryPolicyModel\RetryPolicyModel.csproj" />
   </ItemGroup>
 
 </Project>

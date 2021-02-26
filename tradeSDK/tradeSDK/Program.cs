@@ -13,6 +13,7 @@ using TradingAlgorithms.Algoritms;
 using ScreenerStocks;
 using TinkoffData;
 using TinkoffTrade;
+using RetryPolicy;
 
 namespace tradeSDK
 {
@@ -20,8 +21,6 @@ namespace tradeSDK
     {
         static async Task Main(string[] args)
         {
-
-
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
@@ -42,9 +41,10 @@ namespace tradeSDK
             decimal margin = 5000;
             List<string> Figis = new List<string>() { "BBG000B9XRY4", "BBG000NS03H7", "BBG000BPH459", "BBG000D8RG11", "BBG0016SSV00", "BBG000BM6N47", "BBG000HL7499" };
             //System config
-            int sleep = 0;         
+            int sleep = 0;
 
-
+            var p = RetryPolicy.Model.RetryTooManyRequest();
+           int x = p.Execute(() => 2 + 3);
 
 
             MishMashScreener mishMashScreener = new MishMashScreener();
