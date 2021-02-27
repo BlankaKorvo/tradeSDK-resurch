@@ -50,9 +50,11 @@ namespace ScreenerStocks
         {
             foreach (var item in CandleLists)
             {
+                Log.Information("Start ScreenerStocks");
                 TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandleCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
+                Log.Information("Get transaction data: "+ transactionData.Figi);
                 if (transactionData == null)
                 { continue; }
                 Log.Information("TransactionModel margin = " + transactionData.Margin);
@@ -66,6 +68,7 @@ namespace ScreenerStocks
 
                 if (transactionData.Operation == TinkoffTrade.Operation.toLong)
                 {
+                    Log.Information("");
                     Log.Information("Start first transaction");
                     tinkoffTrading.Transaction(transactionData);
                     int i = 2;
@@ -85,11 +88,17 @@ namespace ScreenerStocks
         }
         List<CandleList> SortUsdCandles(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
-            List<CandleList> allUsdCandles = AllUsdCandles(context, candleInterval, candleCount).GetAwaiter().GetResult();
-            Log.Information("Get All USD candles");
-            List<CandleList> CandleLists = AllValidCandles(allUsdCandles, margin, notTradeMinuts);
-            Log.Information("Get Valid candles");
-            return CandleLists;
+            Log.Information("Start SortUsdCandles. Param: ");
+            Log.Information("candleInterval: " + candleInterval);
+            Log.Information("candleCount: " + candleCount);
+            Log.Information("margin: " + margin);
+            Log.Information("notTradeMinuts: " + notTradeMinuts);
+            List<CandleList> allUsdCandleLists = AllUsdCandles(context, candleInterval, candleCount).GetAwaiter().GetResult();
+            Log.Information("Get All USD candlesLists. Count: " + allUsdCandleLists.Count);
+            List<CandleList> validCandleLists = AllValidCandles(allUsdCandleLists, margin, notTradeMinuts);
+            Log.Information("Return Valid candlesLists. Count: " + validCandleLists.Count);
+            Log.Information("Stop SortUsdCandles");
+            return validCandleLists;
         }
     }    
 }

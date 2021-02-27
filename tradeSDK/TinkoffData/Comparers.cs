@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,10 +14,19 @@ namespace TinkoffData
     {
         public bool Equals(CandlePayload c1, CandlePayload c2)
         {
+            Log.Information("Start Equals method");
             if (c1.Time == c2.Time)
+            {
+                Log.Information(c1.Figi + " " + c1.Time + " candle = " + c2.Figi + " " + c2.Time + " candle");
+                Log.Information("Stop Equals method. Return true");
                 return true;
+            }
             else
+            {
+                Log.Information(c1.Figi + " " + c1.Time + " candle != " + c2.Figi + " " + c2.Time + " candle");
+                Log.Information("Stop Equals method. Return falce");
                 return false;
+            }
         }
 
         public int GetHashCode(CandlePayload c)

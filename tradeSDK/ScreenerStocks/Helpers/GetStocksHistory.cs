@@ -100,7 +100,7 @@ namespace ScreenerStocks.Helpers
             Log.Information("Stop AllValidCandles method");
             return validCandleLists;
         }
-
+        //определяет: торговалась ли акция последние заданные минуты
         private bool NotTradeable(CandleList candleList, int notTradeMinutes)
         {
             Log.Information("Start NotTradeable method. Not trade minutes = " + notTradeMinutes);
@@ -127,17 +127,20 @@ namespace ScreenerStocks.Helpers
                 return true;
             }
         }
-
-        private bool LessPrice(CandleList candleList, decimal price)
+        // определяет: не привышает ли стоимость ации определенную сумму
+        private bool LessPrice(CandleList candleList, decimal margin)
         {
             Log.Information("Start LessPrice with figi: " + candleList.Figi);
             Log.Information("LessPrice. Last Close = " + candleList.Candles.Last().Close);
-            if (candleList.Candles.Last().Close <= price)
+            Log.Information("LessPrice. Margin = " + margin);
+            if (candleList.Candles.Last().Close <= margin)
             {
+                Log.Information("Stop LessPrice with figi: " + candleList.Figi + " Return - true");
                 return true;
             }
             else
             {
+                Log.Information("Stop LessPrice with figi: " + candleList.Figi + " Return - false");
                 return false;
             }
         }

@@ -14,16 +14,7 @@ namespace TinkoffData
     
     public class Market
     {
-        Polly.Retry.AsyncRetryPolicy retryPolicy = Policy
-.Handle<Exception>(ex => ex.Message.Contains("Too many requests"))            
-.WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromMilliseconds(Math.Pow(2, retryAttempt)), 
-(exception, timespan) => 
-{
-    Log.Error(exception.Message);
-    Log.Error(exception.StackTrace);
-    Log.Error("Start retray. Timespan = " + timespan);
-});
-        //var retry = RetryPolicy.Model.getRetry();
+         //var retry = RetryPolicy.Model.getRetry();
         async Task<CandleList> GetCandleByFigiAsync(Context context, string figi, CandleInterval interval, DateTime to)
         {
 
