@@ -59,17 +59,22 @@ namespace TinkoffData
         }
 
 
-        public static List<AdxResult> AdxData(CandleList candleList, int lookbackPeriod = 14)
+        public static List<AdxResult> AdxData(CandleList candleList, int lookbackPeriod)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
             List<AdxResult> adx = Indicator.GetAdx(candles, lookbackPeriod).ToList();
             return adx;
         }
 
-        public static List<AdxResult> AdxData(CandleList candleList, decimal realPrise, int lookbackPeriod = 14)
+        public static List<AdxResult> AdxData(CandleList candleList, decimal realPrise, int lookbackPeriod)
         {
+            Log.Information("Start AdxData method. Figi: " + candleList.Figi);
+            Log.Information("Candles count: " + candleList.Candles.Count);
+            Log.Information("realPrise: " + realPrise);
+            Log.Information("lookbackPeriod: " + lookbackPeriod);
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
             List<AdxResult> adx = Indicator.GetAdx(candles, lookbackPeriod).ToList();
+            Log.Information("Stop AdxData method. Figi: " + candleList.Figi);
             return adx;
         }
 
@@ -107,10 +112,18 @@ namespace TinkoffData
             return macdResult;
         }
 
-        public static List<MacdResult> MacdData(CandleList candleList, decimal realPrise, int fastPeriod = 12, int slowPeriod = 26, int signalPeriod = 9)
+        //public static List<MacdResult> MacdData(CandleList candleList, decimal realPrise, int fastPeriod = 12, int slowPeriod = 26, int signalPeriod = 9)
+        public static List<MacdResult> MacdData(CandleList candleList, decimal realPrise, int fastPeriod, int slowPeriod, int signalPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            Log.Information("Start MacdData method:");
+            Log.Information("Figi: " + candleList.Figi);
+            Log.Information("Candles count: " + candleList.Candles.Count);
+            Log.Information("fastPeriod: " + fastPeriod);
+            Log.Information("slowPeriod: " + slowPeriod);
+            Log.Information("signalPeriod: " + signalPeriod);
+            List <Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
             List <MacdResult> macdResult = Indicator.GetMacd(candles, fastPeriod, slowPeriod, signalPeriod).ToList();
+            Log.Information("Stop MacdData method:");
             return macdResult;
         }
 

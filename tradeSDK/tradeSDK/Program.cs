@@ -36,7 +36,7 @@ namespace tradeSDK
             //var figi = "BBG0013HGFT4"; //USDRUS
             //var figi = "BBG0018SLC07"; //SQ
             var candleInterval = CandleInterval.FiveMinutes;
-            int candleCount = 30;
+            int candleCount = 45;
 
             decimal margin = 5000;
             List<string> Figis = new List<string>() { "BBG000B9XRY4", "BBG000NS03H7", "BBG000BPH459", "BBG000D8RG11", "BBG0016SSV00", "BBG000BM6N47", "BBG000HL7499" };

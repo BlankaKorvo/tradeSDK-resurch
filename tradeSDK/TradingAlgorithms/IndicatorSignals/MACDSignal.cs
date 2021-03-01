@@ -53,7 +53,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool FromLongSignal(CandleList candleList, decimal deltaPrice)
         {
-            List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice);
+            List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, fastPeriod, slowPeriod, signalPeriod);
 
             if (
                 macd.Last().Macd < macd.Last().Signal

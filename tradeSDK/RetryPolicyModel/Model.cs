@@ -11,11 +11,11 @@ namespace RetryPolicy
         {
             Polly.Retry.AsyncRetryPolicy retryPolicy = Policy
                 .Handle<Exception>(ex => ex.Message.Contains("Too many requests"))
-                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Pow(1, retryAttempt)),
+                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
                 (exception, timespan) =>
                 {
-                    Log.Error(exception.Message);
-                    Log.Information("Start retray. Timespan = " + timespan);
+                    Log.Warning(exception.Message);
+                    Log.Warning("Start retray. Timespan = " + timespan);
                 });
 
             return retryPolicy;
@@ -28,8 +28,8 @@ namespace RetryPolicy
                 .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromMilliseconds(Math.Pow(2, retryAttempt)),
                 (exception, timespan) =>
                 {
-                    Log.Error(exception.Message);
-                    Log.Information("Start retray. Timespan = " + timespan);
+                    Log.Warning(exception.Message);
+                    Log.Warning("Start retray. Timespan = " + timespan);
                 });
 
             return retryPolicy;

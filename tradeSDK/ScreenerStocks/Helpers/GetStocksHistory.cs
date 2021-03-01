@@ -48,21 +48,25 @@ namespace ScreenerStocks.Helpers
             foreach (var item in stocks)
             {
                 CandleList candle = await market.GetCandlesTinkoffAsync(context, item.Figi, candleInterval, candelCount);
-                Log.Information("Get candle with figi: " + candle.Figi);
+
                 if (candle == null)
                 {
-                    Log.Information(candle.Figi + "Candle is null");
+                    Log.Information("Candle is null");
                     continue;
-                }
+                }                
                 else if (candle.Candles.Count < candelCount)
                 {
+                    Log.Information("Get candle with figi: " + candle.Figi);
                     Log.Information(item.Figi + " is shortly then expected candle count");
                     continue;
                 }
                 else
-                {                    
+                {
+                    Log.Information("Get candle with figi: " + candle.Figi);
+                    usdCandels.Add(candle);                    
                     Log.Information("Add USD Candles with figi: " + item.Figi + " to candlesList");
                 }
+                
 
             }
             Log.Information("Return " + usdCandels.Count + " USD candles");

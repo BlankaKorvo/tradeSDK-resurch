@@ -77,8 +77,8 @@ namespace TinkoffData
 
         async public Task<CandleList> GetCandlesTinkoffAsync(Context context, string figi, CandleInterval candleInterval, int candlesCount)
         {
-            Log.Information("Start GetCandlesTinkoffAsync method:");
-            Log.Information("Figi: " + figi);
+            Log.Information("Start GetCandlesTinkoffAsync method. Figi: " + figi);
+
             Log.Information("CandleInterval: " + candleInterval.ToString());
             Log.Information("CandleCount: " + candlesCount);
             var date = DateTime.Now;
@@ -104,6 +104,7 @@ namespace TinkoffData
                     if (iterCount > finalIterCount)
                     {
                         Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
                         return null;
                     }
                 }
@@ -117,6 +118,7 @@ namespace TinkoffData
                     if (iterCount > finalIterCount)
                     {
                         Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
                         return null;
                     }
                 }
@@ -130,6 +132,7 @@ namespace TinkoffData
                     if (iterCount > finalIterCount)
                     {
                         Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
                         return null;
                     }
                 }
@@ -140,6 +143,7 @@ namespace TinkoffData
                                                  select u).ToList();
 
             CandleList candleList = new CandleList(figi, candleInterval, candlePayload);
+            Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return candle list");
             return candleList;
         }
 
@@ -149,7 +153,7 @@ namespace TinkoffData
             Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
             CandleList candleListTemp = await GetCandleByFigiAsync(context, figi, candleInterval, date);//.GetAwaiter().GetResult();
             Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
-            AllCandlePayloadTemp = await Task.Run(() => AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList());
+            AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
             //AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
             Log.Information("GetUnionCandles return: " + AllCandlePayloadTemp.Count + " count candles");
             Log.Information("Stop GetUnionCandles method with figi: " + figi);

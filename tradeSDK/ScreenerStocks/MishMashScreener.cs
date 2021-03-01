@@ -22,7 +22,7 @@ namespace ScreenerStocks
         Market market = new Market();
         public async Task Trade(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
-            List<CandleList> candleLists = SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
+            List<CandleList> candleLists = await SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
             Log.Information("Get Sort USD candles");
             Log.Information("Start of sorted candleLists");
             Log.Information("Count = " + candleLists.Count);
@@ -86,14 +86,14 @@ namespace ScreenerStocks
                 }
             }
         }
-        List<CandleList> SortUsdCandles(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
+        async Task<List<CandleList>> SortUsdCandles(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             Log.Information("Start SortUsdCandles. Param: ");
             Log.Information("candleInterval: " + candleInterval);
             Log.Information("candleCount: " + candleCount);
             Log.Information("margin: " + margin);
             Log.Information("notTradeMinuts: " + notTradeMinuts);
-            List<CandleList> allUsdCandleLists = AllUsdCandles(context, candleInterval, candleCount).GetAwaiter().GetResult();
+            List<CandleList> allUsdCandleLists = await AllUsdCandles(context, candleInterval, candleCount);
             Log.Information("Get All USD candlesLists. Count: " + allUsdCandleLists.Count);
             List<CandleList> validCandleLists = AllValidCandles(allUsdCandleLists, margin, notTradeMinuts);
             Log.Information("Return Valid candlesLists. Count: " + validCandleLists.Count);
