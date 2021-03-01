@@ -20,7 +20,8 @@ namespace TinkoffTrade
         toLong,
         fromLong,
         toShort,
-        fromShort
+        fromShort,
+        notTrading
     }
 }
 

@@ -55,7 +55,7 @@ namespace ScreenerStocks
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
                 Log.Information("Get transaction data: "+ transactionData.Figi);
-                if (transactionData == null)
+                if (transactionData.Operation == TinkoffTrade.Operation.notTrading)
                 { continue; }
                 Log.Information("TransactionModel margin = " + transactionData.Margin);
                 Log.Information("TransactionModel operation = " + transactionData.Operation);

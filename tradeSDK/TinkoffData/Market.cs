@@ -161,39 +161,30 @@ namespace TinkoffData
         }
         public async Task<Orderbook> GetOrderbook(Context context, string figi, int depth)
         {
-            try
+
+            Orderbook orderbook = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketOrderbookAsync(figi, depth));
+
+            if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
             {
-                Orderbook orderbook = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async ()=> await context.MarketOrderbookAsync(figi, depth));
-
-                if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
-                {
-                    Log.Error("Биржа по инструменту " + figi + " не работает");
-                    return null;
-                }
-                Log.Information("Orderbook Figi: " + orderbook.Figi);
-                Log.Information("Orderbook Depth: " + orderbook.Depth);
-                Log.Information("Orderbook Asks Price: " + orderbook.Asks.FirstOrDefault().Price);
-                Log.Information("Orderbook Asks Quantity: " + orderbook.Asks.FirstOrDefault().Quantity);
-
-                Log.Information("Orderbook Bids Price: " + orderbook.Bids.Last().Price);
-                Log.Information("Orderbook Bids Quantity: " + orderbook.Bids.Last().Quantity);
-
-                Log.Information("Orderbook ClosePrice: " + orderbook.ClosePrice);
-                Log.Information("Orderbook LastPrice: " + orderbook.LastPrice);
-                Log.Information("Orderbook LimitDown: " + orderbook.LimitDown);
-                Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
-                Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
-                Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
-                return orderbook;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-                Log.Error(ex.StackTrace);
+                Log.Error("Exchange by instrument " + figi + " not working");
                 return null;
             }
-            finally
-            { }
+            Log.Information("Orderbook Figi: " + orderbook.Figi);
+            Log.Information("Orderbook Depth: " + orderbook.Depth);
+            Log.Information("Orderbook Asks Price: " + orderbook.Asks.FirstOrDefault().Price);
+            Log.Information("Orderbook Asks Quantity: " + orderbook.Asks.FirstOrDefault().Quantity);
+
+            Log.Information("Orderbook Bids Price: " + orderbook.Bids.Last().Price);
+            Log.Information("Orderbook Bids Quantity: " + orderbook.Bids.Last().Quantity);
+
+            Log.Information("Orderbook ClosePrice: " + orderbook.ClosePrice);
+            Log.Information("Orderbook LastPrice: " + orderbook.LastPrice);
+            Log.Information("Orderbook LimitDown: " + orderbook.LimitDown);
+            Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
+            Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
+            Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
+            return orderbook;
+
         }
     }
 }

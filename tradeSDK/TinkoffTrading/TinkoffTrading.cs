@@ -78,7 +78,8 @@ namespace TinkoffTrade
             if (orderbook == null)
             {
                 Log.Information("Orderbook " + transactionModel.Figi + " is null");
-                return null; 
+                transactionModel.Operation = Operation.notTrading;
+                return transactionModel; 
             }
             decimal ask = orderbook.Asks.FirstOrDefault().Price;
             decimal bid = orderbook.Bids.FirstOrDefault().Price;
