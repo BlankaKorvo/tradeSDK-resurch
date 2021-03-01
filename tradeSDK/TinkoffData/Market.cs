@@ -75,8 +75,12 @@ namespace TinkoffData
         }
 
 
-        async public Task<CandleList> GetCandlesTinkoff(Context context, string figi, CandleInterval candleInterval, int candlesCount)
+        async public Task<CandleList> GetCandlesTinkoffAsync(Context context, string figi, CandleInterval candleInterval, int candlesCount)
         {
+            Log.Information("Start GetCandlesTinkoffAsync method:");
+            Log.Information("Figi: " + figi);
+            Log.Information("CandleInterval: " + candleInterval.ToString());
+            Log.Information("CandleCount: " + candlesCount);
             var date = DateTime.Now;
             int iterCount = 0;
             int finalIterCount = 5;

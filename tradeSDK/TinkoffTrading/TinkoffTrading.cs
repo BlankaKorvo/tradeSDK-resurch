@@ -71,7 +71,7 @@ namespace TinkoffTrade
             transactionModel.Margin = this.Margin;
             Log.Information("Start PurchaseDecision for: " + transactionModel.Figi);
             //Получаем свечи
-            CandleList candleList = await market.GetCandlesTinkoff(context, transactionModel.Figi, candleInterval, CandleCount);
+            CandleList candleList = await market.GetCandlesTinkoffAsync(context, transactionModel.Figi, candleInterval, CandleCount);
 
             //Получаем стакан
             Orderbook orderbook = await market.GetOrderbook(context, transactionModel.Figi, 1);

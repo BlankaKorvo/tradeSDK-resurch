@@ -47,7 +47,7 @@ namespace ScreenerStocks.Helpers
             List<CandleList> usdCandels = new List<CandleList>();
             foreach (var item in stocks)
             {
-                CandleList candle = await market.GetCandlesTinkoff(context, item.Figi, candleInterval, candelCount);
+                CandleList candle = await market.GetCandlesTinkoffAsync(context, item.Figi, candleInterval, candelCount);
                 Log.Information("Get candle with figi: " + candle.Figi);
                 if (candle == null)
                 {
