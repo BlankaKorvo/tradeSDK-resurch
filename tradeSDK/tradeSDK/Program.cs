@@ -43,8 +43,9 @@ namespace tradeSDK
             //System config
 
 
-           // var p = RetryPolicy.Model.Retry();
-           //int x = p.ExecuteAsync(() => 2 + 3);
+            // var p = RetryPolicy.Model.Retry();
+            //int x = p.ExecuteAsync(() => 2 + 3);
+
 
 
             MishMashScreener mishMashScreener = new MishMashScreener();
@@ -53,12 +54,12 @@ namespace tradeSDK
             {
                 await mishMashScreener.Trade(context, candleInterval, candleCount, margin, 15);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Information(ex.Message);
                 Log.Information(ex.StackTrace);
             }
-            
+
 
             //var marInstr = await context.MarketStocksAsync();
             //foreach (var item in marInstr.Instruments)

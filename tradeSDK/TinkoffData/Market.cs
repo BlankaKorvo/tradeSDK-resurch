@@ -56,12 +56,20 @@ namespace TinkoffData
             }
             Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
 
-            CandleList candle = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketCandlesAsync(figi, from, to, interval));
-
-            Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
-            Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
-            return candle;
-
+            try
+            {
+                CandleList candle = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketCandlesAsync(figi, from, to, interval)));
+                Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
+                Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
+                return candle;
+            }
+            catch (Exception ex)
+            {
+                Log.Information(ex.Message);
+                Log.Information(ex.StackTrace);
+                Log.Information("Stop GetCandleByFigiAsync method. Return null");
+                return null;
+            }
         }
 
         public List<string> FigiFromCandleList(List<CandleList> Stocks)
@@ -162,7 +170,7 @@ namespace TinkoffData
         public async Task<Orderbook> GetOrderbook(Context context, string figi, int depth)
         {
 
-            Orderbook orderbook = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketOrderbookAsync(figi, depth));
+            Orderbook orderbook = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketOrderbookAsync(figi, depth)));
 
             if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
             {

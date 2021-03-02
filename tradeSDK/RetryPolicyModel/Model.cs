@@ -21,7 +21,7 @@ namespace RetryPolicy
             return retryPolicy;
         }
 
-        public static Polly.Retry.AsyncRetryPolicy Retry1()
+        public static Polly.Retry.AsyncRetryPolicy Retry()
         {
             Polly.Retry.AsyncRetryPolicy retryPolicy = Policy
                 .Handle<Exception>()

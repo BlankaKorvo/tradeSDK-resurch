@@ -68,14 +68,24 @@ namespace TinkoffData
 
         public static List<AdxResult> AdxData(CandleList candleList, decimal realPrise, int lookbackPeriod)
         {
-            Log.Information("Start AdxData method. Figi: " + candleList.Figi);
-            Log.Information("Candles count: " + candleList.Candles.Count);
-            Log.Information("realPrise: " + realPrise);
-            Log.Information("lookbackPeriod: " + lookbackPeriod);
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
-            List<AdxResult> adx = Indicator.GetAdx(candles, lookbackPeriod).ToList();
-            Log.Information("Stop AdxData method. Figi: " + candleList.Figi);
-            return adx;
+            try
+            {
+                Log.Information("Start AdxData method. Figi: " + candleList.Figi);
+                Log.Information("Candles count: " + candleList.Candles.Count);
+                Log.Information("realPrise: " + realPrise);
+                Log.Information("lookbackPeriod: " + lookbackPeriod);
+                List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+                List<AdxResult> adx = Indicator.GetAdx(candles, lookbackPeriod).ToList();
+                Log.Information("Stop AdxData method. Figi: " + candleList.Figi);
+                return adx;
+            }
+            catch (Exception ex)
+            {
+                Log.Information(ex.Message);
+                Log.Information(ex.StackTrace);
+                Log.Information("Stop AdxData method. Return: null");
+                return null;
+            }
         }
 
         public static List<AroonResult> AroonData(CandleList candleList, int lookbackPeriod = 7)

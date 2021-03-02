@@ -20,6 +20,7 @@ namespace TradingAlgorithms.IndicatorSignals
         {
             Log.Information("Start AdxSignal LongSignal method with figi:" + candleList.Figi);
             List<AdxResult> adx = Serialization.AdxData(candleList, deltaPrice, lookbackPeriod);
+            if(adx==null) { return false; }
             if (
                             adx.Last().Pdi > adx.Last().Mdi
                             &&
@@ -61,6 +62,7 @@ namespace TradingAlgorithms.IndicatorSignals
         {
             Log.Information("Start AdxSignal FromLongSignal method with figi:" + candleList.Figi);
             List<AdxResult> adx = Serialization.AdxData(candleList, deltaPrice, lookbackPeriod);
+            if (adx == null) { return false; }
             if (
                     AdxDegreeAverageAngle(adx, fromLongAverageAngleCount, Adx.Adx) < 0
                     ||

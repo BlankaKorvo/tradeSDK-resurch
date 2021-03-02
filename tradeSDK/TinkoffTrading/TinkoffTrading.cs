@@ -39,7 +39,12 @@ namespace TinkoffTrade
                 ||
                 transactionModel.Quantity == 0)
             {
-                Log.Error("Transaction is not implemented");
+                Log.Information("Figi: " + transactionModel.Figi);
+                Log.Information("Margin: " + transactionModel.Margin);
+                Log.Information("Price: " + transactionModel.Price);
+                Log.Information("Quantity: " + transactionModel.Quantity);
+                Log.Information("Operation: " + transactionModel.Operation.ToString());
+                Log.Error("Transaction is not correct for implementation");
                 return;
             }
 
