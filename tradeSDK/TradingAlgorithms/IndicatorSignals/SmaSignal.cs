@@ -14,7 +14,7 @@ namespace TradingAlgorithms.IndicatorSignals
     class SmaSignal : IndicatorSignalsHelper
     {
         int lookbackPeriod = 8;
-        const decimal smaPriceDeltaCount = 0.12M;
+        const decimal smaPriceDeltaCount = 0.15M;
         internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<SmaResult> sma = Serialization.SmaData(candleList, deltaPrice, lookbackPeriod);

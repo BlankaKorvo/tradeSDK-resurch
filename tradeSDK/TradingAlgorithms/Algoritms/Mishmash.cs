@@ -20,6 +20,7 @@ namespace TradingAlgorithms.Algoritms
         AdxSignal adxSignal = new AdxSignal();
         SmaSignal smaSignal = new SmaSignal();
         ObvSignal obvSignal = new ObvSignal();
+        CandleSignal candleSignal = new CandleSignal();
 
 
         //Передаваемые при создании объекта параметры
@@ -49,6 +50,8 @@ namespace TradingAlgorithms.Algoritms
                 //Проверка на отсутсвие гэпа
                 &&
                 smaSignal.LongSignal(candleList, deltaPrice)
+                &&
+                candleSignal.LongSignal(candleList, deltaPrice)
                 )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);

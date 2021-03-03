@@ -35,6 +35,9 @@ namespace TinkoffData
                 case CandleInterval.FiveMinutes:
                     from = to.AddDays(-1);
                     break;
+                case CandleInterval.TenMinutes:
+                    from = to.AddDays(-1);
+                    break;
                 case CandleInterval.QuarterHour:
                     from = to.AddDays(-1);
                     break;
