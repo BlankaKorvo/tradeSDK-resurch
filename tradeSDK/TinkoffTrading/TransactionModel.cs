@@ -17,11 +17,11 @@ namespace TinkoffTrade
     }
     public enum Operation
     {
+        notTrading,
         toLong,
         fromLong,
         toShort,
-        fromShort,
-        notTrading
+        fromShort        
     }
 }
 

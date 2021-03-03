@@ -14,7 +14,7 @@ namespace TinkoffTrade
     public class TinkoffTrading : TransactionModel
     {
         public Context context { get; set; }
-        public string figi { get; set; }
+        //public string figi { get; set; }
         public CandleInterval candleInterval { get; set; }
         //public int countStoks { get; set; }
         public int CandleCount { get; set; } = 120;
@@ -24,7 +24,7 @@ namespace TinkoffTrade
         int sleep { get; set; } = 0;
 
         Market market = new Market();
-        TransactionModel transactionModel = new TransactionModel();
+        
 
         public void Transaction(TransactionModel transactionModel)
         {
@@ -72,6 +72,7 @@ namespace TinkoffTrade
 
         public async Task<TransactionModel> PurchaseDecision()
         {
+            TransactionModel transactionModel = new TransactionModel();
             transactionModel.Figi = this.Figi;
             transactionModel.Margin = this.Margin;
             Log.Information("Start PurchaseDecision for: " + transactionModel.Figi);

@@ -48,13 +48,17 @@ namespace ScreenerStocks
 
         public async Task ScreenerStocks(Context context, CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
         {
+            Log.Information("Start ScreenerStocks: ");
+            Log.Information("Count instruments =  " + CandleLists.Count);
+            Log.Information("candleCount =  " + candleCount);
+            Log.Information("margin =  " + margin);
             foreach (var item in CandleLists)
             {
-                Log.Information("Start ScreenerStocks");
+                Log.Information("Start ScreenerStocks for: " + item.Figi);
                 TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandleCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
-                Log.Information("Get transaction data: "+ transactionData.Figi);
+                Log.Information("Get TransactionModel: " + transactionData.Figi);
                 if (transactionData.Operation == TinkoffTrade.Operation.notTrading)
                 { continue; }
                 Log.Information("TransactionModel margin = " + transactionData.Margin);
@@ -68,21 +72,24 @@ namespace ScreenerStocks
 
                 if (transactionData.Operation == TinkoffTrade.Operation.toLong)
                 {
-                    Log.Information("");
+                    Log.Information("If transactionData.Operation = " + TinkoffTrade.Operation.toLong.ToString());
                     Log.Information("Start first transaction");
                     tinkoffTrading.Transaction(transactionData);
                     int i = 2;
-                    while (transactionData.Operation == TinkoffTrade.Operation.fromLong)
+                    do
                     {
                         Log.Information("Start " + i + " transaction");
                         transactionData = await tinkoffTrading.PurchaseDecision();
                         tinkoffTrading.Transaction(transactionData);
                         i++;
                     }
+                    while (transactionData.Operation == TinkoffTrade.Operation.fromLong);
+                    Log.Information("Stop ScreenerStocks after trading");
                 }
                 else
                 {
                     continue;
+                    Log.Information("Stop ScreenerStocks");
                 }
             }
         }
