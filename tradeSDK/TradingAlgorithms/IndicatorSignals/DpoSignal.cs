@@ -21,6 +21,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
+            Log.Information("Start Dpo LongSignal. Figi: " + candleList.Figi);
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (
                 DpoDegreeAverageAngle(dpo, averageAngleCount) > averageAngleConditionLong
@@ -31,7 +32,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionLong);
                 Log.Information("Dpo Degree Average Angle = " + DpoDegreeAverageAngle(dpo, averageAngleCount) + " it should be more then: Average Angle Condition");
                 Log.Information("Dpo Degree Last Average Angle = " + DpoDegreeAverageAngle(dpo, 1) + " it should be more then: Average Angle Condition");
-                Log.Information("DPO = Long - true for: " + candleList.Figi);
+                Log.Information("Stop Dpo LongSignal = Long - true. Figi: " + candleList.Figi);
                 return true;
             }
             else
@@ -40,13 +41,14 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionLong);
                 Log.Information("Dpo Degree Average Angle = " + DpoDegreeAverageAngle(dpo, averageAngleCount) + " it should be more then: Average Angle Condition");
                 Log.Information("Dpo Degree Last Average Angle = " + DpoDegreeAverageAngle(dpo, 1) + " it should be more then: Average Angle Condition");
-                Log.Information("DPO = Long - false for: " + candleList.Figi);
+                Log.Information("Stop Dpo LongSignal = Long - false. Figi: " + candleList.Figi);
                 return false;
             }
         }
 
         internal bool FromLongSignal(CandleList candleList, decimal deltaPrice)
         {
+            Log.Information("Start Dpo FromLongSignal. Figi: " + candleList.Figi);
             List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo < lastDpoCondition
                 || DpoDegreeAverageAngle(dpo, averageAngleCount) < averageAngleConditionFromLong)
@@ -56,7 +58,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionFromLong);
                 Log.Information("Last DPO should be less then Last Dpo Condition");
                 Log.Information("Dpo Degree Average Angle should be less then Average Angle Condition");
-                Log.Information("DPO = FromLong - true for: " + candleList.Figi);
+                Log.Information("Stop Dpo FromLongSignal = Long - true. Figi: " + candleList.Figi);
                 return true;
             }
             else
@@ -66,13 +68,14 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("Average Angle Condition" + averageAngleConditionFromLong);
                 Log.Information("Last DPO should be less then Last Dpo Condition");
                 Log.Information("Dpo Degree Average Angle should be less then Average Angle Condition");
-                Log.Information("DPO = FromLong - false for: " + candleList.Figi);
+                Log.Information("Stop Dpo FromLongSignal = Long - false. Figi: " + candleList.Figi);
                 return false;
             }
         }
 
         double DpoDegreeAverageAngle(List<DpoResult> dpo, int anglesCount)
         {
+            Log.Information("Start DpoDegreeAverageAngle");
             List<DpoResult> skipDpo = dpo.Skip(dpo.Count - (anglesCount + 1)).ToList();
             List<decimal?> values = new List<decimal?>();
             foreach (var item in skipDpo)
@@ -80,6 +83,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 values.Add(item.Dpo);
                 Log.Information("DPO for Degree Average Angle: " + item.Date + " " + item.Dpo);
             }
+            Log.Information("Stop DpoDegreeAverageAngle");
             return DeltaDegreeAngle(values);
         }
 

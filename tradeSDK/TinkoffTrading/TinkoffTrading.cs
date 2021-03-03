@@ -28,6 +28,7 @@ namespace TinkoffTrade
 
         public void Transaction(TransactionModel transactionModel)
         {
+            Log.Information("Start Transaction method. Figi: " + transactionModel.Figi);
             if (
                 transactionModel == null
                 ||
@@ -45,6 +46,7 @@ namespace TinkoffTrade
                 Log.Information("Quantity: " + transactionModel.Quantity);
                 Log.Information("Operation: " + transactionModel.Operation.ToString());
                 Log.Error("Transaction is not correct for implementation");
+                Log.Information("Stop Transaction method. Figi: " + transactionModel.Figi);
                 return;
             }
 
@@ -52,20 +54,23 @@ namespace TinkoffTrade
             {
                 case Operation.toLong:
                     BuyStoks(transactionModel);
-                    Log.Information("Start Buy Stoks to Long");
+                    Log.Information("Start Buy Stoks to Long. Figi: " + transactionModel.Figi);
+                    Log.Information("Stop Transaction method. Figi: " + transactionModel.Figi);
                     break;
 
                 case Operation.fromLong:
                     SellStoksFromLong(transactionModel);
-                    Log.Information("Start Sell Stoks from Long");
+                    Log.Information("Start Sell Stoks from Long. Figi: " + transactionModel.Figi);
+                    Log.Information("Stop Transaction method. Figi: " + transactionModel.Figi);
                     break;
 
                 case Operation.toShort:
                     //not implemented
-                    Log.Error("Sell to short is not implemented");
+                    Log.Warning("Sell to short is not implemented");
                     break;
+
                 case Operation.fromShort:
-                    Log.Error("By from short is not implemented");
+                    Log.Warning("By from short is not implemented");
                     break;
             }
         }
@@ -95,14 +100,14 @@ namespace TinkoffTrade
 
             Mishmash mishmash = new Mishmash() { candleList = candleList, deltaPrice = deltaPrice };
 
-            if (mishmash.Long())
+            if (mishmash.Long()==true)
             {
                 Log.Information("Go to Long: " + transactionModel.Figi);
                 transactionModel.Quantity = quantityAsksFirst;
                 transactionModel.Operation = Operation.toLong;
                 transactionModel.Price = ask;
             }
-            else if (mishmash.FromLong())
+            else if (mishmash.FromLong()==true)
             {                
                 Log.Information("Go from Long: " + transactionModel.Figi);
                 transactionModel.Quantity = quantityBidsFirst;
@@ -114,14 +119,14 @@ namespace TinkoffTrade
             //{
             //    Log.Information("Go to Long: " + transactionModel.Figi);
             //    transactionModel.Quantity = quantityAsksFirst;
-            //    transactionModel.Operation = Operation.toLong;
+            //    transactionModel.Operation = Operation.;
             //    transactionModel.Price = ask;
             //}
             //else if (mishmash.FromShort())
             //{
             //    Log.Information("Go from Long: " + transactionModel.Figi);
             //    transactionModel.Quantity = quantityBidsFirst;
-            //    transactionModel.Operation = Operation.fromLong;
+            //    transactionModel.Operation = Operation;
             //    transactionModel.Price = bid;
             //}
             Log.Information("Stop PurchaseDecision for: " + transactionModel.Figi);
