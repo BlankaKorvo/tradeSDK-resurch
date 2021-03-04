@@ -30,14 +30,14 @@ namespace TradingAlgorithms.IndicatorSignals
             {
                 Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent);
                 Log.Information("persentHighPrice: " + persentFitilByCandle + "must be < " + percent);
-                Log.Information("Stop CandleSignal LongSignal. Return true. Figi: " + candleList.Figi);
+                Log.Information("CandleSignal = Long - true for: " + candleList.Figi);
                 return true;
             }
             else
             {
                 Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent);
                 Log.Information("persentHighPrice: " + persentFitilByCandle + "must be < " + percent);
-                Log.Information("Stop CandleSignal LongSignal. Return false. Figi: " + candleList.Figi);
+                Log.Information("CandleSignal = Long - false for: " + candleList.Figi);
                 return false;
             }
         }

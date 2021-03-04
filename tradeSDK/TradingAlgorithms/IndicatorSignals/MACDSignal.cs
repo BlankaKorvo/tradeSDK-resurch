@@ -20,6 +20,7 @@ namespace TradingAlgorithms.IndicatorSignals
         double averageAngleCondition = 0;
         internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
+            Log.Information("Start MACD LongSignal. Figi: " + candleList.Figi);
             List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, fastPeriod, slowPeriod, signalPeriod);
 
             if (
@@ -53,6 +54,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool FromLongSignal(CandleList candleList, decimal deltaPrice)
         {
+            Log.Information("Start MACD FromLongSignal. Figi: " + candleList.Figi);
             List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, fastPeriod, slowPeriod, signalPeriod);
 
             if (

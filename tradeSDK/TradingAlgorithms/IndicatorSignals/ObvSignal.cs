@@ -19,6 +19,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
+            Log.Information("Start OBV LongSignal. Figi: " + candleList.Figi);
             List<ObvResult> obvFirst = Serialization.ObvData(candleList, deltaPrice, lookbackPeriodFirst);
             List<ObvResult> obvSecond = Serialization.ObvData(candleList, deltaPrice, lookbackPeriodSecond);
 
@@ -83,6 +84,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
             double ObvDegreeAverageAngle(List<ObvResult> ObvValue, int anglesCount, obv obvLine)
             {
+                Log.Information("Start OBV LongSignal. Figi: " + candleList.Figi);
                 List<ObvResult> skipObv = ObvValue.Skip(ObvValue.Count - (anglesCount + 1)).ToList();
                 List<decimal?> values = new List<decimal?>();
                 foreach (var item in skipObv)

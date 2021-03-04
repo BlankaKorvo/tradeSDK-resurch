@@ -16,6 +16,7 @@ namespace TradingAlgorithms.IndicatorSignals
         int anglesCount = 3;
         internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         {
+            Log.Information("Start BollingerBands LongSignal. Figi: " + candleList.Figi);
             List<BollingerBandsResult> bollingerBands = Serialization.BollingerBandsData(candleList, deltaPrice);
 
             if (
@@ -48,18 +49,19 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("BollingerBands = Long - false for: " + candleList.Figi);
                 return false;
             }
-
-            double BollingerBandsWidthDegreeAverageAngle(List<BollingerBandsResult> bollingerBands, int anglesCount)
+        }
+        double BollingerBandsWidthDegreeAverageAngle(List<BollingerBandsResult> bollingerBands, int anglesCount)
+        {
+            Log.Information("Start BollingerBandsWidthDegreeAverageAngle method.");
+            List<BollingerBandsResult> skipbollingerBands = bollingerBands.Skip(bollingerBands.Count - (anglesCount + 1)).ToList();
+            List<decimal?> values = new List<decimal?>();
+            foreach (var item in skipbollingerBands)
             {
-                List<BollingerBandsResult> skipbollingerBands = bollingerBands.Skip(bollingerBands.Count - (anglesCount + 1)).ToList();
-                List<decimal?> values = new List<decimal?>();
-                foreach (var item in skipbollingerBands)
-                {
-                    values.Add(item.Width);
-                    Log.Information("Bollinger Bands Width for Degree Average Angle: " + item.Date + " " + item.Width);
-                }
-                return DeltaDegreeAngle(values);
+                values.Add(item.Width);
+                Log.Information("Bollinger Bands Width for Degree Average Angle: " + item.Date + " " + item.Width);
             }
+            Log.Information("Stop BollingerBandsWidthDegreeAverageAngle method.");
+            return DeltaDegreeAngle(values);
         }
     }
 }

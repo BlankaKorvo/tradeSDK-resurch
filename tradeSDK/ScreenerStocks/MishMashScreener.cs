@@ -22,6 +22,11 @@ namespace ScreenerStocks
         Market market = new Market();
         public async Task Trade(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
+            Log.Information("Start Trade method:");
+            Log.Information("candleInterval:" + candleInterval);
+            Log.Information("candleCount:" + candleInterval);
+            Log.Information("margin:" + margin);
+            Log.Information("notTradeMinuts:" + notTradeMinuts);
             List<CandleList> candleLists = await SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
             Log.Information("Get Sort USD candles");
             Log.Information("Start of sorted candleLists");

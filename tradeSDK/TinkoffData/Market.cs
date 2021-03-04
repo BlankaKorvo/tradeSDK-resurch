@@ -160,24 +160,25 @@ namespace TinkoffData
 
         async Task<List<CandlePayload>> GetUnionCandles(Context context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
         {
-            Log.Information("Start GetUnionCandles method with figi: " + figi);
+            Log.Information("Start GetUnionCandles. Figi: " + figi);
             Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
             CandleList candleListTemp = await GetCandleByFigiAsync(context, figi, candleInterval, date);//.GetAwaiter().GetResult();
             Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
             AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
             //AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
             Log.Information("GetUnionCandles return: " + AllCandlePayloadTemp.Count + " count candles");
-            Log.Information("Stop GetUnionCandles method with figi: " + figi);
+            Log.Information("Stop GetUnionCandles. Figi: " + figi);
             return AllCandlePayloadTemp;
         }
         public async Task<Orderbook> GetOrderbook(Context context, string figi, int depth)
         {
-
+            Log.Information("Start GetOrderbook method. Figi: " + figi);
             Orderbook orderbook = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketOrderbookAsync(figi, depth)));
 
             if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
             {
                 Log.Error("Exchange by instrument " + figi + " not working");
+                Log.Information("Stop GetOrderbook method. Figi: " + figi);
                 return null;
             }
             Log.Information("Orderbook Figi: " + orderbook.Figi);
@@ -194,15 +195,18 @@ namespace TinkoffData
             Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
             Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
             Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
+            Log.Information("Stop GetOrderbook method. Figi: " + figi);
             return orderbook;
         }
         public async Task<bool> PresentInPortfolio(Context context, string figi)
         {
-            Portfolio portfolio = await context.PortfolioAsync();
+            Log.Information("Start PresentInPortfolio method. Figi: " + figi);
+            Portfolio portfolio = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PortfolioAsync()));
             foreach (Portfolio.Position item in portfolio.Positions)
             {
                 if (item.Figi == figi)
                 {
+                    Log.Information("Stop PresentInPortfolio method. Figi: " + figi + "Return - true");
                     return true;
                 }
                 else
@@ -210,6 +214,7 @@ namespace TinkoffData
                     continue;
                 }
             }
+            Log.Information("Stop PresentInPortfolio method. Figi: " + figi + "Return - false");
             return false;
         }
     }

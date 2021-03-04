@@ -11,6 +11,7 @@ namespace TradingAlgorithms.IndicatorSignals.Helpers
     {
         internal double DeltaDegreeAngle(List<decimal?> values)
         {
+            Log.Information("Start DeltaDegreeAngle");
             var countDelta = values.Count;
             double summ = 0;
             for (int i = 1; i < countDelta; i++)
@@ -23,6 +24,7 @@ namespace TradingAlgorithms.IndicatorSignals.Helpers
             }
             double averageAngles = summ / (countDelta - 1);
             Log.Information("Average Angles: " + averageAngles.ToString());
+            Log.Information("Stop DeltaDegreeAngle");
             return averageAngles;
         }
     }
