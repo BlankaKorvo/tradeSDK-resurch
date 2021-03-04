@@ -26,7 +26,7 @@ namespace TinkoffTrade
         Market market = new Market();
         
 
-        public void Transaction(TransactionModel transactionModel)
+        async public Task Transaction(TransactionModel transactionModel)
         {
             Log.Information("Start Transaction method. Figi: " + transactionModel.Figi);
             if (
@@ -53,25 +53,25 @@ namespace TinkoffTrade
             switch (transactionModel.Operation)
             {
                 case Operation.toLong:
-                    BuyStoks(transactionModel);
                     Log.Information("Start Buy Stoks to Long. Figi: " + transactionModel.Figi);
+                    await BuyStoks(transactionModel);                    
                     Log.Information("Stop Transaction method. Figi: " + transactionModel.Figi);
-                    break;
+                    return;
 
                 case Operation.fromLong:
-                    SellStoksFromLong(transactionModel);
                     Log.Information("Start Sell Stoks from Long. Figi: " + transactionModel.Figi);
+                    await SellStoksFromLong(transactionModel);        
                     Log.Information("Stop Transaction method. Figi: " + transactionModel.Figi);
-                    break;
+                    return;
 
                 case Operation.toShort:
                     //not implemented
                     Log.Warning("Sell to short is not implemented");
-                    break;
+                    return;
 
                 case Operation.fromShort:
                     Log.Warning("By from short is not implemented");
-                    break;
+                    return;
             }
         }
 
@@ -158,7 +158,7 @@ namespace TinkoffTrade
         //    return orderbook;
         //}
 
-        private async void BuyStoks(TransactionModel transactionModel)
+        private async Task BuyStoks(TransactionModel transactionModel)
         {
             Log.Information("Start BuyStoks: " + transactionModel.Figi);
             List<Order> orders = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.OrdersAsync());
@@ -187,7 +187,7 @@ namespace TinkoffTrade
             Log.Information("Stop BuyStoks: " + transactionModel.Figi);
         }
 
-        private async void SellStoksFromLong(TransactionModel transactionModel)
+        private async Task SellStoksFromLong(TransactionModel transactionModel)
         {
             Log.Information("Start SellStoksFromLong: " + transactionModel.Figi);
             int lots = await CalculationStocksFromLong(transactionModel);

@@ -74,16 +74,16 @@ namespace ScreenerStocks
                 {
                     Log.Information("If transactionData.Operation = " + TinkoffTrade.Operation.toLong.ToString());
                     Log.Information("Start first transaction");
-                    tinkoffTrading.Transaction(transactionData);
+                    await tinkoffTrading.Transaction(transactionData);
                     int i = 2;
                     do
                     {
                         Log.Information("Start " + i + " transaction");
                         transactionData = await tinkoffTrading.PurchaseDecision();
-                        tinkoffTrading.Transaction(transactionData);
+                        await tinkoffTrading.Transaction(transactionData);
                         i++;
                     }
-                    while (transactionData.Operation == TinkoffTrade.Operation.fromLong);
+                    while (await market.PresentInPortfolio(context, transactionData.Figi) != true);
                     Log.Information("Stop ScreenerStocks after trading");
                 }
                 else

@@ -195,7 +195,22 @@ namespace TinkoffData
             Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
             Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
             return orderbook;
-
+        }
+        public async Task<bool> PresentInPortfolio(Context context, string figi)
+        {
+            Portfolio portfolio = await context.PortfolioAsync();
+            foreach (Portfolio.Position item in portfolio.Positions)
+            {
+                if (item.Figi == figi)
+                {
+                    return true;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            return false;
         }
     }
 }
