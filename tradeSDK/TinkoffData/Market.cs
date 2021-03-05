@@ -206,7 +206,7 @@ namespace TinkoffData
             {
                 if (item.Figi == figi)
                 {
-                    Log.Information("Stop PresentInPortfolio method. Figi: " + figi + "Return - true");
+                    Log.Information("Stop PresentInPortfolio method. Figi: " + figi + " Return - true");
                     return true;
                 }
                 else
@@ -214,7 +214,7 @@ namespace TinkoffData
                     continue;
                 }
             }
-            Log.Information("Stop PresentInPortfolio method. Figi: " + figi + "Return - false");
+            Log.Information("Stop PresentInPortfolio method. Figi: " + figi + " Return - false");
             return false;
         }
     }
