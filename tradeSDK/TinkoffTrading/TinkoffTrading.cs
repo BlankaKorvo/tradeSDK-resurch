@@ -26,7 +26,7 @@ namespace TinkoffTrade
         Market market = new Market();
         
 
-        async public Task Transaction(TransactionModel transactionModel)
+        async public Task TransactionAsync(TransactionModel transactionModel)
         {
             Log.Information("Start Transaction method. Figi: " + transactionModel.Figi);
             if (
@@ -54,13 +54,13 @@ namespace TinkoffTrade
             {
                 case Operation.toLong:
                     Log.Information("Start Buy Stoks to Long. Figi: " + transactionModel.Figi);
-                    await BuyStoks(transactionModel);                    
+                    await BuyStoksAsync(transactionModel);                    
                     Log.Information("Stop Transaction method. Figi: " + transactionModel.Figi);
                     return;
 
                 case Operation.fromLong:
                     Log.Information("Start Sell Stoks from Long. Figi: " + transactionModel.Figi);
-                    await SellStoksFromLong(transactionModel);        
+                    await SellStoksFromLongAsync(transactionModel);        
                     Log.Information("Stop Transaction method. Figi: " + transactionModel.Figi);
                     return;
 
@@ -75,7 +75,7 @@ namespace TinkoffTrade
             }
         }
 
-        public async Task<TransactionModel> PurchaseDecision()
+        public async Task<TransactionModel> PurchaseDecisionAsync()
         {
             Log.Information("Start PurchaseDecision method. Figi: " + this.Figi);
             TransactionModel transactionModel = new TransactionModel();
@@ -85,7 +85,7 @@ namespace TinkoffTrade
             CandleList candleList = await market.GetCandlesTinkoffAsync(context, transactionModel.Figi, candleInterval, CandleCount);
 
             //Получаем стакан
-            Orderbook orderbook = await market.GetOrderbook(context, transactionModel.Figi, 1);
+            Orderbook orderbook = await market.GetOrderbookAsync(context, transactionModel.Figi, 1);
             if (orderbook == null)
             {
                 Log.Information("Orderbook " + transactionModel.Figi + " is null");
@@ -158,7 +158,7 @@ namespace TinkoffTrade
         //    return orderbook;
         //}
 
-        private async Task BuyStoks(TransactionModel transactionModel)
+        private async Task BuyStoksAsync(TransactionModel transactionModel)
         {
             Log.Information("Start BuyStoks: " + transactionModel.Figi);
             List<Order> orders = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.OrdersAsync());
@@ -170,7 +170,7 @@ namespace TinkoffTrade
                     Log.Information("Delete order by figi: " + transactionModel.Figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
                 }
             }
-            int lots = await CalculationLotsByMargin(transactionModel);
+            int lots = await CalculationLotsByMarginAsync(transactionModel);
             //transactionModel.Quantity = await CalculationLotsByMargin(transactionModel);
             if (lots == 0)
             {
@@ -187,10 +187,10 @@ namespace TinkoffTrade
             Log.Information("Stop BuyStoks: " + transactionModel.Figi);
         }
 
-        private async Task SellStoksFromLong(TransactionModel transactionModel)
+        private async Task SellStoksFromLongAsync(TransactionModel transactionModel)
         {
             Log.Information("Start SellStoksFromLong: " + transactionModel.Figi);
-            int lots = await CalculationStocksFromLong(transactionModel);
+            int lots = await CalculationStocksFromLongAsync(transactionModel);
             if (lots == 0)
             { return; }
             await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Sell, transactionModel.Price)));
@@ -205,7 +205,7 @@ namespace TinkoffTrade
         
         private async Task<int> CalculationStocksBuyCount(string figi, int countLotsToBuy)
         {
-            int lots = await CountLotsInPortfolio(figi);
+            int lots = await CountLotsInPortfolioAsync(figi);
             Log.Information("Need to buy stocks: " + countLotsToBuy);
 
             int countLotsToBuyReal = countLotsToBuy - lots;
@@ -213,10 +213,10 @@ namespace TinkoffTrade
 
             return countLotsToBuyReal;
         }
-        private async Task<int> CalculationLotsByMargin(TransactionModel transactionModel)
+        private async Task<int> CalculationLotsByMarginAsync(TransactionModel transactionModel)
         {
             Log.Information("Start CalculationLotsByMargin method. Figi: " + transactionModel.Figi);
-            int lots = await CountLotsInPortfolio(transactionModel.Figi);
+            int lots = await CountLotsInPortfolioAsync(transactionModel.Figi);
             Log.Information("Lots " + transactionModel.Figi + " in portfolio: " + lots);
             decimal sumCostLotsInPorfolio = transactionModel.Price * Convert.ToDecimal(lots);
             decimal remainingCostLots = transactionModel.Margin - sumCostLotsInPorfolio;
@@ -240,10 +240,10 @@ namespace TinkoffTrade
             }
         }
 
-        private async Task<int> CalculationStocksFromLong(TransactionModel transactionModel)
+        private async Task<int> CalculationStocksFromLongAsync(TransactionModel transactionModel)
         {
             Log.Information("Start CalculationStocksFromLong method. Figi: " + transactionModel.Figi);
-            int lots = await CountLotsInPortfolio(transactionModel.Figi);
+            int lots = await CountLotsInPortfolioAsync(transactionModel.Figi);
             Log.Information("Lots " + transactionModel.Figi + " in portfolio: " + lots);
             if (lots <= transactionModel.Quantity)
             {
@@ -258,7 +258,7 @@ namespace TinkoffTrade
                 return transactionModel.Quantity;
             }
         }
-        private async Task<int> CountLotsInPortfolio(string figi)
+        private async Task<int> CountLotsInPortfolioAsync(string figi)
         {
             Log.Information("Start CountLotsInPortfolio method. Figi: " + Figi);
             var portfolio = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PortfolioAsync());

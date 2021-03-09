@@ -20,14 +20,14 @@ namespace ScreenerStocks
     public class MishMashScreener : GetStocksHistory
     {
         Market market = new Market();
-        public async Task Trade(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
+        public async Task TradeAsync(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             Log.Information("Start Trade method:");
             Log.Information("candleInterval:" + candleInterval);
             Log.Information("candleCount:" + candleInterval);
             Log.Information("margin:" + margin);
             Log.Information("notTradeMinuts:" + notTradeMinuts);
-            List<CandleList> candleLists = await SortUsdCandles(context, candleInterval, candleCount, margin, notTradeMinuts);
+            List<CandleList> candleLists = await SortUsdCandlesAsync(context, candleInterval, candleCount, margin, notTradeMinuts);
             Log.Information("Get Sort USD candles");
             Log.Information("Start of sorted candleLists");
             Log.Information("Count = " + candleLists.Count);
@@ -47,11 +47,11 @@ namespace ScreenerStocks
             while (true)
             {
                 Log.Information("Start Screener Stoks");
-                await ScreenerStocks(context, candleInterval, candleCount, margin, candleLists);
+                await ScreenerStocksAsync(context, candleInterval, candleCount, margin, candleLists);
             }
         }
 
-        public async Task ScreenerStocks(Context context, CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
+        public async Task ScreenerStocksAsync(Context context, CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
         {
             Log.Information("Start ScreenerStocks: ");
             Log.Information("Count instruments =  " + CandleLists.Count);
@@ -62,7 +62,7 @@ namespace ScreenerStocks
                 Log.Information("Start ScreenerStocks for: " + item.Figi);
                 TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandleCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
-                TransactionModel transactionData = await tinkoffTrading.PurchaseDecision();
+                TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
                 Log.Information("Get TransactionModel: " + transactionData.Figi);
                 if (transactionData.Operation == TinkoffTrade.Operation.notTrading)
                 { continue; }
@@ -79,16 +79,16 @@ namespace ScreenerStocks
                 {
                     Log.Information("If transactionData.Operation = " + TinkoffTrade.Operation.toLong.ToString());
                     Log.Information("Start first transaction");
-                    await tinkoffTrading.Transaction(transactionData);
+                    await tinkoffTrading.TransactionAsync(transactionData);
                     int i = 2;
                     do
                     {
                         Log.Information("Start " + i + " transaction");
-                        transactionData = await tinkoffTrading.PurchaseDecision();
-                        await tinkoffTrading.Transaction(transactionData);
+                        transactionData = await tinkoffTrading.PurchaseDecisionAsync();
+                        await tinkoffTrading.TransactionAsync(transactionData);
                         i++;
                     }
-                    while (await market.PresentInPortfolio(context, transactionData.Figi) != true);
+                    while (await market.PresentInPortfolioAsync(context, transactionData.Figi) != true);
                     Log.Information("Stop ScreenerStocks after trading");
                 }
                 else
@@ -98,14 +98,14 @@ namespace ScreenerStocks
                 }
             }
         }
-        async Task<List<CandleList>> SortUsdCandles(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
+        async Task<List<CandleList>> SortUsdCandlesAsync(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             Log.Information("Start SortUsdCandles. Param: ");
             Log.Information("candleInterval: " + candleInterval);
             Log.Information("candleCount: " + candleCount);
             Log.Information("margin: " + margin);
             Log.Information("notTradeMinuts: " + notTradeMinuts);
-            List<CandleList> allUsdCandleLists = await AllUsdCandles(context, candleInterval, candleCount);
+            List<CandleList> allUsdCandleLists = await AllUsdCandlesAsync(context, candleInterval, candleCount);
             Log.Information("Get All USD candlesLists. Count: " + allUsdCandleLists.Count);
             List<CandleList> validCandleLists = AllValidCandles(allUsdCandleLists, margin, notTradeMinuts);
             Log.Information("Return Valid candlesLists. Count: " + validCandleLists.Count);

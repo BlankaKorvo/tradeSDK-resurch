@@ -86,7 +86,7 @@ namespace TinkoffData
         }
 
 
-        async public Task<CandleList> GetCandlesTinkoffAsync(Context context, string figi, CandleInterval candleInterval, int candlesCount)
+        public async Task<CandleList> GetCandlesTinkoffAsync(Context context, string figi, CandleInterval candleInterval, int candlesCount)
         {
             Log.Information("Start GetCandlesTinkoffAsync method. Figi: " + figi);
 
@@ -109,7 +109,7 @@ namespace TinkoffData
             {
                 while (AllCandlePayloadTemp.Count < candlesCount)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-1);
                     iterCount++;
                     if (iterCount > finalIterCount)
@@ -123,7 +123,7 @@ namespace TinkoffData
             else if (candleInterval == CandleInterval.Hour)
                 while (AllCandlePayloadTemp.Count < candlesCount)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-7);
                     iterCount++;
                     if (iterCount > finalIterCount)
@@ -137,7 +137,7 @@ namespace TinkoffData
             {
                 while (AllCandlePayloadTemp.Count < candlesCount)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandles(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddYears(-1);
                     iterCount++;
                     if (iterCount > finalIterCount)
@@ -158,7 +158,7 @@ namespace TinkoffData
             return candleList;
         }
 
-        async Task<List<CandlePayload>> GetUnionCandles(Context context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
+        async Task<List<CandlePayload>> GetUnionCandlesAsync(Context context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
         {
             Log.Information("Start GetUnionCandles. Figi: " + figi);
             Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
@@ -170,7 +170,7 @@ namespace TinkoffData
             Log.Information("Stop GetUnionCandles. Figi: " + figi);
             return AllCandlePayloadTemp;
         }
-        public async Task<Orderbook> GetOrderbook(Context context, string figi, int depth)
+        public async Task<Orderbook> GetOrderbookAsync(Context context, string figi, int depth)
         {
             Log.Information("Start GetOrderbook method. Figi: " + figi);
             Orderbook orderbook = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketOrderbookAsync(figi, depth)));
@@ -198,7 +198,7 @@ namespace TinkoffData
             Log.Information("Stop GetOrderbook method. Figi: " + figi);
             return orderbook;
         }
-        public async Task<bool> PresentInPortfolio(Context context, string figi)
+        public async Task<bool> PresentInPortfolioAsync(Context context, string figi)
         {
             Log.Information("Start PresentInPortfolio method. Figi: " + figi);
             Portfolio portfolio = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PortfolioAsync()));

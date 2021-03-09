@@ -8,7 +8,7 @@ using Tinkoff.Trading.OpenApi.Models;
 
 namespace TinkoffData
 {
-    public static class Serialization
+    public static class Serialization 
     {
         public static List<Quote> ConvertTinkoffCandlesToQuote(List<CandlePayload> candles)
         {

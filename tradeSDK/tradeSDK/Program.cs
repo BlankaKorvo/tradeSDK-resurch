@@ -52,7 +52,7 @@ namespace tradeSDK
 
             try
             {
-                await mishMashScreener.Trade(context, candleInterval, candleCount, margin, 60);
+                await mishMashScreener.TradeAsync(context, candleInterval, candleCount, margin, 60);
             }
             catch (Exception ex)
             {

@@ -15,7 +15,7 @@ namespace ScreenerStocks.Helpers
     public class GetStocksHistory
     {
         Market market = new Market();
-        async internal Task<List<MarketInstrument>> AllUsdStocks(Context context)
+        internal async Task<List<MarketInstrument>> AllUsdStocksAsync(Context context)
         {
             Log.Information("Start AllUsdStocks method");
             List<MarketInstrument> usdStocks = new List<MarketInstrument>();
@@ -39,10 +39,10 @@ namespace ScreenerStocks.Helpers
             return usdStocks;
         }
 
-        internal async Task<List<CandleList>> AllUsdCandles(Context context, CandleInterval candleInterval, int candelCount)
+        internal async Task<List<CandleList>> AllUsdCandlesAsync(Context context, CandleInterval candleInterval, int candelCount)
         {
             Log.Information("Start AllUsdCandles method");
-            List<MarketInstrument> stocks = await AllUsdStocks(context);
+            List<MarketInstrument> stocks = await AllUsdStocksAsync(context);
             Log.Information("Get All MarketInstruments. Count =  " + stocks.Count);
             List<CandleList> usdCandels = new List<CandleList>();
             foreach (var item in stocks)
