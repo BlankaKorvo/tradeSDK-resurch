@@ -83,12 +83,21 @@ namespace ScreenerStocks
                     int i = 2;
                     do
                     {
+<<<<<<< HEAD
                         Log.Information("Start " + i + " transaction");
                         transactionData = await tinkoffTrading.PurchaseDecisionAsync();
                         await tinkoffTrading.TransactionAsync(transactionData);
                         i++;
                     }
                     while (await market.PresentInPortfolioAsync(context, transactionData.Figi) != true);
+=======
+                        Log.Information("Start " + i + " iteration");
+                        transactionData = await tinkoffTrading.PurchaseDecision();
+                        await tinkoffTrading.Transaction(transactionData);
+                        i++;
+                    }
+                    while (await market.PresentInPortfolio(context, transactionData.Figi));
+>>>>>>> dd03f2f134ee0beb71e6f58b013ca6c187c12b18
                     Log.Information("Stop ScreenerStocks after trading");
                 }
                 else
