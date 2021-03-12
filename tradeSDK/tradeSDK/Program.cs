@@ -38,7 +38,7 @@ namespace tradeSDK
             var candleInterval = CandleInterval.FiveMinutes;
             int candlesCount = 45;
 
-            List<string> Tickets = new List<string>() {"rig", "ois", "oii", "apa", "ovv"};
+            List<string> Tickets = new List<string>() {"vir", "nari", "ntla", "mstr", "trhc", "acad", "sfix", "anab", "aobc", "itri"};
             List<string> Figis = new List<string>();
             
             foreach (var item in Tickets)
