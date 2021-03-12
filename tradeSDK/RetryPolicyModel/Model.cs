@@ -28,7 +28,8 @@ namespace RetryPolicy
                 .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromMilliseconds(Math.Pow(2, retryAttempt)),
                 (exception, timespan) =>
                 {
-                    Log.Warning(exception.Message);
+                    Log.Error(exception.Message);
+                    Log.Error(exception.StackTrace);
                     Log.Warning("Start retray. Timespan = " + timespan);
                 });
 

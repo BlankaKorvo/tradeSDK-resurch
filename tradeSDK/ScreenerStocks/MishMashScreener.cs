@@ -20,7 +20,7 @@ namespace ScreenerStocks
     public class MishMashScreener : GetStocksHistory
     {
         Market market = new Market();
-        public async Task TradeAsync(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
+        public async Task Screener(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             Log.Information("Start Trade method:");
             Log.Information("candleInterval:" + candleInterval);
@@ -47,11 +47,11 @@ namespace ScreenerStocks
             while (true)
             {
                 Log.Information("Start Screener Stoks");
-                await ScreenerStocksAsync(context, candleInterval, candleCount, margin, candleLists);
+                await Trading(context, candleInterval, candleCount, margin, candleLists);
             }
         }
 
-        public async Task ScreenerStocksAsync(Context context, CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
+        public async Task Trading(Context context, CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
         {
             Log.Information("Start ScreenerStocks: ");
             Log.Information("Count instruments =  " + CandleLists.Count);
@@ -60,7 +60,7 @@ namespace ScreenerStocks
             foreach (var item in CandleLists)
             {
                 Log.Information("Start ScreenerStocks for: " + item.Figi);
-                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandleCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
+                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandlesCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
                 Log.Information("Get TransactionModel: " + transactionData.Figi);

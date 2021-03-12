@@ -68,8 +68,8 @@ namespace TinkoffData
             }
             catch (Exception ex)
             {
-                Log.Information(ex.Message);
-                Log.Information(ex.StackTrace);
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
                 Log.Information("Stop GetCandleByFigiAsync method. Return null");
                 return null;
             }
@@ -177,7 +177,7 @@ namespace TinkoffData
 
             if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
             {
-                Log.Error("Exchange by instrument " + figi + " not working");
+                Log.Warning("Exchange by instrument " + figi + " not working");
                 Log.Information("Stop GetOrderbook method. Figi: " + figi);
                 return null;
             }

@@ -112,7 +112,7 @@ namespace ScreenerStocks.Helpers
             Log.Information("UTC : "+ timeNow.ToString());
             if (candleList == null)
             {
-                Log.Error("CandleList = null");
+                Log.Warning("CandleList = null");
                 return false;
             } 
             else if (candleList.Candles.Last().Time < timeNow.AddMinutes(-notTradeMinutes))

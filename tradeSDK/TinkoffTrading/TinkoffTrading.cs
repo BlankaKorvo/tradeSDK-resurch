@@ -17,7 +17,7 @@ namespace TinkoffTrade
         //public string figi { get; set; }
         public CandleInterval candleInterval { get; set; }
         //public int countStoks { get; set; }
-        public int CandleCount { get; set; } = 120;
+        public int CandlesCount { get; set; } = 120;
         //public decimal budget { get; set; }
 
         //время ожидания между следующим циклом
@@ -45,7 +45,7 @@ namespace TinkoffTrade
                 Log.Information("Price: " + transactionModel.Price);
                 Log.Information("Quantity: " + transactionModel.Quantity);
                 Log.Information("Operation: " + transactionModel.Operation.ToString());
-                Log.Error("Transaction is not correct for implementation");
+                Log.Warning("Transaction is not correct for implementation");
                 Log.Information("Stop Transaction method. Figi: " + transactionModel.Figi);
                 return;
             }
@@ -82,7 +82,7 @@ namespace TinkoffTrade
             transactionModel.Figi = this.Figi;
             transactionModel.Margin = this.Margin;
             //Получаем свечи
-            CandleList candleList = await market.GetCandlesTinkoffAsync(context, transactionModel.Figi, candleInterval, CandleCount);
+            CandleList candleList = await market.GetCandlesTinkoffAsync(context, transactionModel.Figi, candleInterval, CandlesCount);
 
             //Получаем стакан
             Orderbook orderbook = await market.GetOrderbookAsync(context, transactionModel.Figi, 1);

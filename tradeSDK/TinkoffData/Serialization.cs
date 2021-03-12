@@ -81,8 +81,8 @@ namespace TinkoffData
             }
             catch (Exception ex)
             {
-                Log.Information(ex.Message);
-                Log.Information(ex.StackTrace);
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
                 Log.Information("Stop AdxData method. Return: null");
                 return null;
             }
