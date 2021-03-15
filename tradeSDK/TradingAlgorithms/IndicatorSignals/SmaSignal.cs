@@ -11,14 +11,14 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    class SmaSignal : IndicatorSignalsHelper
+    partial class Signal : IndicatorSignalsHelper
     {
-        int lookbackPeriod = 8;
+        int smaLookbackPeriod = 8;
         const decimal smaPriceDeltaCount = 0.15M;
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool SmaLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start Sma LongSignal. Figi: " + candleList.Figi);
-            List<SmaResult> sma = Serialization.SmaData(candleList, deltaPrice, lookbackPeriod);
+            List<SmaResult> sma = Serialization.SmaData(candleList, deltaPrice, smaLookbackPeriod);
             decimal? smaPriceDelta = 100 - (sma.Last().Sma * 100 / deltaPrice); //Насколько далеко убежала цена от Sma
             if (
                 smaPriceDelta < smaPriceDeltaCount

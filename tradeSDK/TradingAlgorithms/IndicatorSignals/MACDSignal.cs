@@ -11,30 +11,30 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    internal class MacdSignal : IndicatorSignalsHelper
+    partial class Signal : IndicatorSignalsHelper
     {
-        int fastPeriod = 6;
-        int slowPeriod = 13;
-        int signalPeriod = 9;
-        int averageAngleCount = 2;
-        double averageAngleCondition = 0;
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice)
+        int macdFastPeriod = 6;
+        int macdSlowPeriod = 13;
+        int macdSignalPeriod = 9;
+        int macdAverageAngleCount = 2;
+        double macdAverageAngleCondition = 0;
+        internal bool MacdLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start MACD LongSignal. Figi: " + candleList.Figi);
-            List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, fastPeriod, slowPeriod, signalPeriod);
+            List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
 
             if (
                 macd.Last().Macd > macd.Last().Signal
                 && macd.Last().Histogram > 0
-                && MacdDegreeAverageAngle(macd, averageAngleCount) >= averageAngleCondition
-                && MacdDegreeAverageAngle(macd, 1) > averageAngleCondition
+                && MacdDegreeAverageAngle(macd, macdAverageAngleCount) >= macdAverageAngleCondition
+                && MacdDegreeAverageAngle(macd, 1) > macdAverageAngleCondition
                 && macd.Last().Histogram > macd[macd.Count - 2].Histogram
                 )
             {
                 Log.Information("Macd = " + macd.Last().Macd);
                 Log.Information("Macd Histogram = " + macd.Last().Histogram);
-                Log.Information("Macd Average of " + averageAngleCount+ " Angle is degree:  " + MacdDegreeAverageAngle(macd, averageAngleCount) + " >= " + averageAngleCondition);
-                Log.Information("Macd Average Angle is degree:  " + MacdDegreeAverageAngle(macd, 1) + " >= " + averageAngleCondition);
+                Log.Information("Macd Average of " + macdAverageAngleCount+ " Angle is degree:  " + MacdDegreeAverageAngle(macd, macdAverageAngleCount) + " >= " + macdAverageAngleCondition);
+                Log.Information("Macd Average Angle is degree:  " + MacdDegreeAverageAngle(macd, 1) + " >= " + macdAverageAngleCondition);
                 //Log.Information("Macd Histogram Average Angle is degree:  " + MacdHistogramDegreeAverageAngle(macd, 1) + " >= " + MacdHistogramDegreeAverageAngle(macd, 2));
                 Log.Information("Last Histogram MACD is biger, then prelast: " + macd.Last().Histogram  + " > " + macd[macd.Count - 2].Histogram);
                 Log.Information("Macd = Long - true for: " + candleList.Figi);
@@ -44,23 +44,23 @@ namespace TradingAlgorithms.IndicatorSignals
             {
                 Log.Information("Macd = " + macd.Last().Macd);
                 Log.Information("Macd Histogram = " + macd.Last().Histogram);
-                Log.Information("Macd Average Angle is not degree:  " + MacdDegreeAverageAngle(macd, 1) + " >= " + averageAngleCondition);
-                Log.Information("Macd Average of " + averageAngleCount + " Angle is not degree:  " + MacdDegreeAverageAngle(macd, averageAngleCount) + " >= " + averageAngleCondition);
+                Log.Information("Macd Average Angle is not degree:  " + MacdDegreeAverageAngle(macd, 1) + " >= " + macdAverageAngleCondition);
+                Log.Information("Macd Average of " + macdAverageAngleCount + " Angle is not degree:  " + MacdDegreeAverageAngle(macd, macdAverageAngleCount) + " >= " + macdAverageAngleCondition);
                 Log.Information("Last Histogram MACD is lowest, then prelast: " + macd.Last().Histogram + " < " + macd[macd.Count - 2].Histogram);
                 Log.Information("Macd = Long - false for: " + candleList.Figi);
                 return false;
             }            
         }
 
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool MacdFromLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start MACD FromLongSignal. Figi: " + candleList.Figi);
-            List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, fastPeriod, slowPeriod, signalPeriod);
+            List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
 
             if (
                 macd.Last().Macd < macd.Last().Signal
                 || macd.Last().Histogram < 0
-                || MacdDegreeAverageAngle(macd, averageAngleCount) < averageAngleCondition
+                || MacdDegreeAverageAngle(macd, macdAverageAngleCount) < macdAverageAngleCondition
                 //|| macd.Last().Histogram < macd[macd.Count - 2].Histogram
                 //|| MacdHistogramDegreeAverageAngle(macd, 1) < MacdHistogramDegreeAverageAngle(macd, 2)
                 )

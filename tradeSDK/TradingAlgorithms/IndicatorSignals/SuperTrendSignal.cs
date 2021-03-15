@@ -10,14 +10,14 @@ using TinkoffData;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    internal class SuperTrendSignal
+    partial class Signal
     {
-        const int _superTrandPeriod = 20;
-        const int _superTrandSensitive = 2;
+        int superTrandPeriod = 20;
+        int superTrandSensitive = 2;
 
         //int superTrandPeriod = 20;
         //int superTrandSensitive = 2;
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice, int superTrandPeriod = _superTrandPeriod, int superTrandSensitive = _superTrandSensitive)
+        internal bool SuperTrendLongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, deltaPrice, superTrandPeriod,  superTrandSensitive);
             if (superTrand.Last().UpperBand == null)
@@ -37,7 +37,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 return false;
             }
         }
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice, int superTrandPeriod = _superTrandPeriod, int superTrandSensitive = _superTrandSensitive)
+        internal bool SuperTrendFromLongSignal(CandleList candleList, decimal deltaPrice)
         {
             List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, deltaPrice, superTrandPeriod, superTrandSensitive);
             if (superTrand.Last().LowerBand == null)

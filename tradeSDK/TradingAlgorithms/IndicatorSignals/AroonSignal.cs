@@ -11,17 +11,17 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    class AroonSignal : IndicatorSignalsHelper
+    partial class Signal : IndicatorSignalsHelper
     {
-        int lookbackPeriod = 7;
+        int aroonLookbackPeriod = 7;
         decimal aroonUpValueLong = 100;
         decimal aroonUpValueFromLong = 50;
 
         decimal aroonDownValue = 50;
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool AroonLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start Aroon LongSignal. Figi: " + candleList.Figi);
-            List<AroonResult> aroon = Serialization.AroonData(candleList, deltaPrice, lookbackPeriod);
+            List<AroonResult> aroon = Serialization.AroonData(candleList, deltaPrice, aroonLookbackPeriod);
 
             if (
                 aroon.Last().AroonUp > aroon.Last().AroonDown
@@ -54,10 +54,10 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool FromLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool AroonFromLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start Aroon FromLongSignal. Figi: " + candleList.Figi);
-            List<AroonResult> aroon = Serialization.AroonData(candleList, deltaPrice, lookbackPeriod);
+            List<AroonResult> aroon = Serialization.AroonData(candleList, deltaPrice, aroonLookbackPeriod);
 
             if (
                 aroon.Last().AroonUp < aroon.Last().AroonDown

@@ -11,16 +11,16 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    internal class BollingerBandsSignal : IndicatorSignalsHelper
+    partial class Signal : IndicatorSignalsHelper
     {
-        int anglesCount = 3;
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice)
+        int BollingerBandsanglesCount = 3;
+        internal bool BollingerBandsLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start BollingerBands LongSignal. Figi: " + candleList.Figi);
             List<BollingerBandsResult> bollingerBands = Serialization.BollingerBandsData(candleList, deltaPrice);
 
             if (
-                BollingerBandsWidthDegreeAverageAngle(bollingerBands, anglesCount) > 0
+                BollingerBandsWidthDegreeAverageAngle(bollingerBands, BollingerBandsanglesCount) > 0
                 &&
                 BollingerBandsWidthDegreeAverageAngle(bollingerBands, 1) > 0
                 )
@@ -31,7 +31,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("BollingerBands Sma = " + bollingerBands.Last().Sma + " " + bollingerBands.Last().Date);
                 Log.Information("BollingerBands Width = " + bollingerBands.Last().Width + " " + bollingerBands.Last().Date);
                 Log.Information("BollingerBands ZScore = " + bollingerBands.Last().ZScore + " " + bollingerBands.Last().Date);
-                Log.Information("BollingerBands BollingerBands Width Degree Average Angle Count " + anglesCount + " = " + BollingerBandsWidthDegreeAverageAngle(bollingerBands, anglesCount));
+                Log.Information("BollingerBands BollingerBands Width Degree Average Angle Count " + BollingerBandsanglesCount + " = " + BollingerBandsWidthDegreeAverageAngle(bollingerBands, BollingerBandsanglesCount));
                 Log.Information("BollingerBands BollingerBands Width Degree Average Angle Count 1 = " + BollingerBandsWidthDegreeAverageAngle(bollingerBands, 1));
                 Log.Information("BollingerBands = Long - true for: " + candleList.Figi);
                 return true;
@@ -44,7 +44,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("BollingerBands Sma = " + bollingerBands.Last().Sma + " " + bollingerBands.Last().Date);
                 Log.Information("BollingerBands Width = " + bollingerBands.Last().Width + " " + bollingerBands.Last().Date);
                 Log.Information("BollingerBands ZScore = " + bollingerBands.Last().ZScore + " " + bollingerBands.Last().Date);
-                Log.Information("BollingerBands BollingerBands Width Degree Average Angle Count " + anglesCount + " = " + BollingerBandsWidthDegreeAverageAngle(bollingerBands, anglesCount));
+                Log.Information("BollingerBands BollingerBands Width Degree Average Angle Count " + BollingerBandsanglesCount + " = " + BollingerBandsWidthDegreeAverageAngle(bollingerBands, BollingerBandsanglesCount));
                 Log.Information("BollingerBands BollingerBands Width Degree Average Angle Count 1 = " + BollingerBandsWidthDegreeAverageAngle(bollingerBands, 1));
                 Log.Information("BollingerBands = Long - false for: " + candleList.Figi);
                 return false;

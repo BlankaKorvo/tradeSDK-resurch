@@ -11,11 +11,11 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    class TsiSignal : IndicatorSignalsHelper
+    partial class Signal : IndicatorSignalsHelper
     {
-        int lookbackPeriod = 8;
-        int averageAngleCount = 2;
-        int fromLongAverageAngleCount = 2;
+        int tsiLookbackPeriod = 8;
+        int tsiAverageAngleCount = 2;
+        int tsiFromLongAverageAngleCount = 2;
         //internal bool LongSignal(CandleList candleList, decimal deltaPrice)
         //{
         //    List<AdxResult> tsi = Serialization.TsiData(candleList, deltaPrice, lookbackPeriod);

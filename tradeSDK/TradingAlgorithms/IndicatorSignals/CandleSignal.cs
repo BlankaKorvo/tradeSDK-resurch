@@ -11,9 +11,9 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    class CandleSignal : IndicatorSignalsHelper
+    partial class Signal : IndicatorSignalsHelper
     {
-        internal bool LongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool CandleLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start CandleSignal LongSignal. Figi: " + candleList.Figi);
             if (deltaPrice == candleList.Candles.Last().Open)
