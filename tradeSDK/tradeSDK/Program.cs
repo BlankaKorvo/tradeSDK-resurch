@@ -37,6 +37,7 @@ namespace tradeSDK
             //var figi = "BBG0018SLC07"; //SQ
             var candleInterval = CandleInterval.FiveMinutes;
             int candlesCount = 45;
+            decimal margin = 5000;
 
             List<string> Tickets = new List<string>() {"vir", "nari", "ntla", "mstr", "trhc", "acad", "sfix", "anab", "aobc", "itri"};
             List<string> Figis = new List<string>();
@@ -47,7 +48,7 @@ namespace tradeSDK
                 Figis.Add(sbt.Instruments.Last().Figi);
             }
 
-            decimal margin = 5000;
+           
             //List<string> Figis = new List<string>() { "BBG000B9XRY4", "BBG000NS03H7", "BBG000BPH459", "BBG000D8RG11", "BBG0016SSV00", "BBG000BM6N47", "BBG000HL7499" };
             //System config
 
@@ -56,64 +57,64 @@ namespace tradeSDK
             //int x = p.ExecuteAsync(() => 2 + 3);
 
 
-            while (true)
+            //while (true)
+            //{
+            //    foreach (var item in Figis)
+            //    {
+            //        //var candles = await market.GetCandlesTinkoffAsync(context, item, CandleInterval.FiveMinutes, candlesCount);
+            //        Log.Information("Start ScreenerStocks for: " + item);
+            //        TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item, CandlesCount = candlesCount, candleInterval = candleInterval, context = context, Margin = margin };
+            //        Log.Information("Get object TinkoffTrading with FIGI: " + item);
+            //        TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
+            //        Log.Information("Get TransactionModel: " + transactionData.Figi);
+            //        if (transactionData.Operation == TinkoffTrade.Operation.notTrading)
+            //        { continue; }
+            //        Log.Information("TransactionModel margin = " + transactionData.Margin);
+            //        Log.Information("TransactionModel operation = " + transactionData.Operation);
+            //        Log.Information("TransactionModel price = " + transactionData.Price);
+            //        Log.Information("TransactionModel quantity = " + transactionData.Quantity);
+
+
+            //        //переписать логику нахрен....
+
+
+            //        if (transactionData.Operation == TinkoffTrade.Operation.toLong)
+            //        {
+            //            Log.Information("If transactionData.Operation = " + TinkoffTrade.Operation.toLong.ToString());
+            //            Log.Information("Start first transaction");
+            //            await tinkoffTrading.TransactionAsync(transactionData);
+            //            int i = 2;
+            //            do
+            //            {
+            //                Log.Information("Start " + i + " transaction");
+            //                transactionData = await tinkoffTrading.PurchaseDecisionAsync();
+            //                await tinkoffTrading.TransactionAsync(transactionData);
+            //                i++;
+            //            }
+            //            while (await market.PresentInPortfolioAsync(context, transactionData.Figi));
+            //            Log.Information("Stop ScreenerStocks after trading");
+            //        }
+            //        else
+            //        {
+            //            continue;
+            //            Log.Information("Stop ScreenerStocks");
+            //        }
+            //    }
+            //}
+
+
+
+            MishMashScreener mishMashScreener = new MishMashScreener();
+
+            try
             {
-                foreach (var item in Figis)
-                {
-                    //var candles = await market.GetCandlesTinkoffAsync(context, item, CandleInterval.FiveMinutes, candlesCount);
-                    Log.Information("Start ScreenerStocks for: " + item);
-                    TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item, CandlesCount = candlesCount, candleInterval = candleInterval, context = context, Margin = margin };
-                    Log.Information("Get object TinkoffTrading with FIGI: " + item);
-                    TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
-                    Log.Information("Get TransactionModel: " + transactionData.Figi);
-                    if (transactionData.Operation == TinkoffTrade.Operation.notTrading)
-                    { continue; }
-                    Log.Information("TransactionModel margin = " + transactionData.Margin);
-                    Log.Information("TransactionModel operation = " + transactionData.Operation);
-                    Log.Information("TransactionModel price = " + transactionData.Price);
-                    Log.Information("TransactionModel quantity = " + transactionData.Quantity);
-
-
-                    //переписать логику нахрен....
-
-
-                    if (transactionData.Operation == TinkoffTrade.Operation.toLong)
-                    {
-                        Log.Information("If transactionData.Operation = " + TinkoffTrade.Operation.toLong.ToString());
-                        Log.Information("Start first transaction");
-                        await tinkoffTrading.TransactionAsync(transactionData);
-                        int i = 2;
-                        do
-                        {
-                            Log.Information("Start " + i + " transaction");
-                            transactionData = await tinkoffTrading.PurchaseDecisionAsync();
-                            await tinkoffTrading.TransactionAsync(transactionData);
-                            i++;
-                        }
-                        while (await market.PresentInPortfolioAsync(context, transactionData.Figi));
-                        Log.Information("Stop ScreenerStocks after trading");
-                    }
-                    else
-                    {
-                        continue;
-                        Log.Information("Stop ScreenerStocks");
-                    }
-                }
+                await mishMashScreener.Screener(context, candleInterval, candlesCount, margin, 60);
             }
-
-
-
-            //MishMashScreener mishMashScreener = new MishMashScreener();
-
-            //try
-            //{
-            //    await mishMashScreener.Screener(context, candleInterval, candleCount, margin, 60);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log.Error(ex.Message);
-            //    Log.Error(ex.StackTrace);
-            //}
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+            }
 
 
             //var marInstr = await context.MarketStocksAsync();
