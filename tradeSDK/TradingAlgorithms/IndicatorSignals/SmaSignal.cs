@@ -18,7 +18,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool SmaLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start Sma LongSignal. Figi: " + candleList.Figi);
-            List<SmaResult> sma = Serialization.SmaData(candleList, deltaPrice, smaLookbackPeriod);
+            List<SmaResult> sma = Mapper.SmaData(candleList, deltaPrice, smaLookbackPeriod);
             decimal? smaPriceDelta = 100 - (sma.Last().Sma * 100 / deltaPrice); //Насколько далеко убежала цена от Sma
             if (
                 smaPriceDelta < smaPriceDeltaCount

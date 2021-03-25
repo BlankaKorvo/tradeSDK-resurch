@@ -19,7 +19,7 @@ namespace ScreenerStocks
 {
     public class MishMashScreener : GetStocksHistory
     {
-        Market market = new Market();
+        GetTinkoffData market = new GetTinkoffData();
         public async Task Screener(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             Log.Information("Start Trade method:");

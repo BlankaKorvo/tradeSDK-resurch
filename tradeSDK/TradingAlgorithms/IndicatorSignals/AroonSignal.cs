@@ -21,7 +21,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool AroonLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start Aroon LongSignal. Figi: " + candleList.Figi);
-            List<AroonResult> aroon = Serialization.AroonData(candleList, deltaPrice, aroonLookbackPeriod);
+            List<AroonResult> aroon = Mapper.AroonData(candleList, deltaPrice, aroonLookbackPeriod);
 
             if (
                 aroon.Last().AroonUp > aroon.Last().AroonDown
@@ -57,7 +57,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool AroonFromLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start Aroon FromLongSignal. Figi: " + candleList.Figi);
-            List<AroonResult> aroon = Serialization.AroonData(candleList, deltaPrice, aroonLookbackPeriod);
+            List<AroonResult> aroon = Mapper.AroonData(candleList, deltaPrice, aroonLookbackPeriod);
 
             if (
                 aroon.Last().AroonUp < aroon.Last().AroonDown

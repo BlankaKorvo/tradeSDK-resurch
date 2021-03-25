@@ -14,7 +14,7 @@ namespace ScreenerStocks.Helpers
 {
     public class GetStocksHistory
     {
-        Market market = new Market();
+        GetTinkoffData market = new GetTinkoffData();
         internal async Task<List<MarketInstrument>> AllUsdStocksAsync(Context context)
         {
             Log.Information("Start AllUsdStocks method");

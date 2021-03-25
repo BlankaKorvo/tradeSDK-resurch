@@ -20,8 +20,8 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool ObvLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start OBV LongSignal. Figi: " + candleList.Figi);
-            List<ObvResult> obvFirst = Serialization.ObvData(candleList, deltaPrice, obvLookbackPeriodFirst);
-            List<ObvResult> obvSecond = Serialization.ObvData(candleList, deltaPrice, obvLookbackPeriodSecond);
+            List<ObvResult> obvFirst = Mapper.ObvData(candleList, deltaPrice, obvLookbackPeriodFirst);
+            List<ObvResult> obvSecond = Mapper.ObvData(candleList, deltaPrice, obvLookbackPeriodSecond);
 
             if (
                 obvFirst.Last().ObvSma > obvSecond.Last().ObvSma

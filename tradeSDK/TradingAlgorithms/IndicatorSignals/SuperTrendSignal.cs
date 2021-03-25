@@ -19,7 +19,7 @@ namespace TradingAlgorithms.IndicatorSignals
         //int superTrandSensitive = 2;
         internal bool SuperTrendLongSignal(CandleList candleList, decimal deltaPrice)
         {
-            List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, deltaPrice, superTrandPeriod,  superTrandSensitive);
+            List<SuperTrendResult> superTrand = Mapper.SuperTrendData(candleList, deltaPrice, superTrandPeriod,  superTrandSensitive);
             if (superTrand.Last().UpperBand == null)
             {
                 Log.Information("Super Trand Period = " + superTrandPeriod);
@@ -39,7 +39,7 @@ namespace TradingAlgorithms.IndicatorSignals
         }
         internal bool SuperTrendFromLongSignal(CandleList candleList, decimal deltaPrice)
         {
-            List<SuperTrendResult> superTrand = Serialization.SuperTrendData(candleList, deltaPrice, superTrandPeriod, superTrandSensitive);
+            List<SuperTrendResult> superTrand = Mapper.SuperTrendData(candleList, deltaPrice, superTrandPeriod, superTrandSensitive);
             if (superTrand.Last().LowerBand == null)
             {
                 Log.Information("Super Trand Period = " + superTrandPeriod);

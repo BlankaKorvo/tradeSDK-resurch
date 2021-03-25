@@ -22,7 +22,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool DpoLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start Dpo LongSignal. Figi: " + candleList.Figi);
-            List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
+            List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
             if (
                 DpoDegreeAverageAngle(dpo, dpoAverageAngleCount) > dpoAverageAngleConditionLong
                 && DpoDegreeAverageAngle(dpo, 1) > dpoAverageAngleConditionLong
@@ -49,7 +49,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool DpoFromLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start Dpo FromLongSignal. Figi: " + candleList.Figi);
-            List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
+            List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo < dpoLastDpoCondition
                 || DpoDegreeAverageAngle(dpo, dpoAverageAngleCount) < dpoAverageAngleConditionFromLong)
             {
@@ -89,7 +89,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool DpoLongSignalUltimate(CandleList candleList, decimal deltaPrice, double averageAngleConditionLong)
         {
-            List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
+            List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo >= dpoLastDpoCondition
                 && DpoDegreeAverageAngle(dpo, dpoAverageAngleCount) > averageAngleConditionLong
                 && DpoDegreeAverageAngle(dpo, 1) >= DpoDegreeAverageAngle(dpo, 2))
@@ -113,7 +113,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool DpoFromLongSignalUltimate(CandleList candleList, decimal deltaPrice, double averageAngleConditionFromLong)
         {
-            List<DpoResult> dpo = Serialization.DpoData(candleList, deltaPrice, dpoPeriod);
+            List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo < dpoLastDpoCondition
                 && DpoDegreeAverageAngle(dpo, dpoAverageAngleCount) < averageAngleConditionFromLong)
             {

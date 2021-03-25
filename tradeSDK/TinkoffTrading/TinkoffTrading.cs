@@ -23,7 +23,7 @@ namespace TinkoffTrade
         //время ожидания между следующим циклом
         int sleep { get; set; } = 0;
 
-        Market market = new Market();
+        GetTinkoffData market = new GetTinkoffData();
         
 
         async public Task TransactionAsync(TransactionModel transactionModel)

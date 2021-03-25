@@ -10,82 +10,9 @@ using RetryPolicy;
 using Polly;
 using Context = Tinkoff.Trading.OpenApi.Network.Context;
 namespace TinkoffData
-{
-    
-    public class Market
+{   
+    public class GetTinkoffData
     {
-         //var retry = RetryPolicy.Model.getRetry();
-        async Task<CandleList> GetCandleByFigiAsync(Context context, string figi, CandleInterval interval, DateTime to)
-        {
-
-            Log.Information("Start GetCandleByFigiAsync method whith figi: " + figi);
-            //DateTime to = DateTime.Now;
-            DateTime from = to;
-            switch (interval)
-            {
-                case CandleInterval.Minute:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.TwoMinutes:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.ThreeMinutes:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.FiveMinutes:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.TenMinutes:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.QuarterHour:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.HalfHour:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.Hour:
-                    from = to.AddDays(-7);
-                    break;
-                case CandleInterval.Day:
-                    from = to.AddYears(-1);
-                    break;
-                case CandleInterval.Week:
-                    from = to.AddYears(-2);
-                    break;
-                case CandleInterval.Month:
-                    from = to.AddYears(-10);
-                    break;
-            }
-            Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
-
-            try
-            {
-                CandleList candle = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketCandlesAsync(figi, from, to, interval)));
-                Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
-                Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
-                return candle;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-                Log.Error(ex.StackTrace);
-                Log.Information("Stop GetCandleByFigiAsync method. Return null");
-                return null;
-            }
-        }
-
-        public List<string> FigiFromCandleList(List<CandleList> Stocks)
-        {
-            List<string> figi = new List<string>();
-            foreach (CandleList item in Stocks)
-            {
-                figi.Add(item.Figi);
-            }
-            return figi;
-        }
-
-
         public async Task<CandleList> GetCandlesTinkoffAsync(Context context, string figi, CandleInterval candleInterval, int candlesCount)
         {
             Log.Information("Start GetCandlesTinkoffAsync method. Figi: " + figi);
@@ -97,7 +24,7 @@ namespace TinkoffData
             int finalIterCount = 5;
             List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
 
-            CandlePayloadEqualityComparer CandlePayloadEqC = new CandlePayloadEqualityComparer();
+            ComparerTinkoffCandlePayloadEquality CandlePayloadEqC = new ComparerTinkoffCandlePayloadEquality();
 
             if (candleInterval == CandleInterval.Minute
                 || candleInterval == CandleInterval.TwoMinutes
@@ -158,11 +85,71 @@ namespace TinkoffData
             return candleList;
         }
 
-        async Task<List<CandlePayload>> GetUnionCandlesAsync(Context context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, CandlePayloadEqualityComparer CandlePayloadEqC)
+        async Task<CandleList> GetOneSetCandlesAsync(Context context, string figi, CandleInterval interval, DateTime to)
+        {
+
+            Log.Information("Start GetCandleByFigiAsync method whith figi: " + figi);
+            //DateTime to = DateTime.Now;
+            DateTime from = to;
+            switch (interval)
+            {
+                case CandleInterval.Minute:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.TwoMinutes:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.ThreeMinutes:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.FiveMinutes:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.TenMinutes:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.QuarterHour:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.HalfHour:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.Hour:
+                    from = to.AddDays(-7);
+                    break;
+                case CandleInterval.Day:
+                    from = to.AddYears(-1);
+                    break;
+                case CandleInterval.Week:
+                    from = to.AddYears(-2);
+                    break;
+                case CandleInterval.Month:
+                    from = to.AddYears(-10);
+                    break;
+            }
+            Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
+
+            try
+            {
+                CandleList candle = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketCandlesAsync(figi, from, to, interval)));
+                Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
+                Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
+                return candle;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+                Log.Information("Stop GetCandleByFigiAsync method. Return null");
+                return null;
+            }
+        }    
+
+        async Task<List<CandlePayload>> GetUnionCandlesAsync(Context context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, ComparerTinkoffCandlePayloadEquality CandlePayloadEqC)
         {
             Log.Information("Start GetUnionCandles. Figi: " + figi);
             Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
-            CandleList candleListTemp = await GetCandleByFigiAsync(context, figi, candleInterval, date);//.GetAwaiter().GetResult();
+            CandleList candleListTemp = await GetOneSetCandlesAsync(context, figi, candleInterval, date);//.GetAwaiter().GetResult();
             Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
             AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
             //AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
@@ -216,6 +203,16 @@ namespace TinkoffData
             }
             Log.Information("Stop PresentInPortfolio method. Figi: " + figi + " Return - false");
             return false;
+        }
+
+        public List<string> FigiFromCandleList(List<CandleList> Stocks)
+        {
+            List<string> figi = new List<string>();
+            foreach (CandleList item in Stocks)
+            {
+                figi.Add(item.Figi);
+            }
+            return figi;
         }
     }
 }

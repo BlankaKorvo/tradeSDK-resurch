@@ -17,7 +17,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool BollingerBandsLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start BollingerBands LongSignal. Figi: " + candleList.Figi);
-            List<BollingerBandsResult> bollingerBands = Serialization.BollingerBandsData(candleList, deltaPrice);
+            List<BollingerBandsResult> bollingerBands = Mapper.BollingerBandsData(candleList, deltaPrice);
 
             if (
                 BollingerBandsWidthDegreeAverageAngle(bollingerBands, BollingerBandsanglesCount) > 0

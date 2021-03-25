@@ -22,7 +22,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool IchimokuLongSignal(CandleList candleList, decimal deltaPrice)
         {
-            List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
+            List<IchimokuResult> ichimoku = Mapper.IchimokuData(candleList, deltaPrice);
             decimal? tenkansenPriceDelta = 100 - (ichimoku.Last().TenkanSen * 100 / deltaPrice); //Насколько далеко убежала цена от Ichimoku TenkanSen
 
             if (ichimoku.Last().TenkanSen > ichimoku.Last().KijunSen
@@ -54,7 +54,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool IchimokuFromLongSignal(CandleList candleList, decimal deltaPrice)
         {
-            List<IchimokuResult> ichimoku = Serialization.IchimokuData(candleList, deltaPrice);
+            List<IchimokuResult> ichimoku = Mapper.IchimokuData(candleList, deltaPrice);
             if (/*ichimoku.Last().TenkanSen < ichimoku.Last().KijunSen*/ //под вопросом на минунтных свечах. Достаточно отрицательный угол на последнем отрезке. Возможно, потребуется, если буду нормализовать свечи не по клозу, а по средней цене за свечу.
                             /*||*/ deltaPrice < ichimoku.Last().SenkouSpanA
                             || deltaPrice < ichimoku.Last().SenkouSpanB

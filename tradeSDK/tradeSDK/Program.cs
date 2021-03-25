@@ -27,7 +27,7 @@ namespace tradeSDK
                 .WriteTo.File("logs\\myapp.txt", rollingInterval: RollingInterval.Day, fileSizeLimitBytes: 104857600, rollOnFileSizeLimit: true)
                 .CreateLogger();   
             
-            Market market = new Market();
+            GetTinkoffData market = new GetTinkoffData();
             SandboxContext context = new Auth().GetSanboxContext();
             //Serialization ser = new Serialization();
 

@@ -21,7 +21,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool MacdLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start MACD LongSignal. Figi: " + candleList.Figi);
-            List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
+            List<MacdResult> macd = Mapper.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
 
             if (
                 macd.Last().Macd > macd.Last().Signal
@@ -55,7 +55,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool MacdFromLongSignal(CandleList candleList, decimal deltaPrice)
         {
             Log.Information("Start MACD FromLongSignal. Figi: " + candleList.Figi);
-            List<MacdResult> macd = Serialization.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
+            List<MacdResult> macd = Mapper.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
 
             if (
                 macd.Last().Macd < macd.Last().Signal
