@@ -27,5 +27,25 @@ namespace TradingAlgorithms.IndicatorSignals.Helpers
             Log.Information("Stop DeltaDegreeAngle");
             return averageAngles;
         }
+
+        internal double DeltaDegreeAngle(List<decimal?> values, int anglesCount)
+        {
+            Log.Information("Start DeltaDegreeAngle");
+            List<decimal?> calculatedValues = values.Skip(values.Count - (anglesCount + 1)).ToList();
+            var countDelta = calculatedValues.Count;
+            double summ = 0;
+            for (int i = 1; i < countDelta; i++)
+            {
+                double deltaLeg = Convert.ToDouble(calculatedValues[i] - calculatedValues[i - 1]);
+                double legDifference = Math.Atan(deltaLeg);
+                double angle = legDifference * (180 / Math.PI);
+                Log.Information("Angle: " + angle.ToString());
+                summ += angle;
+            }
+            double averageAngles = summ / (countDelta - 1);
+            Log.Information("Average Angles: " + averageAngles.ToString());
+            Log.Information("Stop DeltaDegreeAngle");
+            return averageAngles;
+        }
     }
 }

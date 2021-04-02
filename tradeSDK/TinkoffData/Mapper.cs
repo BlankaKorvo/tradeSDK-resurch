@@ -161,6 +161,18 @@ namespace TinkoffData
             return Indicator.GetObv(candles, lookbackPeriod).ToList();
         }
 
+        public static List<AdlResult> AdlData(CandleList candleList, int lookbackPeriod)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            return Indicator.GetAdl(candles, lookbackPeriod).ToList();
+        }
+
+        public static List<AdlResult> AdlData(CandleList candleList, decimal realPrise, int lookbackPeriod)
+        {
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            return Indicator.GetAdl(candles, lookbackPeriod).ToList();
+        }
+
         public static List<SmaResult> SmaData(CandleList candleList, int lookbackPeriod)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
