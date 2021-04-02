@@ -9,8 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TinkoffData\TinkoffData.csproj" />
-    <ProjectReference Include="..\TinkoffTrading\TinkoffTrade.csproj" />
+    <ProjectReference Include="..\TinkoffData\TinkoffAdapter.csproj" />
     <ProjectReference Include="..\TradingAlgorithms\TradingAlgorithms.csproj" />
   </ItemGroup>
 

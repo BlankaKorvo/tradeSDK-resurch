@@ -12,7 +12,7 @@ using Serilog;
 using TradingAlgorithms.Algoritms;
 using ScreenerStocks;
 using TinkoffData;
-using TinkoffTrade;
+using TinkoffAdapter;
 using RetryPolicy;
 
 namespace tradeSDK

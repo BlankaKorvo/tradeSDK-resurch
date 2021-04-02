@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using TinkoffData;
-using TinkoffTrade;
+using TinkoffAdapter;
 using TradingAlgorithms.Algoritms;
 using Quartz;
 
@@ -19,7 +19,7 @@ namespace ScreenerStocks
 {
     public class MishMashScreener : GetStocksHistory
     {
-        GetTinkoffData market = new GetTinkoffData();
+        GetTinkoffData getTinkoffData = new GetTinkoffData();
         public async Task Screener(Context context, CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             Log.Information("Start Trade method:");
@@ -60,13 +60,13 @@ namespace ScreenerStocks
             foreach (var item in CandleLists)
             {
                 Log.Information("Start ScreenerStocks for: " + item.Figi);
-                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandlesCount = candleCount, candleInterval = candleInterval, context = context, Margin = margin };
+                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandlesCount = candleCount, candleInterval = candleInterval, context = context, Purchase = margin };
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
                 Log.Information("Get TransactionModel: " + transactionData.Figi);
-                if (transactionData.Operation == TinkoffTrade.Operation.notTrading)
+                if (transactionData.Operation == TinkoffAdapter.Operation.notTrading)
                 { continue; }
-                Log.Information("TransactionModel margin = " + transactionData.Margin);
+                Log.Information("TransactionModel margin = " + transactionData.Purchase);
                 Log.Information("TransactionModel operation = " + transactionData.Operation);
                 Log.Information("TransactionModel price = " + transactionData.Price);
                 Log.Information("TransactionModel quantity = " + transactionData.Quantity);
@@ -75,9 +75,9 @@ namespace ScreenerStocks
                 //переписать логику нахрен....
 
 
-                if (transactionData.Operation == TinkoffTrade.Operation.toLong)
+                if (transactionData.Operation == TinkoffAdapter.Operation.toLong)
                 {
-                    Log.Information("If transactionData.Operation = " + TinkoffTrade.Operation.toLong.ToString());
+                    Log.Information("If transactionData.Operation = " + TinkoffAdapter.Operation.toLong.ToString());
                     Log.Information("Start first transaction");
                     await tinkoffTrading.TransactionAsync(transactionData);
                     int i = 2;
@@ -88,7 +88,7 @@ namespace ScreenerStocks
                         await tinkoffTrading.TransactionAsync(transactionData);
                         i++;
                     }
-                    while (await market.PresentInPortfolioAsync(context, transactionData.Figi));
+                    while (await getTinkoffData.PresentInPortfolioAsync(context, transactionData.Figi));
                     Log.Information("Stop ScreenerStocks after trading");
                 }
                 else

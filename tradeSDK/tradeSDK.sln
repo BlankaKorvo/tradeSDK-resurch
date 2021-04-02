@@ -19,13 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Skender", "Skender", "{1B24
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Skender", "Skender", "{99C4175D-7928-48E1-A9CF-A57304314C0C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinkoffData", "TinkoffData\TinkoffData.csproj", "{30F80A30-FDF6-4B2B-888C-2C38A713E0CE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinkoffTrade", "TinkoffTrading\TinkoffTrade.csproj", "{B8DFF513-A737-4E75-9703-A57D1932B54F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinkoffAdapter", "TinkoffData\TinkoffAdapter.csproj", "{30F80A30-FDF6-4B2B-888C-2C38A713E0CE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Indicators", "..\Stock.Indicators\tests\indicators\Tests.Indicators.csproj", "{E2B835FE-2430-4149-B4F5-FB80002F0F7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryPolicyModel", "RetryPolicyModel\RetryPolicyModel.csproj", "{726C53C3-0EA9-40E1-9643-D3A733602D2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RetryPolicyModel", "RetryPolicyModel\RetryPolicyModel.csproj", "{726C53C3-0EA9-40E1-9643-D3A733602D2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +51,6 @@ Global
 		{30F80A30-FDF6-4B2B-888C-2C38A713E0CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30F80A30-FDF6-4B2B-888C-2C38A713E0CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30F80A30-FDF6-4B2B-888C-2C38A713E0CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B8DFF513-A737-4E75-9703-A57D1932B54F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B8DFF513-A737-4E75-9703-A57D1932B54F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B8DFF513-A737-4E75-9703-A57D1932B54F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B8DFF513-A737-4E75-9703-A57D1932B54F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2B835FE-2430-4149-B4F5-FB80002F0F7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E2B835FE-2430-4149-B4F5-FB80002F0F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2B835FE-2430-4149-B4F5-FB80002F0F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU

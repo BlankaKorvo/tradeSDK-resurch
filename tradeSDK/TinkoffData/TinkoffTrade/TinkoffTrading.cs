@@ -6,10 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
-using TinkoffData;
-using TradingAlgorithms.Algoritms;
+using TinkoffAdapter.DataHelper;
 
-namespace TinkoffTrade
+
+namespace TinkoffAdapter.TinkoffTrade
 {
     public class TinkoffTrading : TransactionModel
     {

@@ -8,7 +8,7 @@ using Tinkoff;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 
-namespace TinkoffData
+namespace TinkoffAdapter.DataHelper
 {
     class ComparerTinkoffCandlePayloadEquality : IEqualityComparer<CandlePayload>
     {

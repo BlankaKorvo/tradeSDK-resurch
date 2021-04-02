@@ -20,8 +20,7 @@
     <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
     <ProjectReference Include="..\RetryPolicyModel\RetryPolicyModel.csproj" />
     <ProjectReference Include="..\ScreenerStocks\ScreenerStocks.csproj" />
-    <ProjectReference Include="..\TinkoffData\TinkoffData.csproj" />
-    <ProjectReference Include="..\TinkoffTrading\TinkoffTrade.csproj" />
+    <ProjectReference Include="..\TinkoffData\TinkoffAdapter.csproj" />
     <ProjectReference Include="..\TradingAlgorithms\TradingAlgorithms.csproj" />
   </ItemGroup>
 

@@ -9,7 +9,8 @@ using Tinkoff.Trading.OpenApi.Network;
 using RetryPolicy;
 using Polly;
 using Context = Tinkoff.Trading.OpenApi.Network.Context;
-namespace TinkoffData
+
+namespace TinkoffAdapter.DataHelper
 {   
     public class GetTinkoffData
     {
