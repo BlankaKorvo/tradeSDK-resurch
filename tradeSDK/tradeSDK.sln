@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tradeSDK", "tradeSDK\tradeSDK.csproj", "{E9F41FE5-A3E8-423F-A700-36A777A1EB88}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScreenerStocks", "ScreenerStocks\ScreenerStocks.csproj", "{C3C07092-704C-4135-89FF-ACFF54D3C15A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Screeners", "ScreenerStocks\Screeners.csproj", "{C3C07092-704C-4135-89FF-ACFF54D3C15A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingAlgorithms", "TradingAlgorithms\TradingAlgorithms.csproj", "{062AA595-6179-4484-B6F2-B7FC2069116F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analysis", "TradingAlgorithms\Analysis.csproj", "{062AA595-6179-4484-B6F2-B7FC2069116F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{57183731-6DB1-4E25-A871-7831896F392B}"
 EndProject

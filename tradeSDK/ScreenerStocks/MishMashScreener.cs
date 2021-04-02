@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using TradingAlgorithms.Algoritms;
-using Quartz;
 using TinkoffAdapter.DataHelper;
 using TinkoffAdapter.TinkoffTrade;
 using TinkoffAdapter;
