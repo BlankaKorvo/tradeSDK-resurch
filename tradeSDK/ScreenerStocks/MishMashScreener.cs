@@ -10,10 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
-using TinkoffData;
-using TinkoffAdapter;
 using TradingAlgorithms.Algoritms;
 using Quartz;
+using TinkoffAdapter.DataHelper;
+using TinkoffAdapter.TinkoffTrade;
+using TinkoffAdapter;
 
 namespace ScreenerStocks
 {

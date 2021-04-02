@@ -14,6 +14,8 @@ using ScreenerStocks;
 using TinkoffData;
 using TinkoffAdapter;
 using RetryPolicy;
+using TinkoffAdapter.DataHelper;
+using TinkoffAdapter.Auth;
 
 namespace tradeSDK
 {
