@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Tinkoff.Trading.OpenApi" Version="1.7.1" />
+    <PackageReference Include="Tinkoff.Trading.OpenApi" Version="1.7.3" />
   </ItemGroup>
 
   <ItemGroup>

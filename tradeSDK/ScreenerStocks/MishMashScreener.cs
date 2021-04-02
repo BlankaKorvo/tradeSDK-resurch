@@ -93,8 +93,8 @@ namespace ScreenerStocks
                 }
                 else
                 {
-                    continue;
                     Log.Information("Stop ScreenerStocks");
+                    continue;
                 }
             }
         }

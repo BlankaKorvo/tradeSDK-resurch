@@ -35,7 +35,7 @@ namespace tradeSDK
             //var figi = "BBG000BVPV84"; //AMZN
             //var figi = "BBG0013HGFT4"; //USDRUS
             //var figi = "BBG0018SLC07"; //SQ
-            var candleInterval = CandleInterval.FiveMinutes;
+            var candleInterval = CandleInterval.Day;
             int candlesCount = 45;
             decimal margin = 5000;
 
@@ -57,50 +57,50 @@ namespace tradeSDK
             //int x = p.ExecuteAsync(() => 2 + 3);
 
 
-            while (true)
-            {
-                foreach (var item in Figis)
-                {
-                    //var candles = await market.GetCandlesTinkoffAsync(context, item, CandleInterval.FiveMinutes, candlesCount);
-                    Log.Information("Start ScreenerStocks for: " + item);
-                    TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item, CandlesCount = candlesCount, candleInterval = candleInterval, context = context, Margin = margin };
-                    Log.Information("Get object TinkoffTrading with FIGI: " + item);
-                    TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
-                    Log.Information("Get TransactionModel: " + transactionData.Figi);
-                    if (transactionData.Operation == TinkoffTrade.Operation.notTrading)
-                    { continue; }
-                    Log.Information("TransactionModel margin = " + transactionData.Margin);
-                    Log.Information("TransactionModel operation = " + transactionData.Operation);
-                    Log.Information("TransactionModel price = " + transactionData.Price);
-                    Log.Information("TransactionModel quantity = " + transactionData.Quantity);
+            //while (true)
+            //{
+            //    foreach (var item in Figis)
+            //    {
+            //        //var candles = await market.GetCandlesTinkoffAsync(context, item, CandleInterval.FiveMinutes, candlesCount);
+            //        Log.Information("Start ScreenerStocks for: " + item);
+            //        TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item, CandlesCount = candlesCount, candleInterval = candleInterval, context = context, Margin = margin };
+            //        Log.Information("Get object TinkoffTrading with FIGI: " + item);
+            //        TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
+            //        Log.Information("Get TransactionModel: " + transactionData.Figi);
+            //        if (transactionData.Operation == TinkoffTrade.Operation.notTrading)
+            //        { continue; }
+            //        Log.Information("TransactionModel margin = " + transactionData.Margin);
+            //        Log.Information("TransactionModel operation = " + transactionData.Operation);
+            //        Log.Information("TransactionModel price = " + transactionData.Price);
+            //        Log.Information("TransactionModel quantity = " + transactionData.Quantity);
 
 
-                    //переписать логику нахрен....
+            //        //переписать логику нахрен....
 
 
-                    if (transactionData.Operation == TinkoffTrade.Operation.toLong)
-                    {
-                        Log.Information("If transactionData.Operation = " + TinkoffTrade.Operation.toLong.ToString());
-                        Log.Information("Start first transaction");
-                        await tinkoffTrading.TransactionAsync(transactionData);
-                        int i = 2;
-                        do
-                        {
-                            Log.Information("Start " + i + " transaction");
-                            transactionData = await tinkoffTrading.PurchaseDecisionAsync();
-                            await tinkoffTrading.TransactionAsync(transactionData);
-                            i++;
-                        }
-                        while (await market.PresentInPortfolioAsync(context, transactionData.Figi));
-                        Log.Information("Stop ScreenerStocks after trading");
-                    }
-                    else
-                    {
-                        continue;
-                        Log.Information("Stop ScreenerStocks");
-                    }
-                }
-            }
+            //        if (transactionData.Operation == TinkoffTrade.Operation.toLong)
+            //        {
+            //            Log.Information("If transactionData.Operation = " + TinkoffTrade.Operation.toLong.ToString());
+            //            Log.Information("Start first transaction");
+            //            await tinkoffTrading.TransactionAsync(transactionData);
+            //            int i = 2;
+            //            do
+            //            {
+            //                Log.Information("Start " + i + " transaction");
+            //                transactionData = await tinkoffTrading.PurchaseDecisionAsync();
+            //                await tinkoffTrading.TransactionAsync(transactionData);
+            //                i++;
+            //            }
+            //            while (await market.PresentInPortfolioAsync(context, transactionData.Figi));
+            //            Log.Information("Stop ScreenerStocks after trading");
+            //        }
+            //        else
+            //        {
+            //            continue;
+            //            Log.Information("Stop ScreenerStocks");
+            //        }
+            //    }
+            //}
 
 
 
@@ -108,7 +108,7 @@ namespace tradeSDK
 
             try
             {
-                await mishMashScreener.Screener(context, candleInterval, candlesCount, margin, 60);
+                await mishMashScreener.Screener(context, candleInterval, candlesCount, margin, 10080);
             }
             catch (Exception ex)
             {
