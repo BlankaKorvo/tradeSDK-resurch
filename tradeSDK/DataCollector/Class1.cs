@@ -1,9 +1,11 @@
 ﻿using System;
+using DataCollector.Models;
 
-namespace DataGetter
+namespace DataCollector
 {
-    public class Class1
+    public class GetCandlesCollector// : ICandlesList
     {
+
     }
 }
 

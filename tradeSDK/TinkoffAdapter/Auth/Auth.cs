@@ -5,7 +5,7 @@ using Tinkoff.Trading.OpenApi.Network;
 
 namespace TinkoffAdapter.Auth
 {
-    public  class Auth
+    public class Auth
     {
         public SandboxContext GetSanboxContext()
         {
