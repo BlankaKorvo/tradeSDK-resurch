@@ -1,6 +1,5 @@
 ﻿using ScreenerStocks.Helpers;
 using Serilog;
-using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,8 +12,6 @@ using Tinkoff.Trading.OpenApi.Network;
 using TinkoffAdapter;
 using TinkoffAdapter.DataHelper;
 using TinkoffAdapter.TinkoffTrade;
-using TradingAlgorithms.Algoritms;
-
 
 namespace ScreenerStocks
 {

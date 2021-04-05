@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Stock.Indicators\indicators\Indicators.csproj" />
-    <ProjectReference Include="..\DataGetter\DataCollector.csproj" />
+    <ProjectReference Include="..\DataCollector\DataCollector.csproj" />
     <ProjectReference Include="..\RetryPolicyModel\RetryPolicyModel.csproj" />
   </ItemGroup>
 

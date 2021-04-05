@@ -1,12 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Analysis\Analysis.csproj" />
     <ProjectReference Include="..\RetryPolicyModel\RetryPolicyModel.csproj" />
-    <ProjectReference Include="..\TinkoffData\TinkoffAdapter.csproj" />
+    <ProjectReference Include="..\TinkoffAdapter\TinkoffAdapter.csproj" />
   </ItemGroup>
 
 </Project>

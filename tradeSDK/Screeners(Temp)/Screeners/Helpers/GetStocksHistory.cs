@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using TinkoffAdapter.DataHelper;
-using TinkoffData;
+
 
 
 namespace ScreenerStocks.Helpers
