@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Screeners_Temp_</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Operation\Operation.csproj" />
+    <ProjectReference Include="..\TinkoffData\TinkoffAdapter.csproj" />
+  </ItemGroup>
+
+</Project>

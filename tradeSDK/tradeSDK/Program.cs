@@ -10,12 +10,12 @@ using Tinkoff.Trading.OpenApi.Network;
 using System.Diagnostics;
 using Serilog;
 using TradingAlgorithms.Algoritms;
-using ScreenerStocks;
 using TinkoffData;
 using TinkoffAdapter;
 using RetryPolicy;
 using TinkoffAdapter.DataHelper;
 using TinkoffAdapter.Auth;
+using ScreenerStocks;
 
 namespace tradeSDK
 {

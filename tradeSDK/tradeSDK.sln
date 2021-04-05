@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tradeSDK", "tradeSDK\tradeSDK.csproj", "{E9F41FE5-A3E8-423F-A700-36A777A1EB88}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Screeners", "ScreenerStocks\Screeners.csproj", "{C3C07092-704C-4135-89FF-ACFF54D3C15A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analysis", "TradingAlgorithms\Analysis.csproj", "{062AA595-6179-4484-B6F2-B7FC2069116F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{57183731-6DB1-4E25-A871-7831896F392B}"
@@ -25,6 +23,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Indicators", "..\Stoc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RetryPolicyModel", "RetryPolicyModel\RetryPolicyModel.csproj", "{726C53C3-0EA9-40E1-9643-D3A733602D2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCollector", "DataGetter\DataCollector.csproj", "{1CBB8153-3CC3-4F9D-9E9E-ABE6D34F7BC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Operation", "Operation\Operation.csproj", "{F4D9984D-64D1-4BC1-B5E8-DEC025189C9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Screeners(Temp)", "Screeners(Temp)\Screeners(Temp).csproj", "{1A20CDE0-ED22-40ED-A0EB-0CABA0325D3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +39,6 @@ Global
 		{E9F41FE5-A3E8-423F-A700-36A777A1EB88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9F41FE5-A3E8-423F-A700-36A777A1EB88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9F41FE5-A3E8-423F-A700-36A777A1EB88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3C07092-704C-4135-89FF-ACFF54D3C15A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3C07092-704C-4135-89FF-ACFF54D3C15A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3C07092-704C-4135-89FF-ACFF54D3C15A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3C07092-704C-4135-89FF-ACFF54D3C15A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{062AA595-6179-4484-B6F2-B7FC2069116F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{062AA595-6179-4484-B6F2-B7FC2069116F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{062AA595-6179-4484-B6F2-B7FC2069116F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,6 +59,18 @@ Global
 		{726C53C3-0EA9-40E1-9643-D3A733602D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{726C53C3-0EA9-40E1-9643-D3A733602D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{726C53C3-0EA9-40E1-9643-D3A733602D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CBB8153-3CC3-4F9D-9E9E-ABE6D34F7BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CBB8153-3CC3-4F9D-9E9E-ABE6D34F7BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CBB8153-3CC3-4F9D-9E9E-ABE6D34F7BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CBB8153-3CC3-4F9D-9E9E-ABE6D34F7BC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4D9984D-64D1-4BC1-B5E8-DEC025189C9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4D9984D-64D1-4BC1-B5E8-DEC025189C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4D9984D-64D1-4BC1-B5E8-DEC025189C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4D9984D-64D1-4BC1-B5E8-DEC025189C9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A20CDE0-ED22-40ED-A0EB-0CABA0325D3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A20CDE0-ED22-40ED-A0EB-0CABA0325D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A20CDE0-ED22-40ED-A0EB-0CABA0325D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A20CDE0-ED22-40ED-A0EB-0CABA0325D3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
