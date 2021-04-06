@@ -16,6 +16,9 @@ using RetryPolicy;
 using TinkoffAdapter.DataHelper;
 using TinkoffAdapter.Auth;
 using ScreenerStocks;
+using DataCollector;
+using DataCollector.Models;
+using CandleInterval = DataCollector.Models.CandleInterval;
 
 namespace tradeSDK
 {
@@ -38,9 +41,19 @@ namespace tradeSDK
             //var figi = "BBG0013HGFT4"; //USDRUS
             //var figi = "BBG0018SLC07"; //SQ
             var candleInterval = CandleInterval.Day;
+
             int candlesCount = 45;
             decimal margin = 5000;
 
+            //GetCandlesCollector dataCollector = new GetCandlesCollector();
+
+            //var x = await dataCollector.TinkoffCandles("BBG000BVPV84", candleInterval, 45);
+            //foreach (var item in x.Candles)
+            //{
+            //    Console.WriteLine(item.Open);
+            //    Console.WriteLine(item.Time); 
+            //}
+            //Console.ReadKey();
             //List<string> Tickets = new List<string>() {"qdel", "sage", "bio", "coo", "rgr", "hear", "wor", "msgn"};
             //List<string> Figis = new List<string>();
             

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Tinkoff.Trading.OpenApi.Models;
+using DataCollector.Models;
 
 namespace TinkoffData
 {

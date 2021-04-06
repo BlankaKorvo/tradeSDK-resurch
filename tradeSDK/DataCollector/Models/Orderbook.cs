@@ -3,8 +3,7 @@ using System.Collections.Generic;
 namespace DataCollector.Models
 {
     interface IOrderbook
-    { 
-    
+    {     
     }
     public class Orderbook
     {

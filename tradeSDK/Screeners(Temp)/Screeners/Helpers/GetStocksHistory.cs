@@ -5,25 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
+using DataCollector.Models;
+using DataCollector;
+//using Tinkoff.Trading.OpenApi.Models;
 using TinkoffAdapter.Auth;
-using TinkoffAdapter.DataHelper;
-
-
+using CandleInterval = DataCollector.Models.CandleInterval;
 
 namespace ScreenerStocks.Helpers
 {
     public class GetStocksHistory
     {
-        GetTinkoffData market = new GetTinkoffData();
-        internal async Task<List<MarketInstrument>> AllUsdStocksAsync()
+        //GetTinkoffData market = new GetTinkoffData();
+        GetCandlesCollector dataCollector = new GetCandlesCollector();
+        internal async Task<List<Instrument>> AllUsdStocksAsync()
         {
             Log.Information("Start AllUsdStocks method");
-            List<MarketInstrument> usdStocks = new List<MarketInstrument>();
-            MarketInstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketStocksAsync());
+            List<Instrument> usdStocks = new List<Instrument>();
+            InstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketStocksAsync());
             Log.Information("Get All MarketInstruments. Count =  " + stocks.Instruments.Count);
-            foreach (MarketInstrument item in stocks.Instruments)
+            foreach (Instrument item in stocks.Instruments)
             {
                 if (item.Currency == Currency.Usd)
                 {
@@ -41,21 +42,21 @@ namespace ScreenerStocks.Helpers
             return usdStocks;
         }
 
-        internal async Task<List<CandleList>> AllUsdCandlesAsync(CandleInterval candleInterval, int candelCount)
+        internal async Task<List<CandlesList>> AllUsdCandlesAsync(CandleInterval candleInterval, int candelCount)
         {
             Log.Information("Start AllUsdCandles method");
             List<MarketInstrument> stocks = await AllUsdStocksAsync();
             Log.Information("Get All MarketInstruments. Count =  " + stocks.Count);
-            List<CandleList> usdCandels = new List<CandleList>();
+            List<CandlesList> usdCandels = new List<CandlesList>();
             foreach (var item in stocks)
             {
-                CandleList candle = await market.GetCandlesTinkoffAsync(item.Figi, candleInterval, candelCount);
+                CandlesList candle = await dataCollector.GetCandles(item.Figi, candleInterval, candelCount);
 
                 if (candle == null)
                 {
                     Log.Information("Candle is null");
                     continue;
-                }                
+                }
                 else if (candle.Candles.Count < candelCount)
                 {
                     Log.Information("Get candle with figi: " + candle.Figi);
@@ -67,22 +68,20 @@ namespace ScreenerStocks.Helpers
                     Log.Information("Get candle with figi: " + candle.Figi);
                     usdCandels.Add(candle);                    
                     Log.Information("Add USD Candles with figi: " + item.Figi + " to candlesList");
-                }
-                
-
+                }     
             }
             Log.Information("Return " + usdCandels.Count + " USD candles");
             Log.Information("Stop AllUsdCandles method");
             return usdCandels;
         }
-        internal List<CandleList> AllValidCandles(List<CandleList> listCandleLists, decimal price, int minutes)
+        internal List<CandlesList> AllValidCandles(List<CandlesList> listCandleLists, decimal price, int minutes)
         {
             Log.Information("Start AllValidCandles method");
-            List<CandleList> validCandleLists = new List<CandleList> { };
+            List<CandlesList> validCandleLists = new List<CandlesList> { };
             Log.Information("Count input candles: " + listCandleLists.Count);
             Log.Information("AllValidCandles method. price = " + price);
             Log.Information("AllValidCandles method. notTradeMinutes = " + minutes);
-            foreach (CandleList candleList in listCandleLists)
+            foreach (CandlesList candleList in listCandleLists)
             {
                 if (candleList == null)
                 {
@@ -107,7 +106,7 @@ namespace ScreenerStocks.Helpers
             return validCandleLists;
         }
         //определяет: торговалась ли акция последние заданные минуты
-        private bool NotTradeable(CandleList candleList, int notTradeMinutes)
+        private bool NotTradeable(CandlesList candleList, int notTradeMinutes)
         {
             Log.Information("Start NotTradeable method. Not trade minutes = " + notTradeMinutes);
             var timeNow = DateTime.Now.ToUniversalTime();
@@ -134,7 +133,7 @@ namespace ScreenerStocks.Helpers
             }
         }
         // определяет: не привышает ли стоимость ации определенную сумму
-        private bool LessPrice(CandleList candleList, decimal margin)
+        private bool LessPrice(CandlesList candleList, decimal margin)
         {
             Log.Information("Start LessPrice with figi: " + candleList.Figi);
             Log.Information("LessPrice. Last Close = " + candleList.Candles.Last().Close);

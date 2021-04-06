@@ -1,4 +1,3 @@
-
 namespace DataCollector.Models
 {
     public enum CandleInterval

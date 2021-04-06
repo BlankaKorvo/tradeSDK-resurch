@@ -49,6 +49,10 @@ namespace TinkoffAdapter.Auth
             Log.Information("Stop GetContext");
             return context;
         }
+        public static void RemoveInstance()
+        {
+            _context = null;
+        }
     }
 }
 
