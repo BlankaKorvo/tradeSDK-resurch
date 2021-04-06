@@ -19,7 +19,10 @@ namespace DataCollector
             Tinkoff.Trading.OpenApi.Models.CandleInterval interval = (Tinkoff.Trading.OpenApi.Models.CandleInterval)candleInterval;
             CandleList tinkoffCandles = await getTinkoffData.GetCandlesTinkoffAsync(figi, interval, candlesCount);
 
-            List<CandleStructure> candles = new List<CandleStructure>(tinkoffCandles.Candles.Select(x => new CandleStructure(x.Open, x.Close, x.High, x.Low, x.Volume, x.Time, (CandleInterval)x.Interval, x.Figi)).Distinct());
+            List<CandleStructure> candles = 
+                new List<CandleStructure>(tinkoffCandles.Candles.Select(x => 
+                new CandleStructure(x.Open, x.Close, x.High, x.Low, x.Volume, x.Time, (CandleInterval)x.Interval, x.Figi)).Distinct());
+
             CandlesList candlesList = new CandlesList(tinkoffCandles.Figi, candleInterval, candles);
             return candlesList;
         }
@@ -28,13 +31,20 @@ namespace DataCollector
         {
             MarketInstrumentList tinkoffStocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketStocksAsync());
 
-            InstrumentList stocks = new InstrumentList(tinkoffStocks.Total, tinkoffStocks.Instruments.Select(x => new Instrument(x.Figi, x.Ticker, x.Isin, x.MinPriceIncrement, x.Lot, x.Currency, x.Name, x.Type)));
+            InstrumentList stocks = 
+                new InstrumentList(tinkoffStocks.Total, tinkoffStocks.Instruments.Select(x => 
+                new Instrument(x.Figi, x.Ticker, x.Isin, x.MinPriceIncrement, x.Lot, (Currency)x.Currency, x.Name, (Models.InstrumentType)x.Type)).ToList());
             return stocks;
         }
 
-        public async Task<CandlesList> GetCandles(string figi, CandleInterval candleInterval, int candlesCount)
+        public async Task<CandlesList> GetCandlesAsync(string figi, CandleInterval candleInterval, int candlesCount)
         {
             return await TinkoffCandles(figi, candleInterval, candlesCount);
+        }
+
+        public async Task<InstrumentList> GetInstrumentList()
+        {
+            return await TinkoffInstrumentList();
         }
     }
 }

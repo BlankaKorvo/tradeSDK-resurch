@@ -1,4 +1,5 @@
-﻿using ScreenerStocks.Helpers;
+﻿using DataCollector.Models;
+using ScreenerStocks.Helpers;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -7,12 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
+//using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using TinkoffAdapter;
 using TinkoffAdapter.Auth;
 using TinkoffAdapter.DataHelper;
 using TinkoffAdapter.TinkoffTrade;
+using CandleInterval = DataCollector.Models.CandleInterval;
 
 namespace ScreenerStocks
 {
@@ -26,7 +28,7 @@ namespace ScreenerStocks
             Log.Information("candleCount:" + candleInterval);
             Log.Information("margin:" + margin);
             Log.Information("notTradeMinuts:" + notTradeMinuts);
-            List<CandleList> candleLists = await SortUsdCandlesAsync(candleInterval, candleCount, margin, notTradeMinuts);
+            List<CandlesList> candleLists = await SortUsdCandlesAsync(candleInterval, candleCount, margin, notTradeMinuts);
             Log.Information("Get Sort USD candles");
             Log.Information("Start of sorted candleLists");
             Log.Information("Count = " + candleLists.Count);
@@ -50,7 +52,7 @@ namespace ScreenerStocks
             }
         }
 
-        public async Task Trading(CandleInterval candleInterval, int candleCount, decimal margin, List<CandleList> CandleLists)
+        public async Task Trading(CandleInterval candleInterval, int candleCount, decimal margin, List<CandlesList> CandleLists)
         {
             Log.Information("Start ScreenerStocks: ");
             Log.Information("Count instruments =  " + CandleLists.Count);
@@ -97,16 +99,16 @@ namespace ScreenerStocks
                 }
             }
         }
-        async Task<List<CandleList>> SortUsdCandlesAsync(CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
+        async Task<List<CandlesList>> SortUsdCandlesAsync(CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)
         {
             Log.Information("Start SortUsdCandles. Param: ");
             Log.Information("candleInterval: " + candleInterval);
             Log.Information("candleCount: " + candleCount);
             Log.Information("margin: " + margin);
             Log.Information("notTradeMinuts: " + notTradeMinuts);
-            List<CandleList> allUsdCandleLists = await AllUsdCandlesAsync(candleInterval, candleCount);
+            List<CandlesList> allUsdCandleLists = await AllUsdCandlesAsync(candleInterval, candleCount);
             Log.Information("Get All USD candlesLists. Count: " + allUsdCandleLists.Count);
-            List<CandleList> validCandleLists = AllValidCandles(allUsdCandleLists, margin, notTradeMinuts);
+            List<CandlesList> validCandleLists = AllValidCandles(allUsdCandleLists, margin, notTradeMinuts);
             Log.Information("Return Valid candlesLists. Count: " + validCandleLists.Count);
             Log.Information("Stop SortUsdCandles");
             return validCandleLists;

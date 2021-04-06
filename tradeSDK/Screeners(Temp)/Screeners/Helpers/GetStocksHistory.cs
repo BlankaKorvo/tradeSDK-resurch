@@ -22,7 +22,7 @@ namespace ScreenerStocks.Helpers
         {
             Log.Information("Start AllUsdStocks method");
             List<Instrument> usdStocks = new List<Instrument>();
-            InstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketStocksAsync());
+            InstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await dataCollector.GetInstrumentList());
             Log.Information("Get All MarketInstruments. Count =  " + stocks.Instruments.Count);
             foreach (Instrument item in stocks.Instruments)
             {
@@ -45,12 +45,12 @@ namespace ScreenerStocks.Helpers
         internal async Task<List<CandlesList>> AllUsdCandlesAsync(CandleInterval candleInterval, int candelCount)
         {
             Log.Information("Start AllUsdCandles method");
-            List<MarketInstrument> stocks = await AllUsdStocksAsync();
+            List<Instrument> stocks = await AllUsdStocksAsync();
             Log.Information("Get All MarketInstruments. Count =  " + stocks.Count);
             List<CandlesList> usdCandels = new List<CandlesList>();
             foreach (var item in stocks)
             {
-                CandlesList candle = await dataCollector.GetCandles(item.Figi, candleInterval, candelCount);
+                CandlesList candle = await dataCollector.GetCandlesAsync(item.Figi, candleInterval, candelCount);
 
                 if (candle == null)
                 {

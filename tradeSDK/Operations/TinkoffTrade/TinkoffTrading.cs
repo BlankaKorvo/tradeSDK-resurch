@@ -1,11 +1,13 @@
-﻿using Serilog;
+﻿using DataCollector;
+using DataCollector.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
-using Tinkoff.Trading.OpenApi.Network;
+//using Tinkoff.Trading.OpenApi.Models;
+//using Tinkoff.Trading.OpenApi.Network;
 using TinkoffAdapter.DataHelper;
 using TradingAlgorithms.Algoritms;
 
@@ -13,7 +15,7 @@ namespace TinkoffAdapter.TinkoffTrade
 {
     public class TinkoffTrading : TransactionModel
     {
-        public Context context { get; set; }
+        //public Context context { get; set; }
         //public string figi { get; set; }
         public CandleInterval candleInterval { get; set; }
         //public int countStoks { get; set; }
@@ -23,8 +25,8 @@ namespace TinkoffAdapter.TinkoffTrade
         //время ожидания между следующим циклом
         int sleep { get; set; } = 0;
 
-        GetTinkoffData market = new GetTinkoffData();
-        
+        //GetTinkoffData market = new GetTinkoffData();
+        GetCandlesCollector market = new GetCandlesCollector();
 
         async public Task TransactionAsync(TransactionModel transactionModel)
         {
@@ -82,7 +84,7 @@ namespace TinkoffAdapter.TinkoffTrade
             transactionModel.Figi = this.Figi;
             transactionModel.Purchase = this.Purchase;
             //Получаем свечи
-            CandleList candleList = await market.GetCandlesTinkoffAsync(transactionModel.Figi, candleInterval, CandlesCount);
+            CandlesList candleList = await market.GetCandlesAsync(transactionModel.Figi, candleInterval, CandlesCount);
 
             //Получаем стакан
             Orderbook orderbook = await market.GetOrderbookAsync(transactionModel.Figi, 1);
