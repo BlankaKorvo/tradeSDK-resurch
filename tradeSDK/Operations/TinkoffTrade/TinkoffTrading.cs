@@ -82,10 +82,10 @@ namespace TinkoffAdapter.TinkoffTrade
             transactionModel.Figi = this.Figi;
             transactionModel.Purchase = this.Purchase;
             //Получаем свечи
-            CandleList candleList = await market.GetCandlesTinkoffAsync(context, transactionModel.Figi, candleInterval, CandlesCount);
+            CandleList candleList = await market.GetCandlesTinkoffAsync(transactionModel.Figi, candleInterval, CandlesCount);
 
             //Получаем стакан
-            Orderbook orderbook = await market.GetOrderbookAsync(context, transactionModel.Figi, 1);
+            Orderbook orderbook = await market.GetOrderbookAsync(transactionModel.Figi, 1);
             if (orderbook == null)
             {
                 Log.Information("Orderbook " + transactionModel.Figi + " is null");

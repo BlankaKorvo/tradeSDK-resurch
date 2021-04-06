@@ -5,9 +5,32 @@ using Tinkoff.Trading.OpenApi.Network;
 
 namespace TinkoffAdapter.Auth
 {
-    public class Auth
+    public static class Auth
     {
-        public SandboxContext GetSanboxContext()
+        static Context _context;
+        public static Context Context
+        {
+            get
+            {
+                if (_context == null)
+                {
+#if DEBUG
+                    _context = GetSanboxContext();
+#else
+                    _context = GetSanboxContext();
+#endif
+                }
+                return _context;
+            }
+        }
+        //static Auth()
+        //{
+        //    if (Context == null)
+        //    {
+        //        Context = GetSanboxContext();
+        //    }
+        //}
+        static Context GetSanboxContext()
         {
             Log.Information("Start GetSanboxContext");
             string token = File.ReadAllLines("toksan.dll")[0].Trim();
@@ -17,7 +40,7 @@ namespace TinkoffAdapter.Auth
             return context;
         }
 
-        public Context GetContext()
+        static Context GetContext()
         {
             Log.Information("Start GetContext");
             string token = File.ReadAllLines("tokst.dll")[0].Trim();

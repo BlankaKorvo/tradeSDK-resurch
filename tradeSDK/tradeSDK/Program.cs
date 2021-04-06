@@ -30,7 +30,7 @@ namespace tradeSDK
                 .CreateLogger();   
             
             GetTinkoffData market = new GetTinkoffData();
-            SandboxContext context = new Auth().GetSanboxContext();
+            //SandboxContext context = new Auth().GetSanboxContext();
             //Serialization ser = new Serialization();
 
 
@@ -41,14 +41,14 @@ namespace tradeSDK
             int candlesCount = 45;
             decimal margin = 5000;
 
-            List<string> Tickets = new List<string>() {"qdel", "sage", "bio", "coo", "rgr", "hear", "wor", "msgn"};
-            List<string> Figis = new List<string>();
+            //List<string> Tickets = new List<string>() {"qdel", "sage", "bio", "coo", "rgr", "hear", "wor", "msgn"};
+            //List<string> Figis = new List<string>();
             
-            foreach (var item in Tickets)
-            {
-                var sbt = await context.MarketSearchByTickerAsync(item);
-                Figis.Add(sbt.Instruments.Last().Figi);
-            }
+            //foreach (var item in Tickets)
+            //{
+            //    var sbt = await context.MarketSearchByTickerAsync(item);
+            //    Figis.Add(sbt.Instruments.Last().Figi);
+            //}
 
 
             //List<string> Figis = new List<string>() { "BBG000B9XRY4", "BBG000NS03H7", "BBG000BPH459", "BBG000D8RG11", "BBG0016SSV00", "BBG000BM6N47", "BBG000HL7499" };
@@ -111,7 +111,7 @@ namespace tradeSDK
 
             try
             {
-                await mishMashScreener.Screener(context, candleInterval, candlesCount, margin, 10080);
+                await mishMashScreener.Screener(candleInterval, candlesCount, margin, 10080);
             }
             catch (Exception ex)
             {

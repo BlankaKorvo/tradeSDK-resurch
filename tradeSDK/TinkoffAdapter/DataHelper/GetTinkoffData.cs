@@ -9,12 +9,13 @@ using Tinkoff.Trading.OpenApi.Network;
 using RetryPolicy;
 using Polly;
 using Context = Tinkoff.Trading.OpenApi.Network.Context;
+using TinkoffAdapter.Auth;
 
 namespace TinkoffAdapter.DataHelper
 {   
     public class GetTinkoffData
     {
-        public async Task<CandleList> GetCandlesTinkoffAsync(Context context, string figi, CandleInterval candleInterval, int candlesCount)
+        public async Task<CandleList> GetCandlesTinkoffAsync(string figi, CandleInterval candleInterval, int candlesCount)
         {
             Log.Information("Start GetCandlesTinkoffAsync method. Figi: " + figi);
 
@@ -37,7 +38,7 @@ namespace TinkoffAdapter.DataHelper
             {
                 while (AllCandlePayloadTemp.Count < candlesCount)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandlesAsync(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-1);
                     iterCount++;
                     if (iterCount > finalIterCount)
@@ -51,7 +52,7 @@ namespace TinkoffAdapter.DataHelper
             else if (candleInterval == CandleInterval.Hour)
                 while (AllCandlePayloadTemp.Count < candlesCount)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandlesAsync(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-7);
                     iterCount++;
                     if (iterCount > finalIterCount)
@@ -65,7 +66,7 @@ namespace TinkoffAdapter.DataHelper
             {
                 while (AllCandlePayloadTemp.Count < candlesCount)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandlesAsync(context, figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddYears(-1);
                     iterCount++;
                     if (iterCount > finalIterCount)
@@ -86,7 +87,7 @@ namespace TinkoffAdapter.DataHelper
             return candleList;
         }
 
-        async Task<CandleList> GetOneSetCandlesAsync(Context context, string figi, CandleInterval interval, DateTime to)
+        async Task<CandleList> GetOneSetCandlesAsync(string figi, CandleInterval interval, DateTime to)
         {
 
             Log.Information("Start GetCandleByFigiAsync method whith figi: " + figi);
@@ -132,7 +133,7 @@ namespace TinkoffAdapter.DataHelper
 
             try
             {
-                CandleList candle = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketCandlesAsync(figi, from, to, interval)));
+                CandleList candle = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Auth.Context.MarketCandlesAsync(figi, from, to, interval)));
                 Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
                 Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
                 return candle;
@@ -146,11 +147,11 @@ namespace TinkoffAdapter.DataHelper
             }
         }    
 
-        async Task<List<CandlePayload>> GetUnionCandlesAsync(Context context, string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, ComparerTinkoffCandlePayloadEquality CandlePayloadEqC)
+        async Task<List<CandlePayload>> GetUnionCandlesAsync(string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, ComparerTinkoffCandlePayloadEquality CandlePayloadEqC)
         {
             Log.Information("Start GetUnionCandles. Figi: " + figi);
             Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
-            CandleList candleListTemp = await GetOneSetCandlesAsync(context, figi, candleInterval, date);//.GetAwaiter().GetResult();
+            CandleList candleListTemp = await GetOneSetCandlesAsync(figi, candleInterval, date);//.GetAwaiter().GetResult();
             Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
             AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
             //AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
@@ -158,10 +159,10 @@ namespace TinkoffAdapter.DataHelper
             Log.Information("Stop GetUnionCandles. Figi: " + figi);
             return AllCandlePayloadTemp;
         }
-        public async Task<Orderbook> GetOrderbookAsync(Context context, string figi, int depth)
+        public async Task<Orderbook> GetOrderbookAsync(string figi, int depth)
         {
             Log.Information("Start GetOrderbook method. Figi: " + figi);
-            Orderbook orderbook = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketOrderbookAsync(figi, depth)));
+            Orderbook orderbook = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Auth.Context.MarketOrderbookAsync(figi, depth)));
 
             if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
             {
@@ -186,10 +187,10 @@ namespace TinkoffAdapter.DataHelper
             Log.Information("Stop GetOrderbook method. Figi: " + figi);
             return orderbook;
         }
-        public async Task<bool> PresentInPortfolioAsync(Context context, string figi)
+        public async Task<bool> PresentInPortfolioAsync(string figi)
         {
             Log.Information("Start PresentInPortfolio method. Figi: " + figi);
-            Portfolio portfolio = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PortfolioAsync()));
+            Portfolio portfolio = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Auth.Context.PortfolioAsync()));
             foreach (Portfolio.Position item in portfolio.Positions)
             {
                 if (item.Figi == figi)

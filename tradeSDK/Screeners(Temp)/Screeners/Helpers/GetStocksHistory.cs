@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
+using TinkoffAdapter.Auth;
 using TinkoffAdapter.DataHelper;
 
 
@@ -16,11 +17,11 @@ namespace ScreenerStocks.Helpers
     public class GetStocksHistory
     {
         GetTinkoffData market = new GetTinkoffData();
-        internal async Task<List<MarketInstrument>> AllUsdStocksAsync(Context context)
+        internal async Task<List<MarketInstrument>> AllUsdStocksAsync()
         {
             Log.Information("Start AllUsdStocks method");
             List<MarketInstrument> usdStocks = new List<MarketInstrument>();
-            MarketInstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.MarketStocksAsync());
+            MarketInstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketStocksAsync());
             Log.Information("Get All MarketInstruments. Count =  " + stocks.Instruments.Count);
             foreach (MarketInstrument item in stocks.Instruments)
             {
@@ -40,15 +41,15 @@ namespace ScreenerStocks.Helpers
             return usdStocks;
         }
 
-        internal async Task<List<CandleList>> AllUsdCandlesAsync(Context context, CandleInterval candleInterval, int candelCount)
+        internal async Task<List<CandleList>> AllUsdCandlesAsync(CandleInterval candleInterval, int candelCount)
         {
             Log.Information("Start AllUsdCandles method");
-            List<MarketInstrument> stocks = await AllUsdStocksAsync(context);
+            List<MarketInstrument> stocks = await AllUsdStocksAsync();
             Log.Information("Get All MarketInstruments. Count =  " + stocks.Count);
             List<CandleList> usdCandels = new List<CandleList>();
             foreach (var item in stocks)
             {
-                CandleList candle = await market.GetCandlesTinkoffAsync(context, item.Figi, candleInterval, candelCount);
+                CandleList candle = await market.GetCandlesTinkoffAsync(item.Figi, candleInterval, candelCount);
 
                 if (candle == null)
                 {
