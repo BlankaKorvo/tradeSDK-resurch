@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarketDataModules;
 using Serilog;
 using Skender.Stock.Indicators;
-using Tinkoff.Trading.OpenApi.Models;
 using TinkoffData;
 
 namespace TradingAlgorithms.IndicatorSignals
@@ -17,7 +17,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         //int superTrandPeriod = 20;
         //int superTrandSensitive = 2;
-        internal bool SuperTrendLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool SuperTrendLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             List<SuperTrendResult> superTrand = Mapper.SuperTrendData(candleList, deltaPrice, superTrandPeriod,  superTrandSensitive);
             if (superTrand.Last().UpperBand == null)
@@ -37,7 +37,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 return false;
             }
         }
-        internal bool SuperTrendFromLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool SuperTrendFromLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             List<SuperTrendResult> superTrand = Mapper.SuperTrendData(candleList, deltaPrice, superTrandPeriod, superTrandSensitive);
             if (superTrand.Last().LowerBand == null)

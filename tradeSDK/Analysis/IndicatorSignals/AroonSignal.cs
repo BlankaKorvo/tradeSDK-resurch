@@ -1,11 +1,12 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
+//using Tinkoff.Trading.OpenApi.Models;
 using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
@@ -18,7 +19,7 @@ namespace TradingAlgorithms.IndicatorSignals
         decimal aroonUpValueFromLong = 50;
 
         decimal aroonDownValue = 50;
-        internal bool AroonLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool AroonLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Aroon LongSignal. Figi: " + candleList.Figi);
             List<AroonResult> aroon = Mapper.AroonData(candleList, deltaPrice, aroonLookbackPeriod);
@@ -54,7 +55,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool AroonFromLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool AroonFromLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Aroon FromLongSignal. Figi: " + candleList.Figi);
             List<AroonResult> aroon = Mapper.AroonData(candleList, deltaPrice, aroonLookbackPeriod);

@@ -1,4 +1,4 @@
-﻿using DataCollector.Models;
+﻿using MarketDataModules;
 using ScreenerStocks.Helpers;
 using Serilog;
 using System;
@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 //using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using TinkoffAdapter;
-using TinkoffAdapter.Auth;
+using TinkoffAdapter.Authority;
 using TinkoffAdapter.DataHelper;
 using TinkoffAdapter.TinkoffTrade;
-using CandleInterval = DataCollector.Models.CandleInterval;
+using CandleInterval = MarketDataModules.CandleInterval;
 
 namespace ScreenerStocks
 {
@@ -61,7 +61,7 @@ namespace ScreenerStocks
             foreach (var item in CandleLists)
             {
                 Log.Information("Start ScreenerStocks for: " + item.Figi);
-                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandlesCount = candleCount, candleInterval = candleInterval, context = Auth.Context, Purchase = margin };
+                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandlesCount = candleCount, candleInterval = candleInterval, Purchase = margin };
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
                 Log.Information("Get TransactionModel: " + transactionData.Figi);

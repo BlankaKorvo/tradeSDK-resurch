@@ -1,11 +1,11 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
 using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
@@ -16,7 +16,7 @@ namespace TradingAlgorithms.IndicatorSignals
         int adxLookbackPeriod = 8;
         int adxAverageAngleCount = 2;
         int adxFromLongAverageAngleCount = 2;
-        public bool AdxLongSignal(CandleList candleList, decimal deltaPrice)
+        public bool AdxLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start AdxSignal LongSignal method with figi:" + candleList.Figi);
             List<AdxResult> adx = Mapper.AdxData(candleList, deltaPrice, adxLookbackPeriod);
@@ -58,7 +58,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         }
 
-        public bool AdxFromLongSignal(CandleList candleList, decimal deltaPrice)
+        public bool AdxFromLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start AdxSignal FromLongSignal method with figi:" + candleList.Figi);
             List<AdxResult> adx = Mapper.AdxData(candleList, deltaPrice, adxLookbackPeriod);

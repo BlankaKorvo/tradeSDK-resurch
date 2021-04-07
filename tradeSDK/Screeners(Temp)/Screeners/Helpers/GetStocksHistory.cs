@@ -6,23 +6,23 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Tinkoff.Trading.OpenApi.Network;
-using DataCollector.Models;
+using MarketDataModules;
 using DataCollector;
 //using Tinkoff.Trading.OpenApi.Models;
-using TinkoffAdapter.Auth;
-using CandleInterval = DataCollector.Models.CandleInterval;
+using TinkoffAdapter.Authority;
+using CandleInterval = MarketDataModules.CandleInterval;
 
 namespace ScreenerStocks.Helpers
 {
     public class GetStocksHistory
     {
         //GetTinkoffData market = new GetTinkoffData();
-        GetCandlesCollector dataCollector = new GetCandlesCollector();
+        MarketDataCollector dataCollector = new MarketDataCollector();
         internal async Task<List<Instrument>> AllUsdStocksAsync()
         {
             Log.Information("Start AllUsdStocks method");
             List<Instrument> usdStocks = new List<Instrument>();
-            InstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await dataCollector.GetInstrumentList());
+            InstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await dataCollector.GetInstrumentListAsync());
             Log.Information("Get All MarketInstruments. Count =  " + stocks.Instruments.Count);
             foreach (Instrument item in stocks.Instruments)
             {

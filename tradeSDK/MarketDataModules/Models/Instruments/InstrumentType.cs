@@ -1,4 +1,4 @@
-namespace DataCollector.Models
+namespace MarketDataModules
 {
     public enum InstrumentType
     {

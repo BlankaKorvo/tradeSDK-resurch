@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MarketDataModules\MarketDataModules.csproj" />
     <ProjectReference Include="..\RetryPolicyModel\RetryPolicyModel.csproj" />
     <ProjectReference Include="..\TinkoffAdapter\TinkoffAdapter.csproj" />
   </ItemGroup>

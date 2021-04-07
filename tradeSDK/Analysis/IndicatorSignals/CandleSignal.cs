@@ -1,11 +1,11 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
 using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
@@ -13,7 +13,7 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     partial class Signal : IndicatorSignalsHelper
     {
-        internal bool CandleLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool CandleLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start CandleSignal LongSignal. Figi: " + candleList.Figi);
             if (deltaPrice == candleList.Candles.Last().Open)

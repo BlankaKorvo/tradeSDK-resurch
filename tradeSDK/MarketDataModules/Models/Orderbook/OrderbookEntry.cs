@@ -1,11 +1,11 @@
-namespace DataCollector.Models
+namespace MarketDataModules
 { 
-    public class OrderbookRecord
+    public class OrderbookEntry
     {
         public int Quantity { get; }
         public decimal Price { get; }
 
-        public OrderbookRecord(int quantity, decimal price)
+        public OrderbookEntry(int quantity, decimal price)
         {
             Quantity = quantity;
             Price = price;

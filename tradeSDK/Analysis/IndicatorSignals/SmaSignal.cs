@@ -1,11 +1,11 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
 using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
@@ -15,7 +15,7 @@ namespace TradingAlgorithms.IndicatorSignals
     {
         int smaLookbackPeriod = 8;
         const decimal smaPriceDeltaCount = 0.15M;
-        internal bool SmaLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool SmaLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Sma LongSignal. Figi: " + candleList.Figi);
             List<SmaResult> sma = Mapper.SmaData(candleList, deltaPrice, smaLookbackPeriod);

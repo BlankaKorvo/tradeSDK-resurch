@@ -9,7 +9,7 @@ using Tinkoff.Trading.OpenApi.Network;
 using RetryPolicy;
 using Polly;
 using Context = Tinkoff.Trading.OpenApi.Network.Context;
-using TinkoffAdapter.Auth;
+using TinkoffAdapter.Authority;
 
 namespace TinkoffAdapter.DataHelper
 {   
@@ -133,7 +133,7 @@ namespace TinkoffAdapter.DataHelper
 
             try
             {
-                CandleList candle = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Auth.Context.MarketCandlesAsync(figi, from, to, interval)));
+                CandleList candle = await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketCandlesAsync(figi, from, to, interval)));
                 Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
                 Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
                 return candle;
@@ -162,7 +162,7 @@ namespace TinkoffAdapter.DataHelper
         public async Task<Orderbook> GetOrderbookAsync(string figi, int depth)
         {
             Log.Information("Start GetOrderbook method. Figi: " + figi);
-            Orderbook orderbook = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Auth.Context.MarketOrderbookAsync(figi, depth)));
+            Orderbook orderbook = await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketOrderbookAsync(figi, depth)));
 
             if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
             {
@@ -190,7 +190,7 @@ namespace TinkoffAdapter.DataHelper
         public async Task<bool> PresentInPortfolioAsync(string figi)
         {
             Log.Information("Start PresentInPortfolio method. Figi: " + figi);
-            Portfolio portfolio = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Auth.Context.PortfolioAsync()));
+            Portfolio portfolio = await RetryPolicy.Model.Retry().ExecuteAsync(async () => await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Authority.Auth.Context.PortfolioAsync()));
             foreach (Portfolio.Position item in portfolio.Positions)
             {
                 if (item.Figi == figi)

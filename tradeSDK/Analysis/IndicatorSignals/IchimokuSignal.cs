@@ -1,11 +1,11 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
 using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
@@ -20,7 +20,7 @@ namespace TradingAlgorithms.IndicatorSignals
         const int ichimokuDeltaAngleCountFromLong = 1;
         const double ichimokuTenkanSenAngleFromLong = 0;
 
-        internal bool IchimokuLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool IchimokuLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             List<IchimokuResult> ichimoku = Mapper.IchimokuData(candleList, deltaPrice);
             decimal? tenkansenPriceDelta = 100 - (ichimoku.Last().TenkanSen * 100 / deltaPrice); //Насколько далеко убежала цена от Ichimoku TenkanSen
@@ -52,7 +52,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool IchimokuFromLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool IchimokuFromLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             List<IchimokuResult> ichimoku = Mapper.IchimokuData(candleList, deltaPrice);
             if (/*ichimoku.Last().TenkanSen < ichimoku.Last().KijunSen*/ //под вопросом на минунтных свечах. Достаточно отрицательный угол на последнем отрезке. Возможно, потребуется, если буду нормализовать свечи не по клозу, а по средней цене за свечу.

@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace TradingAlgorithms.IndicatorSignals
         int macdSignalPeriod = 9;
         int macdAverageAngleCount = 2;
         double macdAverageAngleCondition = 0;
-        internal bool MacdLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool MacdLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start MACD LongSignal. Figi: " + candleList.Figi);
             List<MacdResult> macd = Mapper.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
@@ -52,7 +53,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }            
         }
 
-        internal bool MacdFromLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool MacdFromLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start MACD FromLongSignal. Figi: " + candleList.Figi);
             List<MacdResult> macd = Mapper.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);

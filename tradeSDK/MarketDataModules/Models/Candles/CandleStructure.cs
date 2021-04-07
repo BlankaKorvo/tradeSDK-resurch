@@ -1,6 +1,6 @@
 using System;
 
-namespace DataCollector.Models
+namespace MarketDataModules
 {
     public class CandleStructure
     {

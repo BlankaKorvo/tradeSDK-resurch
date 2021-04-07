@@ -1,11 +1,12 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
+
 using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
@@ -14,7 +15,7 @@ namespace TradingAlgorithms.IndicatorSignals
     partial class Signal : IndicatorSignalsHelper
     {
         int BollingerBandsanglesCount = 3;
-        internal bool BollingerBandsLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool BollingerBandsLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start BollingerBands LongSignal. Figi: " + candleList.Figi);
             List<BollingerBandsResult> bollingerBands = Mapper.BollingerBandsData(candleList, deltaPrice);

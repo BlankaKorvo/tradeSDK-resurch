@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace TradingAlgorithms.IndicatorSignals
         double dpoAverageAngleConditionLong = 0;
         double dpoAverageAngleConditionFromLong = -30;
 
-        internal bool DpoLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool DpoLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Dpo LongSignal. Figi: " + candleList.Figi);
             List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
@@ -46,7 +47,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool DpoFromLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool DpoFromLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Dpo FromLongSignal. Figi: " + candleList.Figi);
             List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
@@ -87,7 +88,7 @@ namespace TradingAlgorithms.IndicatorSignals
             return DeltaDegreeAngle(values);
         }
 
-        internal bool DpoLongSignalUltimate(CandleList candleList, decimal deltaPrice, double averageAngleConditionLong)
+        internal bool DpoLongSignalUltimate(CandlesList candleList, decimal deltaPrice, double averageAngleConditionLong)
         {
             List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo >= dpoLastDpoCondition
@@ -111,7 +112,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
         }
 
-        internal bool DpoFromLongSignalUltimate(CandleList candleList, decimal deltaPrice, double averageAngleConditionFromLong)
+        internal bool DpoFromLongSignalUltimate(CandlesList candleList, decimal deltaPrice, double averageAngleConditionFromLong)
         {
             List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
             if (dpo.Last().Dpo < dpoLastDpoCondition

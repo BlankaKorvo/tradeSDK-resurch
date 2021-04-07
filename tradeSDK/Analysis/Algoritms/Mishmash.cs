@@ -1,10 +1,11 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
+//using Tinkoff.Trading.OpenApi.Models;
 using TradingAlgorithms.IndicatorSignals;
 
 namespace TradingAlgorithms.Algoritms
@@ -15,7 +16,7 @@ namespace TradingAlgorithms.Algoritms
 
 
         //Передаваемые при создании объекта параметры
-        public CandleList candleList { get; set; }
+        public CandlesList candleList { get; set; }
         public decimal deltaPrice { get; set; }
 
         //Тюнинг индикаторов
@@ -38,11 +39,13 @@ namespace TradingAlgorithms.Algoritms
                 &&
                 Signal.BollingerBandsLongSignal(candleList, deltaPrice)
                 
+                &&
+                Signal.CandleLongSignal(candleList, deltaPrice)
+
                 //Проверка на отсутсвие гэпа
                 &&
                 Signal.SmaLongSignal(candleList, deltaPrice)
-                &&
-                Signal.CandleLongSignal(candleList, deltaPrice)
+
                 )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);

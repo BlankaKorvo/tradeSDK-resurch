@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using Tinkoff.Trading.OpenApi.Network;
 
-namespace TinkoffAdapter.Auth
+namespace TinkoffAdapter.Authority
 {
     public static class Auth
     {

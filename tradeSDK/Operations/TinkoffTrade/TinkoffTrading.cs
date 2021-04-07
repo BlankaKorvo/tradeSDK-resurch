@@ -1,15 +1,18 @@
 ﻿using DataCollector;
-using DataCollector.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-//using Tinkoff.Trading.OpenApi.Models;
-//using Tinkoff.Trading.OpenApi.Network;
+using TinkoffAdapter.Authority;
+using Tinkoff.Trading.OpenApi.Models;
+using Tinkoff.Trading.OpenApi.Network;
 using TinkoffAdapter.DataHelper;
 using TradingAlgorithms.Algoritms;
+using MarketDataModules;
+using Orderbook = MarketDataModules.Orderbook;
+using CandleInterval = MarketDataModules.CandleInterval;
 
 namespace TinkoffAdapter.TinkoffTrade
 {
@@ -26,7 +29,7 @@ namespace TinkoffAdapter.TinkoffTrade
         int sleep { get; set; } = 0;
 
         //GetTinkoffData market = new GetTinkoffData();
-        GetCandlesCollector market = new GetCandlesCollector();
+        MarketDataCollector marketDataCollector = new MarketDataCollector();
 
         async public Task TransactionAsync(TransactionModel transactionModel)
         {
@@ -84,10 +87,10 @@ namespace TinkoffAdapter.TinkoffTrade
             transactionModel.Figi = this.Figi;
             transactionModel.Purchase = this.Purchase;
             //Получаем свечи
-            CandlesList candleList = await market.GetCandlesAsync(transactionModel.Figi, candleInterval, CandlesCount);
+            CandlesList candleList = await marketDataCollector.GetCandlesAsync(transactionModel.Figi, candleInterval, CandlesCount);
 
             //Получаем стакан
-            Orderbook orderbook = await market.GetOrderbookAsync(transactionModel.Figi, 1);
+            Orderbook orderbook = await marketDataCollector.GetOrderbookAsync(transactionModel.Figi, 1);
             if (orderbook == null)
             {
                 Log.Information("Orderbook " + transactionModel.Figi + " is null");
@@ -163,12 +166,12 @@ namespace TinkoffAdapter.TinkoffTrade
         private async Task BuyStoksAsync(TransactionModel transactionModel)
         {
             Log.Information("Start BuyStoks: " + transactionModel.Figi);
-            List<Order> orders = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.OrdersAsync());
+            List<Order> orders = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.OrdersAsync());
             foreach (Order order in orders)
             {
                 if (order.Figi == transactionModel.Figi)
                 {
-                    await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.CancelOrderAsync(order.OrderId));
+                    await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.CancelOrderAsync(order.OrderId));
                     Log.Information("Delete order by figi: " + transactionModel.Figi + " RequestedLots " + order.RequestedLots + " ExecutedLots " + order.ExecutedLots + " Price " + order.Price + " Operation " + order.Operation + " Status " + order.Status + " Type " + order.Type);
                 }
             }
@@ -179,7 +182,7 @@ namespace TinkoffAdapter.TinkoffTrade
                 Log.Information("Not any lot in margin: " + transactionModel.Purchase);
                 return; }
 
-            await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Buy, transactionModel.Price)));
+            await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Buy, transactionModel.Price)));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
                 sw.WriteLine(DateTime.Now + @" Buy " + transactionModel.Figi + " Quantity: " + transactionModel.Quantity +  " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
@@ -195,7 +198,7 @@ namespace TinkoffAdapter.TinkoffTrade
             int lots = await CalculationStocksFromLongAsync(transactionModel);
             if (lots == 0)
             { return; }
-            await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Sell, transactionModel.Price)));
+            await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Sell, transactionModel.Price)));
             using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
             {
                 sw.WriteLine(DateTime.Now + @" Sell " + transactionModel.Figi + "Quantity: " + transactionModel.Quantity + " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
@@ -263,7 +266,7 @@ namespace TinkoffAdapter.TinkoffTrade
         private async Task<int> CountLotsInPortfolioAsync(string figi)
         {
             Log.Information("Start CountLotsInPortfolio method. Figi: " + Figi);
-            var portfolio = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await context.PortfolioAsync());
+            var portfolio = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.PortfolioAsync());
             int lots = 0;
             foreach (var item in portfolio.Positions)
             {

@@ -1,11 +1,11 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using Skender.Stock.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
 using TinkoffData;
 using TradingAlgorithms.IndicatorSignals.Helpers;
 
@@ -16,7 +16,7 @@ namespace TradingAlgorithms.IndicatorSignals
         int adlLookbackPeriodSma = 5;
         int adlAnglesCount = 2;
 
-        internal bool AdlLongSignal(CandleList candleList, decimal deltaPrice)
+        internal bool AdlLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start OBV LongSignal. Figi: " + candleList.Figi);
             List<AdlResult> adl = Mapper.AdlData(candleList, deltaPrice, adlLookbackPeriodSma);

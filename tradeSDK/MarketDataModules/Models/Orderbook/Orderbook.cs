@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
 
-namespace DataCollector.Models
+namespace MarketDataModules
 {
     interface IOrderbook
     {     
@@ -8,8 +9,8 @@ namespace DataCollector.Models
     public class Orderbook
     {
         public int Depth { get; }
-        public List<OrderbookRecord> Bids { get; }
-        public List<OrderbookRecord> Asks { get; }
+        public List<OrderbookEntry> Bids { get; }
+        public List<OrderbookEntry> Asks { get; }
         public string Figi { get; }
         public TradeStatus TradeStatus { get; }
         /// <summary>
@@ -33,8 +34,8 @@ namespace DataCollector.Models
 
         public Orderbook(
             int depth,
-            List<OrderbookRecord> bids,
-            List<OrderbookRecord> asks,
+            List<OrderbookEntry> bids,
+            List<OrderbookEntry> asks,
             string figi,
             TradeStatus tradeStatus,
             decimal minPriceIncrement,

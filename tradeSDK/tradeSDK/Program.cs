@@ -14,11 +14,10 @@ using TinkoffData;
 using TinkoffAdapter;
 using RetryPolicy;
 using TinkoffAdapter.DataHelper;
-using TinkoffAdapter.Auth;
+using TinkoffAdapter.Authority;
 using ScreenerStocks;
 using DataCollector;
-using DataCollector.Models;
-using CandleInterval = DataCollector.Models.CandleInterval;
+using CandleInterval = MarketDataModules.CandleInterval;
 
 namespace tradeSDK
 {
