@@ -39,8 +39,8 @@ namespace TradingAlgorithms.Algoritms
                 &&
                 Signal.BollingerBandsLongSignal(candleList, deltaPrice)
                 
-                &&
-                Signal.CandleLongSignal(candleList, deltaPrice)
+                //&&
+                //Signal.CandleLongSignal(candleList, deltaPrice)
 
                 //Проверка на отсутсвие гэпа
                 &&

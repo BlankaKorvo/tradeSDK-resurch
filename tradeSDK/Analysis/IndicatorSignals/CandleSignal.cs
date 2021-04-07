@@ -13,6 +13,8 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     partial class Signal : IndicatorSignalsHelper
     {
+
+        decimal percent = 10;
         internal bool CandleLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start CandleSignal LongSignal. Figi: " + candleList.Figi);
@@ -22,7 +24,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 Log.Information("CandleSignal = Long - true for: " + candleList.Figi);
                 return true;
             }
-            decimal percent = 10;
+            
             Log.Information("percent = " + percent);
             var persentHighPrice = ((candleList.Candles.Last().High * 100) / deltaPrice) - 100;
             var persentFitilByCandle = ((candleList.Candles.Last().High - deltaPrice) * 100) / (deltaPrice - candleList.Candles.Last().Open);

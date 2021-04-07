@@ -42,7 +42,7 @@ namespace tradeSDK
             var candleInterval = CandleInterval.Day;
 
             int candlesCount = 45;
-            decimal margin = 5000;
+            decimal margin = 3500;
 
             //GetCandlesCollector dataCollector = new GetCandlesCollector();
 

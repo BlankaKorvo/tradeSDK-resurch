@@ -14,17 +14,18 @@ namespace TradingAlgorithms.IndicatorSignals
     partial class Signal : IndicatorSignalsHelper
     {
         int smaLookbackPeriod = 8;
-        const decimal smaPriceDeltaCount = 0.15M;
+        const decimal smaPriceDeltaCount = 2M;
         internal bool SmaLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Sma LongSignal. Figi: " + candleList.Figi);
             List<SmaResult> sma = Mapper.SmaData(candleList, deltaPrice, smaLookbackPeriod);
-            decimal? smaPriceDelta = 100 - (sma.Last().Sma * 100 / deltaPrice); //Насколько далеко убежала цена от Sma
+            decimal? smaPriceDelta = ((deltaPrice * 100) / sma.Last().Sma) - 100; //Насколько далеко убежала цена от Sma
             if (
                 smaPriceDelta < smaPriceDeltaCount
                )
             {
                 Log.Information("Checking for the absence of a gap via SMA");
+                Log.Information("Sma = " + sma.Last().Sma + "LPrice = " + deltaPrice);
                 Log.Information("smaPriceDelta = " + smaPriceDelta);
                 Log.Information("smaPriceDeltaCount = " + smaPriceDeltaCount);
                 Log.Information("Should be: smaPriceDelta < smaPriceDeltaCount");
@@ -34,6 +35,7 @@ namespace TradingAlgorithms.IndicatorSignals
             else
             {
                 Log.Information("Checking for the absence of a gap via SMA");
+                Log.Information("Sma = " + sma.Last().Sma + "LPrice = " + deltaPrice);
                 Log.Information("smaPriceDelta = " + smaPriceDelta);
                 Log.Information("smaPriceDeltaCount = " + smaPriceDeltaCount);
                 Log.Information("Should be: smaPriceDelta < smaPriceDeltaCount");
