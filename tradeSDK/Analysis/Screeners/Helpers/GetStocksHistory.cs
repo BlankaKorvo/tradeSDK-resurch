@@ -18,7 +18,7 @@ namespace ScreenerStocks.Helpers
     {
         //GetTinkoffData market = new GetTinkoffData();
         MarketDataCollector dataCollector = new MarketDataCollector();
-        internal async Task<List<Instrument>> AllUsdStocksAsync()
+        public async Task<List<Instrument>> AllUsdStocksAsync()
         {
             Log.Information("Start AllUsdStocks method");
             List<Instrument> usdStocks = new List<Instrument>();
@@ -74,31 +74,19 @@ namespace ScreenerStocks.Helpers
             Log.Information("Stop AllUsdCandles method");
             return usdCandels;
         }
-        internal List<CandlesList> AllValidCandles(List<CandlesList> listCandleLists, decimal price, int minutes)
+        internal List<CandlesList> AllValidCandles(List<CandlesList> listCandleLists, decimal price, int notTradeMinutes)
         {
             Log.Information("Start AllValidCandles method");
             List<CandlesList> validCandleLists = new List<CandlesList> { };
             Log.Information("Count input candles: " + listCandleLists.Count);
             Log.Information("AllValidCandles method. price = " + price);
-            Log.Information("AllValidCandles method. notTradeMinutes = " + minutes);
+            Log.Information("AllValidCandles method. notTradeMinutes = " + notTradeMinutes);
             foreach (CandlesList candleList in listCandleLists)
             {
-                if (candleList == null)
-                {
-                    Log.Information("Nullable candlelist");
-                    continue; 
-                }
-                Log.Information("AllValidCandles method. Candle.Figi: " + candleList.Figi);
-                Log.Information("AllValidCandles method. Candle.Interval: " + candleList.Interval);
-                Log.Information("AllValidCandles method. Candle Count: " + candleList.Candles.Count);
-                if (LessPrice(candleList, price) && NotTradeable(candleList, minutes))
+                if (ValidCandles(candleList, price, notTradeMinutes))
                 {
                     Log.Information(candleList.Figi + " Add candllist to Valid list");
                     validCandleLists.Add(candleList);
-                }
-                else 
-                {
-                    Log.Information(candleList.Figi + " Not add to valid candles, because price < margin or this stocks not tradeble last " + minutes + " minutes");
                 }
             }
             Log.Information("Return " + validCandleLists.Count + "valid candlelists");
@@ -106,7 +94,7 @@ namespace ScreenerStocks.Helpers
             return validCandleLists;
         }
         //определяет: торговалась ли акция последние заданные минуты
-        private bool NotTradeable(CandlesList candleList, int notTradeMinutes)
+        private bool NotTradeableCountMinutes(CandlesList candleList, int notTradeMinutes)
         {
             Log.Information("Start NotTradeable method. Not trade minutes = " + notTradeMinutes);
             var timeNow = DateTime.Now.ToUniversalTime();
@@ -118,7 +106,7 @@ namespace ScreenerStocks.Helpers
             } 
             else if (candleList.Candles.Last().Time < timeNow.AddMinutes(-notTradeMinutes))
             {
-                Log.Information("Last time candle of " + candleList.Figi + " is " + candleList.Candles.Last().Time.ToString() + " < then " + DateTime.Now.AddMinutes(-notTradeMinutes));
+                Log.Information("Last time candle of " + candleList.Figi + " is " + candleList.Candles.Last().Time.ToString() + " < then " + timeNow.AddMinutes(-notTradeMinutes));
                 //Log.Information("Last time candle of " + candleList.Figi + " is " + candleList.Candles.Last().Time.ToString());
                 Log.Information(candleList.Figi + " not trading last " + notTradeMinutes + " minutes");
                 Log.Information("Stop NotTradeable method. Return - false");
@@ -126,12 +114,61 @@ namespace ScreenerStocks.Helpers
             }
             else
             {
-                Log.Information("Last time candle of " + candleList.Figi + " is " + candleList.Candles.Last().Time.ToString() + " > then " + DateTime.Now.AddMinutes(-notTradeMinutes));
+                Log.Information("Last time candle of " + candleList.Figi + " is " + candleList.Candles.Last().Time.ToString() + " > then " + timeNow.AddMinutes(-notTradeMinutes));
                 Log.Information(candleList.Figi + " is trading last " + notTradeMinutes + " minutes");
                 Log.Information("Stop NotTradeable method. Return - true");
                 return true;
             }
         }
+
+        private bool NotTradeableCountCandles(CandlesList candleList, int notTradeCandles = 5)
+        {
+            Log.Information("Start NotTradeable method. Not trade minutes = " + notTradeCandles);
+            int notTradeMinutes = 0;
+            if (candleList == null)
+            {
+                Log.Warning("CandleList = null");
+                return false;
+            }
+            switch (candleList.Interval)
+            {
+                case CandleInterval.Minute:
+                    notTradeMinutes = 1 * notTradeCandles;
+                    break;
+                case CandleInterval.TwoMinutes:
+                    notTradeMinutes = 2 * notTradeCandles;
+                    break;
+                case CandleInterval.ThreeMinutes:
+                    notTradeMinutes = 3 * notTradeCandles;
+                    break;
+                case CandleInterval.FiveMinutes:
+                    notTradeMinutes = 5 * notTradeCandles;
+                    break;
+                case CandleInterval.TenMinutes:
+                    notTradeMinutes = 10 * notTradeCandles;
+                    break;
+                case CandleInterval.QuarterHour:
+                    notTradeMinutes = 15 * notTradeCandles;
+                    break;
+                case CandleInterval.HalfHour:
+                    notTradeMinutes = 30 * notTradeCandles;
+                    break;
+                case CandleInterval.Hour:
+                    notTradeMinutes = 60 * notTradeCandles;
+                    break;
+                case CandleInterval.Day:
+                    notTradeMinutes = 1440 * notTradeCandles;
+                    break;
+                case CandleInterval.Week:
+                    notTradeMinutes = 10080 * notTradeCandles;
+                    break;
+                case CandleInterval.Month:
+                    notTradeMinutes = 43200 * notTradeCandles;
+                    break;
+            }
+            return NotTradeableCountMinutes(candleList, notTradeMinutes);
+        }
+
         // определяет: не привышает ли стоимость ации определенную сумму
         private bool LessPrice(CandlesList candleList, decimal margin)
         {
@@ -146,6 +183,55 @@ namespace ScreenerStocks.Helpers
             else
             {
                 Log.Information("Stop LessPrice with figi: " + candleList.Figi + " Return - false");
+                return false;
+            }
+        }
+        internal bool ValidCandles(CandlesList candlesList, decimal price, int notTradeMinutes)
+        {
+            Log.Information("Start validation CandlesList " + candlesList.Figi);
+            if (candlesList == null)
+            {
+                Log.Information("Nullable candlelist");
+                Log.Information("Stop validation CandlesList " + candlesList.Figi);
+                return false;
+            }
+            Log.Information("AllValidCandles method. Candle.Figi: " + candlesList.Figi);
+            Log.Information("AllValidCandles method. Candle.Interval: " + candlesList.Interval);
+            Log.Information("AllValidCandles method. Candle Count: " + candlesList.Candles.Count);
+            if (LessPrice(candlesList, price) && NotTradeableCountMinutes(candlesList, notTradeMinutes))
+            {
+                Log.Information(candlesList.Figi + " Valid CandlesList");
+                Log.Information("Stop validation CandlesList " + candlesList.Figi);
+                return true;
+            }
+            else
+            {
+                Log.Information(candlesList.Figi + " Not add to valid candles, because price < margin or this stocks not tradeble last " + notTradeMinutes + " minutes");
+                Log.Information("Stop validation CandlesList " + candlesList.Figi);
+                return false;
+            }
+        }
+        internal bool ValidCandles(CandlesList candlesList, decimal price)
+        {
+            Log.Information("Start validation CandlesList " + candlesList.Figi);
+            if (candlesList == null)
+            {
+                Log.Information("Nullable candlelist");
+                Log.Information("Stop validation CandlesList " + candlesList.Figi);
+                return false;
+            }
+            Log.Information("AllValidCandles method. Candle.Figi: " + candlesList.Figi);
+            Log.Information("AllValidCandles method. Candle.Interval: " + candlesList.Interval);
+            Log.Information("AllValidCandles method. Candle Count: " + candlesList.Candles.Count);
+            if (LessPrice(candlesList, price) && NotTradeableCountCandles(candlesList))
+            {
+                Log.Information(candlesList.Figi + " Valid CandlesList");
+                Log.Information("Stop validation CandlesList " + candlesList.Figi);
+                return true;
+            }
+            else
+            {
+                Log.Information("Stop validation CandlesList " + candlesList.Figi);
                 return false;
             }
         }

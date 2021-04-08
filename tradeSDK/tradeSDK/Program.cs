@@ -9,15 +9,15 @@ using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using System.Diagnostics;
 using Serilog;
-using TradingAlgorithms.Algoritms;
-using TinkoffData;
 using TinkoffAdapter;
 using RetryPolicy;
 using TinkoffAdapter.DataHelper;
 using TinkoffAdapter.Authority;
-using ScreenerStocks;
 using DataCollector;
 using CandleInterval = MarketDataModules.CandleInterval;
+using ScreenerStocks;
+using ScreenerStocks.Helpers;
+using MarketDataModules;
 
 namespace tradeSDK
 {
@@ -32,6 +32,8 @@ namespace tradeSDK
                 .CreateLogger();   
             
             GetTinkoffData market = new GetTinkoffData();
+            MarketDataCollector marketDataCollector = new MarketDataCollector();
+            GetStocksHistory getStocksHistory = new GetStocksHistory();
             //SandboxContext context = new Auth().GetSanboxContext();
             //Serialization ser = new Serialization();
 
@@ -39,10 +41,10 @@ namespace tradeSDK
             //var figi = "BBG000BVPV84"; //AMZN
             //var figi = "BBG0013HGFT4"; //USDRUS
             //var figi = "BBG0018SLC07"; //SQ
-            var candleInterval = CandleInterval.Day;
+            var candleInterval = CandleInterval.FiveMinutes;
 
             int candlesCount = 45;
-            decimal margin = 3500;
+            decimal margin = 9000;
 
             //GetCandlesCollector dataCollector = new GetCandlesCollector();
 
@@ -123,7 +125,8 @@ namespace tradeSDK
 
             try
             {
-                await mishMashScreener.Screener(candleInterval, candlesCount, margin, 10080);
+                List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+                await mishMashScreener.CycleTrading(candleInterval, candlesCount, margin, instrumentList);
             }
             catch (Exception ex)
             {

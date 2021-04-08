@@ -39,13 +39,12 @@ namespace TradingAlgorithms.Algoritms
                 &&
                 Signal.BollingerBandsLongSignal(candleList, deltaPrice)
                 
-                //&&
-                //Signal.CandleLongSignal(candleList, deltaPrice)
-
                 //Проверка на отсутсвие гэпа
                 &&
                 Signal.SmaLongSignal(candleList, deltaPrice)
 
+                &&
+                Signal.CandleLongSignal(candleList, deltaPrice)
                 )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);

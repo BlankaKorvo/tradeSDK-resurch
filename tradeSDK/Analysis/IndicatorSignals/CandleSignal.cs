@@ -14,37 +14,42 @@ namespace TradingAlgorithms.IndicatorSignals
     partial class Signal : IndicatorSignalsHelper
     {
 
-        decimal percent = 10;
+        decimal percent = 0.5M;
         internal bool CandleLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start CandleSignal LongSignal. Figi: " + candleList.Figi);
-            if (deltaPrice == candleList.Candles.Last().Open)
-            {
-                Log.Information("deltaPrice = Open");
-                Log.Information("CandleSignal = Long - true for: " + candleList.Figi);
-                return true;
-            }
             
             Log.Information("percent = " + percent);
             var persentHighPrice = ((candleList.Candles.Last().High * 100) / deltaPrice) - 100;
-            var persentFitilByCandle = ((candleList.Candles.Last().High - deltaPrice) * 100) / (deltaPrice - candleList.Candles.Last().Open);
+            CandleStructure preLastCandle = candleList.Candles[candleList.Candles.Count - 2];
+            CandleStructure lastCandle = candleList.Candles.Last();
+
             if (
-                candleList.Candles.Last().Open < deltaPrice
+                lastCandle.Open >= preLastCandle.Close
+                &&
+                lastCandle.Open <= deltaPrice
                 &&
                 persentHighPrice < percent
-                &&
-                persentFitilByCandle < percent
+
                )
             {
-                Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent);
-                Log.Information("persentHighPrice: " + persentFitilByCandle + "must be < " + percent);
+                Log.Information("price = " + deltaPrice);
+                Log.Information("LastOpen = " + lastCandle.Open);
+                Log.Information("preLastClose = " + preLastCandle.Close);
+                Log.Information("deltaPrice must be >= Open");
+                Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent + " %");
+                Log.Information("LastOpen must be >= PreLastClose");
                 Log.Information("CandleSignal = Long - true for: " + candleList.Figi);
                 return true;
             }
             else
             {
-                Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent);
-                Log.Information("persentHighPrice: " + persentFitilByCandle + "must be < " + percent);
+                Log.Information("price = " + deltaPrice);
+                Log.Information("LastOpen = " + lastCandle.Open);
+                Log.Information("preLastClose = " + preLastCandle.Close);
+                Log.Information("deltaPrice must be >= Open");
+                Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent + " %");
+                Log.Information("LastOpen must be >= PreLastClose");
                 Log.Information("CandleSignal = Long - false for: " + candleList.Figi);
                 return false;
             }
