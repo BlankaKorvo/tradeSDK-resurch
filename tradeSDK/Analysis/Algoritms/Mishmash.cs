@@ -45,6 +45,8 @@ namespace TradingAlgorithms.Algoritms
 
                 &&
                 Signal.CandleLongSignal(candleList, deltaPrice)
+                &&
+                Signal.AdlLongSignal(candleList, deltaPrice)
                 )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);

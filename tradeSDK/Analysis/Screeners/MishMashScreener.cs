@@ -116,7 +116,7 @@ namespace ScreenerStocks
                     Log.Information("Stop ScreenerStocks");
                     continue;
                 }
-            }
+            }            
         }
 
         public async Task Trading(CandleInterval candleInterval, int candleCount, decimal margin, List<Instrument> instrumentList)

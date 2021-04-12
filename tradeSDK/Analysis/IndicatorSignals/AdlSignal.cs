@@ -14,23 +14,27 @@ namespace TradingAlgorithms.IndicatorSignals
     partial class Signal : IndicatorSignalsHelper
     {
         int adlLookbackPeriodSma = 5;
-        int adlAnglesCount = 2;
+        int adlAnglesCount = 10;
 
         internal bool AdlLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start OBV LongSignal. Figi: " + candleList.Figi);
             List<AdlResult> adl = Mapper.AdlData(candleList, deltaPrice, adlLookbackPeriodSma);
-
+            double adlDegreeAverageAngle = AdlDegreeAverageAngle(adl, adlAnglesCount, Adl.Adl);
             if (
-                adl.Last().Adl > 0
-                &&
-                AdlDegreeAverageAngle(adl, adlAnglesCount, Adl.Adl) > 0
+                //adl.Last().Adl > 0
+                //&&
+                adlDegreeAverageAngle > 0
                )
-            {       
+            {
+                Log.Information("Adl = " + adl.Last().Adl);
+                Log.Information("AdlDegreeAverageAngle = " + adlDegreeAverageAngle + ". It must be > 0 for long");
                 return true;
             }
             else
-            {               
+            {
+                Log.Information("Adl = " + adl.Last().Adl);
+                Log.Information("AdlDegreeAverageAngle = " + adlDegreeAverageAngle + ". It must be > 0 for long");
                 return false;
             }
         }
