@@ -18,7 +18,7 @@ namespace TradingAlgorithms.IndicatorSignals
 
         internal bool AdlLongSignal(CandlesList candleList, decimal deltaPrice)
         {
-            Log.Information("Start OBV LongSignal. Figi: " + candleList.Figi);
+            Log.Information("Start Adl LongSignal. Figi: " + candleList.Figi);
             List<AdlResult> adl = Mapper.AdlData(candleList, deltaPrice, adlLookbackPeriodSma);
             double adlDegreeAverageAngle = AdlDegreeAverageAngle(adl, adlAnglesCount, Adl.Adl);
             if (
@@ -28,13 +28,13 @@ namespace TradingAlgorithms.IndicatorSignals
                )
             {
                 Log.Information("Adl = " + adl.Last().Adl);
-                Log.Information("AdlDegreeAverageAngle = " + adlDegreeAverageAngle + ". It must be > 0 for long");
+                Log.Information("AdlDegreeAverageAngle = " + adlDegreeAverageAngle + " in "+ adlAnglesCount + " count. It must be > 0 for long");
                 return true;
             }
             else
             {
                 Log.Information("Adl = " + adl.Last().Adl);
-                Log.Information("AdlDegreeAverageAngle = " + adlDegreeAverageAngle + ". It must be > 0 for long");
+                Log.Information("AdlDegreeAverageAngle = " + adlDegreeAverageAngle + " in " + adlAnglesCount + " count. It must be > 0 for long");
                 return false;
             }
         }

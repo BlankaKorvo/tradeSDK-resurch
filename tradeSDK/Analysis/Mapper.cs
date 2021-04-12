@@ -30,6 +30,7 @@ namespace TinkoffData
         }
 
 
+
         public static List<Quote> ConvertTinkoffCandlesToQuote(List<CandleStructure> candles, decimal realClose)
         {
             List<Quote> quotes = new List<Quote>();
@@ -47,6 +48,15 @@ namespace TinkoffData
             }
             quotes.Last().Close = realClose;
             return quotes;
+        }
+
+        internal static List<StochResult> StochData(CandlesList candleList, decimal deltaPrice, int stochLookbackPeriod, int stochSignalPeriod, int stochSmoothPeriod)
+        {
+            Log.Information("Start mapping Stoch");
+            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, deltaPrice);
+            List<StochResult> stoch = Indicator.GetStoch(candles, stochLookbackPeriod, stochSignalPeriod, stochSmoothPeriod).ToList();
+            Log.Information("Stop mapping Stoch");
+            return stoch;
         }
 
 
