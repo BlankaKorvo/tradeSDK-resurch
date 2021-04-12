@@ -24,15 +24,17 @@ namespace TradingAlgorithms.IndicatorSignals
         {
             Log.Information("Start Dpo LongSignal. Figi: " + candleList.Figi);
             List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
+            double dpoDegreeAverageAngle = DpoDegreeAverageAngle(dpo, dpoAverageAngleCount);
+            double dpoDegreeAverageAngle1 = DpoDegreeAverageAngle(dpo, 1);
             if (
-                DpoDegreeAverageAngle(dpo, dpoAverageAngleCount) > dpoAverageAngleConditionLong
-                && DpoDegreeAverageAngle(dpo, 1) > dpoAverageAngleConditionLong
+                dpoDegreeAverageAngle > dpoAverageAngleConditionLong
+                && dpoDegreeAverageAngle1 > dpoAverageAngleConditionLong
                 )
             {
                 Log.Information("Average Angle Count" + dpoAverageAngleCount);
                 Log.Information("Average Angle Condition" + dpoAverageAngleConditionLong);
-                Log.Information("Dpo Degree Average Angle = " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCount) + " it should be more then: Average Angle Condition");
-                Log.Information("Dpo Degree Last Average Angle = " + DpoDegreeAverageAngle(dpo, 1) + " it should be more then: Average Angle Condition");
+                Log.Information("Dpo Degree Average Angle = " + dpoDegreeAverageAngle + " it should be more then: Average Angle Condition");
+                Log.Information("Dpo Degree Last Average Angle = " + dpoDegreeAverageAngle1 + " it should be more then: Average Angle Condition");
                 Log.Information("Stop Dpo LongSignal = Long - true. Figi: " + candleList.Figi);
                 return true;
             }
@@ -40,8 +42,8 @@ namespace TradingAlgorithms.IndicatorSignals
             {
                 Log.Information("Average Angle Count" + dpoAverageAngleCount);
                 Log.Information("Average Angle Condition" + dpoAverageAngleConditionLong);
-                Log.Information("Dpo Degree Average Angle = " + DpoDegreeAverageAngle(dpo, dpoAverageAngleCount) + " it should be more then: Average Angle Condition");
-                Log.Information("Dpo Degree Last Average Angle = " + DpoDegreeAverageAngle(dpo, 1) + " it should be more then: Average Angle Condition");
+                Log.Information("Dpo Degree Average Angle = " + dpoDegreeAverageAngle + " it should be more then: Average Angle Condition");
+                Log.Information("Dpo Degree Last Average Angle = " + dpoDegreeAverageAngle1 + " it should be more then: Average Angle Condition");
                 Log.Information("Stop Dpo LongSignal = Long - false. Figi: " + candleList.Figi);
                 return false;
             }
@@ -51,8 +53,9 @@ namespace TradingAlgorithms.IndicatorSignals
         {
             Log.Information("Start Dpo FromLongSignal. Figi: " + candleList.Figi);
             List<DpoResult> dpo = Mapper.DpoData(candleList, deltaPrice, dpoPeriod);
+            double dpoDegreeAverageAngle = DpoDegreeAverageAngle(dpo, dpoAverageAngleCount);
             if (dpo.Last().Dpo < dpoLastDpoCondition
-                || DpoDegreeAverageAngle(dpo, dpoAverageAngleCount) < dpoAverageAngleConditionFromLong)
+                || dpoDegreeAverageAngle < dpoAverageAngleConditionFromLong)
             {
                 Log.Information("Last Dpo Condition = " + dpoLastDpoCondition);
                 Log.Information("Average Angle Count" + dpoAverageAngleCount);

@@ -24,18 +24,20 @@ namespace TradingAlgorithms.IndicatorSignals
             Log.Information("Start MACD LongSignal. Figi: " + candleList.Figi);
             List<MacdResult> macd = Mapper.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
 
+            double macdDegreeAverageAngle = MacdDegreeAverageAngle(macd, macdAverageAngleCount);
+            double macdDegreeAverageAngle1 = MacdDegreeAverageAngle(macd, 1);
             if (
                 macd.Last().Macd > macd.Last().Signal
                 && macd.Last().Histogram > 0
-                && MacdDegreeAverageAngle(macd, macdAverageAngleCount) >= macdAverageAngleCondition
-                && MacdDegreeAverageAngle(macd, 1) > macdAverageAngleCondition
+                && macdDegreeAverageAngle >= macdAverageAngleCondition
+                && macdDegreeAverageAngle1 > macdAverageAngleCondition
                 && macd.Last().Histogram > macd[macd.Count - 2].Histogram
                 )
             {
                 Log.Information("Macd = " + macd.Last().Macd);
                 Log.Information("Macd Histogram = " + macd.Last().Histogram);
-                Log.Information("Macd Average of " + macdAverageAngleCount+ " Angle is degree:  " + MacdDegreeAverageAngle(macd, macdAverageAngleCount) + " >= " + macdAverageAngleCondition);
-                Log.Information("Macd Average Angle is degree:  " + MacdDegreeAverageAngle(macd, 1) + " >= " + macdAverageAngleCondition);
+                Log.Information("Macd Average of " + macdAverageAngleCount + " Angle is degree:  " + macdDegreeAverageAngle + " >= " + macdAverageAngleCondition);
+                Log.Information("Macd Average Angle is degree:  " + macdDegreeAverageAngle1 + " >= " + macdAverageAngleCondition);
                 //Log.Information("Macd Histogram Average Angle is degree:  " + MacdHistogramDegreeAverageAngle(macd, 1) + " >= " + MacdHistogramDegreeAverageAngle(macd, 2));
                 Log.Information("Last Histogram MACD is biger, then prelast: " + macd.Last().Histogram  + " > " + macd[macd.Count - 2].Histogram);
                 Log.Information("Macd = Long - true for: " + candleList.Figi);
@@ -45,8 +47,8 @@ namespace TradingAlgorithms.IndicatorSignals
             {
                 Log.Information("Macd = " + macd.Last().Macd);
                 Log.Information("Macd Histogram = " + macd.Last().Histogram);
-                Log.Information("Macd Average Angle is not degree:  " + MacdDegreeAverageAngle(macd, 1) + " >= " + macdAverageAngleCondition);
-                Log.Information("Macd Average of " + macdAverageAngleCount + " Angle is not degree:  " + MacdDegreeAverageAngle(macd, macdAverageAngleCount) + " >= " + macdAverageAngleCondition);
+                Log.Information("Macd Average Angle is not degree:  " + macdDegreeAverageAngle1 + " >= " + macdAverageAngleCondition);
+                Log.Information("Macd Average of " + macdAverageAngleCount + " Angle is not degree:  " + macdDegreeAverageAngle + " >= " + macdAverageAngleCondition);
                 Log.Information("Last Histogram MACD is lowest, then prelast: " + macd.Last().Histogram + " < " + macd[macd.Count - 2].Histogram);
                 Log.Information("Macd = Long - false for: " + candleList.Figi);
                 return false;
@@ -58,18 +60,23 @@ namespace TradingAlgorithms.IndicatorSignals
             Log.Information("Start MACD FromLongSignal. Figi: " + candleList.Figi);
             List<MacdResult> macd = Mapper.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
 
+            double macdDegreeAverageAngle = MacdDegreeAverageAngle(macd, macdAverageAngleCount);
+            double macdDegreeAverageAngle1 = MacdDegreeAverageAngle(macd, 1);
+            double macdHistogramDegreeAverageAngle1 = MacdHistogramDegreeAverageAngle(macd, 1);
+
             if (
                 macd.Last().Macd < macd.Last().Signal
                 || macd.Last().Histogram < 0
-                || MacdDegreeAverageAngle(macd, macdAverageAngleCount) < macdAverageAngleCondition
+                || macdDegreeAverageAngle < macdAverageAngleCondition
                 //|| macd.Last().Histogram < macd[macd.Count - 2].Histogram
                 //|| MacdHistogramDegreeAverageAngle(macd, 1) < MacdHistogramDegreeAverageAngle(macd, 2)
                 )
             {
                 Log.Information("Macd = " + macd.Last().Macd);
                 Log.Information("Macd Histogram = " + macd.Last().Histogram);
-                Log.Information("Macd Average Angle is not degree:  " + MacdDegreeAverageAngle(macd, 1) + " < 0" );
-                Log.Information("Macd Histogram Average Angle is not degree:  " + MacdHistogramDegreeAverageAngle(macd, 1) + " < " + MacdHistogramDegreeAverageAngle(macd, 2));
+                Log.Information("Macd Average Angle is not degree:  " + macdDegreeAverageAngle1 + " < 0" );
+
+                Log.Information("Macd Histogram Average Angle is not degree:  " + macdHistogramDegreeAverageAngle1 + " < " + MacdHistogramDegreeAverageAngle(macd, 2));
                 Log.Information("Macd = FromLong - true for: " + candleList.Figi);
                 return true;
             }
@@ -77,7 +84,7 @@ namespace TradingAlgorithms.IndicatorSignals
             {
                 Log.Information("Macd = " + macd.Last().Macd);
                 Log.Information("Macd Histogram = " + macd.Last().Histogram);
-                Log.Information("Macd Average Angle is degree:  " + MacdDegreeAverageAngle(macd, 1) + " >= 0");
+                Log.Information("Macd Average Angle is degree:  " + macdDegreeAverageAngle1 + " >= 0");
                 Log.Information("Macd Histogram Average Angle is degree:  " + MacdHistogramDegreeAverageAngle(macd, 1) + " < " + MacdHistogramDegreeAverageAngle(macd, 2));
                 Log.Information("Macd = FromLong - false for: " + candleList.Figi);
                 return false;

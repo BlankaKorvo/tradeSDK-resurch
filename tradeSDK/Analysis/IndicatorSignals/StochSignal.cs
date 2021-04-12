@@ -25,11 +25,28 @@ namespace TradingAlgorithms.IndicatorSignals
             Log.Information("Oscillator (%K) = " + stoch.Last().Oscillator);
             Log.Information("Signal (%D) = " + stoch.Last().Signal);
             Log.Information("PercentJ = " + stoch.Last().PercentJ);
-            Log.Information("Oscillator (%K) = " + stoch.Last().Oscillator);
-            Log.Information("Signal (%D) = " + stoch.Last().Signal);
-            Log.Information("PercentJ = " + stoch.Last().PercentJ);
+            var OscillatorDegreeAverageAngle = StochDegreeAverageAngle(stoch, stochanglesCount, Stoch.Oscillator);
+            var SignalDegreeAverageAngle = StochDegreeAverageAngle(stoch, stochanglesCount, Stoch.Signal);
+            var PercentJDegreeAverageAngle = StochDegreeAverageAngle(stoch, stochanglesCount, Stoch.PercentJ);
 
-            return true;
+            Log.Information("OscillatorDegreeAverageAngle = " + OscillatorDegreeAverageAngle);
+            Log.Information("SignalDegreeAverageAngle = " + SignalDegreeAverageAngle);
+            Log.Information("PercentJDegreeAverageAngle = " + PercentJDegreeAverageAngle);
+
+            if (OscillatorDegreeAverageAngle > 0
+                &&
+                SignalDegreeAverageAngle > 0
+                &&
+                PercentJDegreeAverageAngle > 0)
+            {
+                Log.Information("Stoch = Long - true for: " + candleList.Figi);
+                return true;
+            }
+            else
+            {
+                Log.Information("Stoch = Long - false for: " + candleList.Figi);
+                return false;
+            }
         }
         double StochDegreeAverageAngle(List<StochResult> AdlValue, int anglesCount, Stoch line)
         {

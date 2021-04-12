@@ -25,7 +25,8 @@ namespace TradingAlgorithms.Algoritms
         public bool Long()
         {
             if (
-
+                Signal.StochLongSignal(candleList, deltaPrice)
+                &&
                 Signal.DpoLongSignal(candleList, deltaPrice)
                 &&
                 Signal.MacdLongSignal(candleList, deltaPrice)

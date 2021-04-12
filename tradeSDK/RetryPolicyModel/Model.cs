@@ -11,7 +11,7 @@ namespace RetryPolicy
         {
             Polly.Retry.AsyncRetryPolicy retryPolicy = Policy
                 .Handle<Exception>(ex => ex.Message.Contains("Too many requests"))
-                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt)),
+                .WaitAndRetryForeverAsync(retryAttempt => TimeSpan.FromSeconds(Math.Pow(1, retryAttempt)),
                 (exception, timespan) =>
                 {
                     Log.Warning(exception.Message);
