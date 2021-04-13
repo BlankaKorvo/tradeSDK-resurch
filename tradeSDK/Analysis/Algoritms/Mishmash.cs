@@ -25,8 +25,6 @@ namespace TradingAlgorithms.Algoritms
         public bool Long()
         {
             if (
-                Signal.StochLongSignal(candleList, deltaPrice)
-                &&
                 Signal.DpoLongSignal(candleList, deltaPrice)
                 &&
                 Signal.MacdLongSignal(candleList, deltaPrice)
@@ -48,6 +46,8 @@ namespace TradingAlgorithms.Algoritms
                 Signal.CandleLongSignal(candleList, deltaPrice)
                 &&
                 Signal.AdlLongSignal(candleList, deltaPrice)
+                &&
+                Signal.StochLongSignal(candleList, deltaPrice)                
                 )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);

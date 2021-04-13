@@ -41,7 +41,7 @@ namespace tradeSDK
             //var figi = "BBG000BVPV84"; //AMZN
             //var figi = "BBG0013HGFT4"; //USDRUS
             //var figi = "BBG0018SLC07"; //SQ
-            var candleInterval = CandleInterval.FiveMinutes;
+            var candleInterval = CandleInterval.QuarterHour;
 
             int candlesCount = 45;
             decimal margin = 9000;

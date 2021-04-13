@@ -23,6 +23,13 @@ namespace TradingAlgorithms.IndicatorSignals
         {
             Log.Information("Start AdxSignal LongSignal method with figi:" + candleList.Figi);
             List<AdxResult> adx = Mapper.AdxData(candleList, deltaPrice, adxLookbackPeriod);
+            if (adx == null)
+            {
+                Log.Information("Adx = null");
+                Log.Information("Adx = Long - false for: " + candleList.Figi);
+                Log.Information("Stop AdxSignal LongSignal method with figi:" + candleList.Figi);
+                return false;
+            }
 
             int count = adx.Count();
             int countAdxCandles = 0;
