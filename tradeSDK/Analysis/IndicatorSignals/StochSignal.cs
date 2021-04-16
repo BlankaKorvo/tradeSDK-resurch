@@ -25,6 +25,11 @@ namespace TradingAlgorithms.IndicatorSignals
             Log.Information("Oscillator (%K) = " + stoch.Last().Oscillator);
             Log.Information("Signal (%D) = " + stoch.Last().Signal);
             Log.Information("PercentJ = " + stoch.Last().PercentJ);
+
+            Log.Information("PreLast Oscillator (%K) = " + stoch[stoch.Count() - 2].Oscillator);
+            Log.Information("PreLast Signal (%D) = " + stoch[stoch.Count() - 2].Signal);
+            Log.Information("PreLast PercentJ = " + stoch[stoch.Count() - 2].PercentJ);
+
             var OscillatorDegreeAverageAngle = StochDegreeAverageAngle(stoch, stochanglesCount, Stoch.Oscillator);
             var SignalDegreeAverageAngle = StochDegreeAverageAngle(stoch, stochanglesCount, Stoch.Signal);
             var PercentJDegreeAverageAngle = StochDegreeAverageAngle(stoch, stochanglesCount, Stoch.PercentJ);
@@ -33,12 +38,20 @@ namespace TradingAlgorithms.IndicatorSignals
             Log.Information("SignalDegreeAverageAngle = " + SignalDegreeAverageAngle);
             Log.Information("PercentJDegreeAverageAngle = " + PercentJDegreeAverageAngle);
 
-            if (OscillatorDegreeAverageAngle > 0
+
+            if (
+                OscillatorDegreeAverageAngle > 0
                 &&
                 SignalDegreeAverageAngle > 0
                 &&
-                PercentJDegreeAverageAngle > 0)
+                PercentJDegreeAverageAngle > 0
+                &&
+                stoch.Last().Signal < 80
+                &&
+                stoch.Last().Signal < stoch.Last().Oscillator
+                )
             {
+
                 Log.Information("Stoch = Long - true for: " + candleList.Figi);
                 return true;
             }
@@ -66,6 +79,12 @@ namespace TradingAlgorithms.IndicatorSignals
                 return DeltaDegreeAngle(values, anglesCount);
             }            
         }
+
+        //internal bool StochFromLongSignal(CandlesList candleList, decimal deltaPrice)
+        //{
+
+        //}
+
         enum Stoch
         {
             Oscillator,

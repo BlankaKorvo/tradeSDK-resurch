@@ -154,7 +154,7 @@ namespace TinkoffData
             return Indicator.GetEma(candles, lookbackPeriod).ToList();
         }
 
-        public static List<EmaResult> EmaData(CandlesList candleList, int lookbackPeriod, decimal realPrise)
+        public static List<EmaResult> EmaData(CandlesList candleList, decimal realPrise, int lookbackPeriod)
         {
             List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
             return Indicator.GetEma(candles, lookbackPeriod).ToList();

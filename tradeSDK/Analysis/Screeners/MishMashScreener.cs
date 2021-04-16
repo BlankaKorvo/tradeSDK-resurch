@@ -17,7 +17,7 @@ using TinkoffAdapter.DataHelper;
 using TinkoffAdapter.TinkoffTrade;
 using CandleInterval = MarketDataModules.CandleInterval;
 
-namespace ScreenerStocks
+namespace Analysis.Screeners
 {
     public class MishMashScreener : GetStocksHistory
     {

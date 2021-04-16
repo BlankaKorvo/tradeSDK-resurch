@@ -27,27 +27,27 @@ namespace TradingAlgorithms.Algoritms
             if (
                 Signal.DpoLongSignal(candleList, deltaPrice)
                 &&
-                Signal.MacdLongSignal(candleList, deltaPrice)
-                &&
-                Signal.AroonLongSignal(candleList, deltaPrice)
-                &&
-                Signal.AdxLongSignal(candleList, deltaPrice)               
+                //Signal.MacdLongSignal(candleList, deltaPrice)
+                //&&
+                //Signal.AroonLongSignal(candleList, deltaPrice)
+                //&&
+                Signal.AdxLongSignal(candleList, deltaPrice)
                 &&
                 Signal.ObvLongSignal(candleList, deltaPrice)
                 //Проверка на отсутствие боковика
                 &&
-                Signal.BollingerBandsLongSignal(candleList, deltaPrice)
-                
-                //Проверка на отсутсвие гэпа
-                &&
-                Signal.SmaLongSignal(candleList, deltaPrice)
-
+                Signal.BollingerBandsLongSignal(candleList, deltaPrice)                
+                //Проверка на отсутсвие гэпа        
                 &&
                 Signal.CandleLongSignal(candleList, deltaPrice)
                 &&
+                Signal.StochLongSignal(candleList, deltaPrice)
+                &&
                 Signal.AdlLongSignal(candleList, deltaPrice)
                 &&
-                Signal.StochLongSignal(candleList, deltaPrice)                
+                Signal.IchimokuLongSignal(candleList, deltaPrice)
+                &&
+                Signal.EmaLongSignal(candleList, deltaPrice)
                 )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);
@@ -67,6 +67,8 @@ namespace TradingAlgorithms.Algoritms
                 Signal.AdxFromLongSignal(candleList, deltaPrice)
                 ||
                 Signal.AroonFromLongSignal(candleList, deltaPrice)
+                ||
+                Signal.AdlFromLongSignal(candleList, deltaPrice)
                 )
             {
                 Log.Information("Mishmash Algoritms: FromLong - true " + candleList.Figi);

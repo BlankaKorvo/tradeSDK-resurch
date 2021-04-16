@@ -121,9 +121,9 @@ namespace ScreenerStocks.Helpers
             }
         }
 
-        private bool NotTradeableCountCandles(CandlesList candleList, int notTradeCandles = 5)
+        private bool NotTradeableCountCandles(CandlesList candleList, int notTradeCandles = 2)
         {
-            Log.Information("Start NotTradeable method. Not trade minutes = " + notTradeCandles);
+            Log.Information("Start NotTradeable method. Not trade candles = " + notTradeCandles);
             int notTradeMinutes = 0;
             if (candleList == null)
             {

@@ -16,7 +16,7 @@ namespace TradingAlgorithms.IndicatorSignals
         int adxLookbackPeriod = 8;
         int adxAverageAngleCount = 2;
         int adxFromLongAverageAngleCount = 2;
-        double pdiAngleLong = 50;
+        double pdiAngleLong = 0;
         int expecCountAdxCandles = 2;
 
         public bool AdxLongSignal(CandlesList candleList, decimal deltaPrice)

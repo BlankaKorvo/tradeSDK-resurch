@@ -14,18 +14,18 @@ namespace TradingAlgorithms.IndicatorSignals
     partial class Signal : IndicatorSignalsHelper
     {
         int smaLookbackPeriod = 8;
-        const decimal smaPriceDeltaCount = 1M;
-        internal bool SmaLongSignal(CandlesList candleList, decimal deltaPrice)
+        const decimal smaPriceDeltaCount = 8M;
+        internal bool EmaLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Sma LongSignal. Figi: " + candleList.Figi);
-            List<SmaResult> sma = Mapper.SmaData(candleList, deltaPrice, smaLookbackPeriod);
-            decimal? smaPriceDelta = ((deltaPrice * 100) / sma.Last().Sma) - 100; //Насколько далеко убежала цена от Sma
+            List<EmaResult> ema = Mapper.EmaData(candleList, deltaPrice, smaLookbackPeriod);
+            decimal? smaPriceDelta = ((deltaPrice * 100) / ema.Last().Ema) - 100; //Насколько далеко убежала цена от Sma
             if (
                 smaPriceDelta < smaPriceDeltaCount
                )
             {
                 Log.Information("Checking for the absence of a gap via SMA");
-                Log.Information("Sma = " + sma.Last().Sma + "LPrice = " + deltaPrice);
+                Log.Information("Sma = " + ema.Last().Ema + "LPrice = " + deltaPrice);
                 Log.Information("smaPriceDelta = " + smaPriceDelta);
                 Log.Information("smaPriceDeltaCount = " + smaPriceDeltaCount);
                 Log.Information("Should be: smaPriceDelta < smaPriceDeltaCount");
@@ -35,7 +35,7 @@ namespace TradingAlgorithms.IndicatorSignals
             else
             {
                 Log.Information("Checking for the absence of a gap via SMA");
-                Log.Information("Sma = " + sma.Last().Sma + "LPrice = " + deltaPrice);
+                Log.Information("Sma = " + ema.Last().Ema + "LPrice = " + deltaPrice);
                 Log.Information("smaPriceDelta = " + smaPriceDelta);
                 Log.Information("smaPriceDeltaCount = " + smaPriceDeltaCount);
                 Log.Information("Should be: smaPriceDelta < smaPriceDeltaCount");

@@ -1,23 +1,14 @@
-﻿using Skender.Stock.Indicators;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Tinkoff.Trading.OpenApi.Models;
-using Tinkoff.Trading.OpenApi.Network;
-using System.Diagnostics;
 using Serilog;
-using TinkoffAdapter;
-using RetryPolicy;
 using TinkoffAdapter.DataHelper;
-using TinkoffAdapter.Authority;
 using DataCollector;
 using CandleInterval = MarketDataModules.CandleInterval;
 using ScreenerStocks;
 using ScreenerStocks.Helpers;
 using MarketDataModules;
+using Analysis.Screeners;
 
 namespace tradeSDK
 {
@@ -41,7 +32,7 @@ namespace tradeSDK
             //var figi = "BBG000BVPV84"; //AMZN
             //var figi = "BBG0013HGFT4"; //USDRUS
             //var figi = "BBG0018SLC07"; //SQ
-            var candleInterval = CandleInterval.QuarterHour;
+            var candleInterval = CandleInterval.Day;
 
             int candlesCount = 45;
             decimal margin = 9000;
