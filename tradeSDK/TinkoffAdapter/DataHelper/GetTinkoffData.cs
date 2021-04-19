@@ -15,7 +15,7 @@ namespace TinkoffAdapter.DataHelper
 {   
     public class GetTinkoffData
     {
-        public async Task<CandleList> GetCandlesTinkoffAsync(string figi, CandleInterval candleInterval, int candlesCount)
+        public async Task<CandleList> GetCandlesTinkoffAsync(string figi, CandleInterval candleInterval, int candlesCount, int finalIterCount = 5)
         {
             Log.Information("Start GetCandlesTinkoffAsync method. Figi: " + figi);
 
@@ -23,7 +23,6 @@ namespace TinkoffAdapter.DataHelper
             Log.Information("CandleCount: " + candlesCount);
             var date = DateTime.Now;
             int iterCount = 0;
-            int finalIterCount = 5;
             List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
 
             ComparerTinkoffCandlePayloadEquality CandlePayloadEqC = new ComparerTinkoffCandlePayloadEquality();
