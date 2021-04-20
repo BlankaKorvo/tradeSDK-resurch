@@ -10,6 +10,9 @@ using ScreenerStocks.Helpers;
 using MarketDataModules;
 using Analysis.Screeners;
 using System.Linq;
+using System.IO;
+using TinkoffAdapter.Authority;
+using MarketDataModules.Models.Candles;
 
 namespace tradeSDK
 {
@@ -29,28 +32,7 @@ namespace tradeSDK
 
             int candlesCount = 45;
             decimal margin = 9000;
-
-            List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
-            foreach (var item in instrumentList)
-            {
-                var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Day, 350);
-                if (candles == null)
-                {
-                    continue;
-                }
-                List<VolumeProfile> vps = volumeProfileScreener.MaxVol(candles, 50, VolumeProfileMethod.All);
-                var result = vps.OrderByDescending(x => x.Volume);
-                var finalresult = result.FirstOrDefault();
-                if (finalresult.UpperBound < candles.Candles.Last().Close * 1.1m && finalresult.UpperBound > candles.Candles.Last().Close * 0.9m)
-                {
-                    Console.WriteLine(candles.Figi);
-                    Console.WriteLine(finalresult.UpperBound);
-                    Console.WriteLine(finalresult.LowerBound);
-                    Console.WriteLine(finalresult.Volume);
-                    Console.WriteLine(candles.Candles.Last().Close);
-                    Console.WriteLine("***");
-                }
-            }
+            List<Instrument> instrumentList = await NewMethod(marketDataCollector, getStocksHistory, volumeProfileScreener);
 
             //foreach (var x in vps)
             //{
@@ -68,7 +50,7 @@ namespace tradeSDK
 
             try
             {
-               // List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+                // List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
                 await mishMashScreener.CycleTrading(candleInterval, candlesCount, margin, instrumentList);
             }
             catch (Exception ex)
@@ -76,6 +58,43 @@ namespace tradeSDK
                 Log.Error(ex.Message);
                 Log.Error(ex.StackTrace);
             }
+        }
+
+        private static async Task<List<Instrument>> NewMethod(MarketDataCollector marketDataCollector, GetStocksHistory getStocksHistory, VolumeProfileScreener volumeProfileScreener)
+        {
+            List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+            foreach (var item in instrumentList)
+            {
+                var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Day, 200);
+                if (candles == null)
+                {
+                    continue;
+                }
+
+                CandlesListProfile vps = volumeProfileScreener.VolumeProfileList(candles, 50, VolumeProfileMethod.All);
+                var result = vps.VolumeProfiles.OrderByDescending(x => x.Volume);
+                var finalresult = result.FirstOrDefault();
+                decimal averageBound = (finalresult.UpperBound + finalresult.LowerBound) / 2;
+                decimal procentUp = averageBound * 1.1M;
+                decimal procentDown = averageBound * 0.9M;
+                decimal close = candles.Candles.Last().Close;
+
+                if (close < procentUp && close > procentDown)
+                {
+                    Console.WriteLine(candles.Figi);
+                    Console.WriteLine(finalresult.UpperBound);
+                    Console.WriteLine(finalresult.LowerBound);
+                    Console.WriteLine(finalresult.Volume);
+                    Console.WriteLine(candles.Candles.Last().Close);
+                    Console.WriteLine("***");
+                    using (StreamWriter sw = new StreamWriter("tickers", true, System.Text.Encoding.Default))
+                    {
+                        sw.WriteLine(item.Ticker + " UpperBound: " + finalresult.UpperBound + " LowerBound: " + finalresult.LowerBound + " Volume: " + finalresult.Volume + " Close:" + candles.Candles.Last().Close);
+                        sw.WriteLine();
+                    }
+                }
+            }
+            return instrumentList;
         }
     }
 }

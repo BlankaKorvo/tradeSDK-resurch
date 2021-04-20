@@ -63,9 +63,16 @@ namespace DataCollector
             return orderbook;
         }
 
-        public async Task<CandlesList> GetCandlesAsync(string figi, CandleInterval candleInterval, int candlesCount)
+        public async Task<CandlesList> GetCandlesAsync(string figi, CandleInterval candleInterval, int candlesCount, Providers providers = Providers.Tinkoff)
         {
-            return await TinkoffCandles(figi, candleInterval, candlesCount);
+            switch (providers)
+            {
+                case Providers.Tinkoff:
+                    return await TinkoffCandles(figi, candleInterval, candlesCount);
+                case Providers.Finam:
+                    return null;
+            }
+            return null;
         }
 
         public async Task<InstrumentList> GetInstrumentListAsync()
@@ -77,6 +84,25 @@ namespace DataCollector
         {
             return await TinkoffOrderbook(figi, depth);
         }
+        public async Task<List<CandlesList>> GetListCandlesAsync(InstrumentList instrumentList, CandleInterval candleInterval, int candlesCount, Providers providers = Providers.Tinkoff)
+        {
+            List<CandlesList> listCandlesList = new List<CandlesList>();
+            foreach (var item in instrumentList.Instruments)
+            {
+                CandlesList candlesList = await GetCandlesAsync(item.Figi, candleInterval, candlesCount, providers);
+                if (candlesList == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    listCandlesList.Add(candlesList);
+                }
+            }
+            return listCandlesList;
+        }
+
+
 
     }
 }
