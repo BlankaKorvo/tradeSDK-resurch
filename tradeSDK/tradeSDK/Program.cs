@@ -18,6 +18,9 @@ namespace tradeSDK
 {
     class Program
     {
+        MarketDataCollector marketDataCollector = new MarketDataCollector();
+        GetStocksHistory getStocksHistory = new GetStocksHistory();
+        VolumeProfileScreener volumeProfileScreener = new VolumeProfileScreener();
         static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -32,7 +35,39 @@ namespace tradeSDK
 
             int candlesCount = 45;
             decimal margin = 9000;
-            List<Instrument> instrumentList = await NewMethod(marketDataCollector, getStocksHistory, volumeProfileScreener);
+
+
+
+            async Task NewMethod(MarketDataCollector marketDataCollector)
+            {
+                List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+                List<CandlesList> candlesList = new List<CandlesList>();
+                foreach (var item in instrumentList)
+                {
+                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Day, 20);
+                    if (candles == null)
+                    {
+                        continue;
+                    }
+                    candlesList.Add(candles);
+                }
+                List<ProfileList> profileList = volumeProfileScreener.CreateProfilesList(candlesList, 50, VolumeProfileMethod.All);
+
+                List<ProfileList> profilesList1 = volumeProfileScreener.OrderVolBargaining(profileList);
+                Log.Information("Start set ticker");
+                foreach (var item in profilesList1)
+                {
+                    VolumeProfile maxVol = item.VolumeProfiles.OrderByDescending(x => (x.VolumeGreen + x.VolumeRed)).FirstOrDefault();
+                    Instrument instrument = await marketDataCollector.GetInstrumentByFigi(item.Figi);
+                    
+                    using (StreamWriter sw = new StreamWriter("tickers", true, System.Text.Encoding.Default))
+                    {
+                        sw.WriteLine(instrument.Ticker + " UpperBound: " + maxVol.UpperBound + " LowerBound: " + maxVol.LowerBound + " VolumeGreen: " + maxVol.VolumeGreen + " VolumeRed: " + maxVol.VolumeRed + " CandlesCount: " + maxVol.CandlesCount + " Close:" + item.Candles.Last().Close);
+                        sw.WriteLine();
+                    }
+                }
+            }
+
 
             //foreach (var x in vps)
             //{
@@ -43,15 +78,14 @@ namespace tradeSDK
 
             //}
 
-            Console.ReadKey();
-
 
             MishMashScreener mishMashScreener = new MishMashScreener();
 
             try
             {
-                // List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
-                await mishMashScreener.CycleTrading(candleInterval, candlesCount, margin, instrumentList);
+                await NewMethod(marketDataCollector);
+                //List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+                //await mishMashScreener.CycleTrading(candleInterval, candlesCount, margin, instrumentList);
             }
             catch (Exception ex)
             {
@@ -60,41 +94,5 @@ namespace tradeSDK
             }
         }
 
-        private static async Task<List<Instrument>> NewMethod(MarketDataCollector marketDataCollector, GetStocksHistory getStocksHistory, VolumeProfileScreener volumeProfileScreener)
-        {
-            List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
-            foreach (var item in instrumentList)
-            {
-                var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Day, 200);
-                if (candles == null)
-                {
-                    continue;
-                }
-
-                CandlesListProfile vps = volumeProfileScreener.VolumeProfileList(candles, 50, VolumeProfileMethod.All);
-                var result = vps.VolumeProfiles.OrderByDescending(x => x.Volume);
-                var finalresult = result.FirstOrDefault();
-                decimal averageBound = (finalresult.UpperBound + finalresult.LowerBound) / 2;
-                decimal procentUp = averageBound * 1.1M;
-                decimal procentDown = averageBound * 0.9M;
-                decimal close = candles.Candles.Last().Close;
-
-                if (close < procentUp && close > procentDown)
-                {
-                    Console.WriteLine(candles.Figi);
-                    Console.WriteLine(finalresult.UpperBound);
-                    Console.WriteLine(finalresult.LowerBound);
-                    Console.WriteLine(finalresult.Volume);
-                    Console.WriteLine(candles.Candles.Last().Close);
-                    Console.WriteLine("***");
-                    using (StreamWriter sw = new StreamWriter("tickers", true, System.Text.Encoding.Default))
-                    {
-                        sw.WriteLine(item.Ticker + " UpperBound: " + finalresult.UpperBound + " LowerBound: " + finalresult.LowerBound + " Volume: " + finalresult.Volume + " Close:" + candles.Candles.Last().Close);
-                        sw.WriteLine();
-                    }
-                }
-            }
-            return instrumentList;
-        }
     }
 }

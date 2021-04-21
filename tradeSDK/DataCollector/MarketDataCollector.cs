@@ -16,9 +16,38 @@ using TradeStatus = MarketDataModules.TradeStatus;
 
 namespace DataCollector
 {
+
+
     public class MarketDataCollector// : GetTinkoffData // : ICandlesList
     {
         GetTinkoffData getTinkoffData = new GetTinkoffData();
+
+        public async Task<InstrumentList> GetInstrumentListAsync()
+        {
+            return await TinkoffInstrumentList();
+        }
+
+        public async Task<Orderbook> GetOrderbookAsync(string figi, int depth)
+        {
+            return await TinkoffOrderbook(figi, depth);
+        }
+        public async Task<List<CandlesList>> GetListCandlesAsync(InstrumentList instrumentList, CandleInterval candleInterval, int candlesCount, Providers providers = Providers.Tinkoff)
+        {
+            List<CandlesList> listCandlesList = new List<CandlesList>();
+            foreach (var item in instrumentList.Instruments)
+            {
+                CandlesList candlesList = await GetCandlesAsync(item.Figi, candleInterval, candlesCount, providers);
+                if (candlesList == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    listCandlesList.Add(candlesList);
+                }
+            }
+            return listCandlesList;
+        }
         async Task<CandlesList> TinkoffCandles(string figi, CandleInterval candleInterval, int candlesCount)
         {
             Tinkoff.Trading.OpenApi.Models.CandleInterval interval = (Tinkoff.Trading.OpenApi.Models.CandleInterval)candleInterval;
@@ -75,31 +104,13 @@ namespace DataCollector
             return null;
         }
 
-        public async Task<InstrumentList> GetInstrumentListAsync()
+        public async Task<Instrument> GetInstrumentByFigi(string figi)
         {
-            return await TinkoffInstrumentList();
-        }
-
-        public async Task<Orderbook> GetOrderbookAsync(string figi, int depth)
-        {
-            return await TinkoffOrderbook(figi, depth);
-        }
-        public async Task<List<CandlesList>> GetListCandlesAsync(InstrumentList instrumentList, CandleInterval candleInterval, int candlesCount, Providers providers = Providers.Tinkoff)
-        {
-            List<CandlesList> listCandlesList = new List<CandlesList>();
-            foreach (var item in instrumentList.Instruments)
-            {
-                CandlesList candlesList = await GetCandlesAsync(item.Figi, candleInterval, candlesCount, providers);
-                if (candlesList == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    listCandlesList.Add(candlesList);
-                }
-            }
-            return listCandlesList;
+            MarketInstrument instrumentT = await getTinkoffData.GetMarketInstrumentByFigi(figi);
+            Instrument instrument = new Instrument(instrumentT.Figi, instrumentT.Ticker, 
+                instrumentT.Isin, instrumentT.MinPriceIncrement, instrumentT.Lot, 
+                (Currency)instrumentT.Currency, instrumentT.Name, (InstrumentType)instrumentT.Type);
+            return instrument;
         }
 
 

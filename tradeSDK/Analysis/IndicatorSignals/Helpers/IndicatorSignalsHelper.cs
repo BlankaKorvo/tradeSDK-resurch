@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using MarketDataModules;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,14 @@ namespace TradingAlgorithms.IndicatorSignals.Helpers
             Log.Information("Average Angles: " + averageAngles.ToString());
             Log.Information("Stop DeltaDegreeAngle");
             return averageAngles;
+        }
+
+        internal bool GreenCandle(CandleStructure candleStructure)
+        {
+            if (candleStructure.Open <= candleStructure.Close)
+                return true;
+            else
+                return false;
         }
     }
 }

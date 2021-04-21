@@ -215,5 +215,11 @@ namespace TinkoffAdapter.DataHelper
             }
             return figi;
         }
+
+        public async Task<MarketInstrument> GetMarketInstrumentByFigi(string figi)
+        {
+            MarketInstrument instrument =  await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketSearchByFigiAsync(figi)));
+            return instrument;
+        }
     }
 }

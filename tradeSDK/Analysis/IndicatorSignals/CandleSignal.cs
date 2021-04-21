@@ -64,7 +64,7 @@ namespace TradingAlgorithms.IndicatorSignals
             for (int i = 0; i <= candlesCount; i++)
             {
                 CandleStructure candleStructure = candlesList.Candles[candlesCount - i];
-                if (candleStructure.Open < candleStructure.Close)
+                if (GreenCandle(candleStructure))
                 {
                     greenCount++;
                 }
