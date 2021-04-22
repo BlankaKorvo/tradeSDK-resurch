@@ -18,6 +18,7 @@ namespace tradeSDK
 {
     class Program
     {
+        GetTinkoffData getTinkoffData = new GetTinkoffData();
         MarketDataCollector marketDataCollector = new MarketDataCollector();
         GetStocksHistory getStocksHistory = new GetStocksHistory();
         VolumeProfileScreener volumeProfileScreener = new VolumeProfileScreener();
@@ -37,23 +38,25 @@ namespace tradeSDK
             decimal margin = 9000;
 
 
-
             async Task NewMethod(MarketDataCollector marketDataCollector)
             {
                 List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
                 List<CandlesList> candlesList = new List<CandlesList>();
                 foreach (var item in instrumentList)
                 {
-                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Day, 20);
+                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Day, new DateTime(2020, 3, 1));
                     if (candles == null)
                     {
                         continue;
                     }
                     candlesList.Add(candles);
                 }
-                List<ProfileList> profileList = volumeProfileScreener.CreateProfilesList(candlesList, 50, VolumeProfileMethod.All);
+                List<CandlesProfileList> profileList = volumeProfileScreener.CreateProfilesList(candlesList, 50, VolumeProfileMethod.All);
 
-                List<ProfileList> profilesList1 = volumeProfileScreener.OrderVolBargaining(profileList);
+                List<CandlesProfileList> profilesList2 = volumeProfileScreener.BargainingOnPrice(profileList, 5);
+
+                List <CandlesProfileList> profilesList1 = volumeProfileScreener.OrderVolBargaining(profilesList2);
+    
                 Log.Information("Start set ticker");
                 foreach (var item in profilesList1)
                 {
@@ -77,7 +80,14 @@ namespace tradeSDK
             //    Console.WriteLine();
 
             //}
-
+            DateTime dateT = new DateTime(2021, 04, 20);
+            GetTinkoffData getTinkoffData = new GetTinkoffData();
+            var x = await getTinkoffData.GetCandlesTinkoffAsync("BBG00HQ77DS2", Tinkoff.Trading.OpenApi.Models.CandleInterval.Day, dateT);
+            foreach (var item in x.Candles)
+            {
+                Console.WriteLine(item.Time);
+            }
+            Console.ReadKey();
 
             MishMashScreener mishMashScreener = new MishMashScreener();
 

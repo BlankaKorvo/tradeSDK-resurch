@@ -15,7 +15,7 @@ namespace TinkoffAdapter.DataHelper
 {   
     public class GetTinkoffData
     {
-        public async Task<CandleList> GetCandlesTinkoffAsync(string figi, CandleInterval candleInterval, int candlesCount, int finalIterCount = 5)
+        public async Task<CandleList> GetCandlesTinkoffAsync(string figi, CandleInterval candleInterval, int candlesCount, int attemptsCount = 5)
         {
             Log.Information("Start GetCandlesTinkoffAsync method. Figi: " + figi);
 
@@ -40,9 +40,9 @@ namespace TinkoffAdapter.DataHelper
                     AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-1);
                     iterCount++;
-                    if (iterCount > finalIterCount)
+                    if (iterCount > attemptsCount)
                     {
-                        Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        Log.Information(figi + " could not get the number of candles needed in " + attemptsCount + " attempts ");
                         Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
                         return null;
                     }
@@ -54,9 +54,9 @@ namespace TinkoffAdapter.DataHelper
                     AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddDays(-7);
                     iterCount++;
-                    if (iterCount > finalIterCount)
+                    if (iterCount > attemptsCount)
                     {
-                        Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        Log.Information(figi + " could not get the number of candles needed in " + attemptsCount + " attempts ");
                         Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
                         return null;
                     }
@@ -68,96 +68,97 @@ namespace TinkoffAdapter.DataHelper
                     AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
                     date = date.AddYears(-1);
                     iterCount++;
-                    if (iterCount > finalIterCount)
+                    if (iterCount > attemptsCount)
                     {
-                        Log.Information(figi + " could not get the number of candles needed in " + finalIterCount + " attempts ");
+                        Log.Information(figi + " could not get the number of candles needed in " + attemptsCount + " attempts ");
                         Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
                         return null;
                     }
                 }
             }
-
-            List<CandlePayload> candlePayload = (from u in AllCandlePayloadTemp
+            List<CandlePayload> candlePayloadBefor = (from u in AllCandlePayloadTemp
                                                  orderby u.Time
                                                  select u).ToList();
 
+            int candlesCountNow = candlePayloadBefor.Count();
+            List<CandlePayload> candlePayload = candlePayloadBefor.Skip(candlesCountNow - candlesCount).ToList();
+
             CandleList candleList = new CandleList(figi, candleInterval, candlePayload);
+
+            Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return candle list");
+            return candleList;
+        }
+        public async Task<CandleList> GetCandlesTinkoffAsync(string figi, CandleInterval candleInterval, DateTime dateFrom)
+        {
+            Log.Information("Start GetCandlesTinkoffAsync method. Figi: " + figi);
+
+            Log.Information("CandleInterval: " + candleInterval.ToString());
+            Log.Information("Date from: " + dateFrom);
+            var date = DateTime.Now;
+            int iterCount = 0;
+            List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
+
+            ComparerTinkoffCandlePayloadEquality CandlePayloadEqC = new ComparerTinkoffCandlePayloadEquality();
+
+            if (candleInterval == CandleInterval.Minute
+                || candleInterval == CandleInterval.TwoMinutes
+                || candleInterval == CandleInterval.ThreeMinutes
+                || candleInterval == CandleInterval.FiveMinutes
+                || candleInterval == CandleInterval.TenMinutes
+                || candleInterval == CandleInterval.QuarterHour
+                || candleInterval == CandleInterval.HalfHour)
+            {
+                while (date.CompareTo(dateFrom) == 0)
+                {
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    date = date.AddDays(-1);
+                    //iterCount++;
+                    //if (iterCount > attemptsCount)
+                    //{
+                       // Log.Information(figi + " could not get the number of candles needed in " + attemptsCount + " attempts ");
+                        Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
+                        //return null;
+                    //}
+                }
+            }
+            else if (candleInterval == CandleInterval.Hour)
+                while (date.CompareTo(dateFrom) == 0)
+                {
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    date = date.AddDays(-7);
+                    //iterCount++;
+                    //if (iterCount > attemptsCount)
+                    //{
+                        //Log.Information(figi + " could not get the number of candles needed in " + attemptsCount + " attempts ");
+                        Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
+                        //return null;
+                    //}
+                }
+            else if (candleInterval == CandleInterval.Day)
+            {
+                while (date.CompareTo(dateFrom) == 1)
+                {
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
+                    date = date.AddYears(-1);
+                    //iterCount++;
+                    //if (iterCount > attemptsCount)
+                    //{
+                       // Log.Information(figi + " could not get the number of candles needed in " + attemptsCount + " attempts ");
+                        Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
+                        //return null;
+                    //}
+                }
+            }
+            List<CandlePayload> candlePayload = (from u in AllCandlePayloadTemp
+                                                      orderby u.Time
+                                                      select u).ToList();
+
+            CandleList candleList = new CandleList(figi, candleInterval, candlePayload);
+
             Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return candle list");
             return candleList;
         }
 
-        async Task<CandleList> GetOneSetCandlesAsync(string figi, CandleInterval interval, DateTime to)
-        {
-
-            Log.Information("Start GetCandleByFigiAsync method whith figi: " + figi);
-            //DateTime to = DateTime.Now;
-            DateTime from = to;
-            switch (interval)
-            {
-                case CandleInterval.Minute:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.TwoMinutes:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.ThreeMinutes:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.FiveMinutes:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.TenMinutes:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.QuarterHour:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.HalfHour:
-                    from = to.AddDays(-1);
-                    break;
-                case CandleInterval.Hour:
-                    from = to.AddDays(-7);
-                    break;
-                case CandleInterval.Day:
-                    from = to.AddYears(-1);
-                    break;
-                case CandleInterval.Week:
-                    from = to.AddYears(-2);
-                    break;
-                case CandleInterval.Month:
-                    from = to.AddYears(-10);
-                    break;
-            }
-            Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
-
-            try
-            {
-                CandleList candle = await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketCandlesAsync(figi, from, to, interval)));
-                Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
-                Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
-                return candle;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-                Log.Error(ex.StackTrace);
-                Log.Information("Stop GetCandleByFigiAsync method. Return null");
-                return null;
-            }
-        }    
-
-        async Task<List<CandlePayload>> GetUnionCandlesAsync(string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, ComparerTinkoffCandlePayloadEquality CandlePayloadEqC)
-        {
-            Log.Information("Start GetUnionCandles. Figi: " + figi);
-            Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
-            CandleList candleListTemp = await GetOneSetCandlesAsync(figi, candleInterval, date);//.GetAwaiter().GetResult();
-            Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
-            AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
-            //AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
-            Log.Information("GetUnionCandles return: " + AllCandlePayloadTemp.Count + " count candles");
-            Log.Information("Stop GetUnionCandles. Figi: " + figi);
-            return AllCandlePayloadTemp;
-        }
         public async Task<Orderbook> GetOrderbookAsync(string figi, int depth)
         {
             Log.Information("Start GetOrderbook method. Figi: " + figi);
@@ -220,6 +221,78 @@ namespace TinkoffAdapter.DataHelper
         {
             MarketInstrument instrument =  await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketSearchByFigiAsync(figi)));
             return instrument;
+        }
+
+        async Task<CandleList> GetOneSetCandlesAsync(string figi, CandleInterval interval, DateTime to)
+        {
+
+            Log.Information("Start GetCandleByFigiAsync method whith figi: " + figi);
+            //DateTime to = DateTime.Now;
+            DateTime from = to;
+            switch (interval)
+            {
+                case CandleInterval.Minute:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.TwoMinutes:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.ThreeMinutes:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.FiveMinutes:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.TenMinutes:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.QuarterHour:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.HalfHour:
+                    from = to.AddDays(-1);
+                    break;
+                case CandleInterval.Hour:
+                    from = to.AddDays(-7);
+                    break;
+                case CandleInterval.Day:
+                    from = to.AddYears(-1);
+                    break;
+                case CandleInterval.Week:
+                    from = to.AddYears(-2);
+                    break;
+                case CandleInterval.Month:
+                    from = to.AddYears(-10);
+                    break;
+            }
+            Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
+
+            try
+            {
+                CandleList candle = await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketCandlesAsync(figi, from, to, interval)));
+                Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
+                Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
+                return candle;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+                Log.Information("Stop GetCandleByFigiAsync method. Return null");
+                return null;
+            }
+        }
+        async Task<List<CandlePayload>> GetUnionCandlesAsync(string figi, CandleInterval candleInterval, DateTime date, List<CandlePayload> AllCandlePayloadTemp, ComparerTinkoffCandlePayloadEquality CandlePayloadEqC)
+        {
+            Log.Information("Start GetUnionCandles. Figi: " + figi);
+            Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
+            CandleList candleListTemp = await GetOneSetCandlesAsync(figi, candleInterval, date);//.GetAwaiter().GetResult();
+            Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
+            AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
+            //AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
+            Log.Information("GetUnionCandles return: " + AllCandlePayloadTemp.Count + " count candles");
+            Log.Information("Stop GetUnionCandles. Figi: " + figi);
+            return AllCandlePayloadTemp;
         }
     }
 }

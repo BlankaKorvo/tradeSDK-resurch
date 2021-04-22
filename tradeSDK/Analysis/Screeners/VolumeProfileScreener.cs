@@ -17,9 +17,9 @@ namespace Analysis.Screeners
         MarketDataCollector dataCollector = new MarketDataCollector();
         IndicatorSignalsHelper indicatorSignalsHelper = new IndicatorSignalsHelper();
 
-        public List<ProfileList> CreateProfilesList(List<CandlesList> listCandlesList, int countVolumeProfile, VolumeProfileMethod volumeProfileMethod)
+        public List<CandlesProfileList> CreateProfilesList(List<CandlesList> listCandlesList, int countVolumeProfile, VolumeProfileMethod volumeProfileMethod)
         {
-            List<ProfileList> profilesList = new List<ProfileList>();
+            List<CandlesProfileList> profilesList = new List<CandlesProfileList>();
             foreach (var item in listCandlesList)
             {
                 if (item == null)
@@ -29,10 +29,10 @@ namespace Analysis.Screeners
             return profilesList;
         }
 
-        bool PriceUpperBargaining(ProfileList candlesListProfile)
+        bool PriceUpperBargaining(CandlesProfileList candlesProfileList)
         {
-            decimal bargainingPrice = AverageBargane(candlesListProfile);
-            decimal price = candlesListProfile.Candles.Last().Close;
+            decimal bargainingPrice = AverageBargane(candlesProfileList);
+            decimal price = candlesProfileList.Candles.Last().Close;
             if (price >= bargainingPrice)
             {
                 return true;
@@ -43,21 +43,43 @@ namespace Analysis.Screeners
             }
         }
 
-        public List<ProfileList> OrderVolBargaining(List<ProfileList> listCandlesListProfiles)
+        VolumeProfile GetVolumeProfileMaxVolPrice(CandlesProfileList candlesProfileList) // Вытаскивает VolumeProfile с самым большим объёмом
         {
-            var maxVol = listCandlesListProfiles.OrderByDescending(x => (x.VolumeProfiles.Select(y => y).OrderByDescending(z => (z.VolumeRed + z.VolumeGreen)).FirstOrDefault())).ToList();
+            return candlesProfileList.VolumeProfiles.OrderByDescending(x => x.VolumeGreen + x.VolumeRed).FirstOrDefault();
+        }
+
+        decimal MaxVolPrice(CandlesProfileList candlesProfileList)  // Расчитывает сумму оборота из самого объёмного VolumeProfile
+        {
+            var volumeProfile = candlesProfileList.VolumeProfiles.OrderByDescending(x => x.VolumeGreen + x.VolumeRed).FirstOrDefault();
+            return volumeProfile.VolumeGreen + volumeProfile.VolumeRed;
+        }
+
+        public List<CandlesProfileList> OrderVolBargaining(List<CandlesProfileList> listCandlesListProfiles) // Сортировка инструметов по объему самого объёмного VolumeProfile
+        {
+            var maxVol = listCandlesListProfiles.OrderByDescending(y => MaxVolPrice(y)).ToList();
             return maxVol;
         }
 
-        private static decimal AverageBargane(ProfileList candlesListProfile)
+        public List<CandlesProfileList> BargainingOnPrice(List<CandlesProfileList> listCandlesListProfiles, decimal percent) // Сортировка инструметов по объему самого объёмного VolumeProfile
         {
-            var volProf = candlesListProfile.VolumeProfiles.OrderByDescending(x => x.VolumeGreen);
+            List<CandlesProfileList> result = 
+                (from x in listCandlesListProfiles where 
+                 AverageBargane(x) <= x.Candles.Last().Close * (percent / 100 + 1)
+                 && AverageBargane(x) >= x.Candles.Last().Close * (1 - (percent / 100)) 
+                 select x).ToList();
+            return result;
+        }
+
+
+        decimal AverageBargane(CandlesProfileList candlesListProfile) // Среднее значение границ горизонтального канала прторговки (VolumeProfile:  UpperBound & LowerBound )
+        {
+            var volProf = candlesListProfile.VolumeProfiles.OrderByDescending(x => x.VolumeGreen + x.VolumeRed);
             var maxVol = volProf.FirstOrDefault();
             decimal bargainingPrice = (maxVol.LowerBound + maxVol.UpperBound) / 2;
             return bargainingPrice;
         }
 
-        public ProfileList VolumeProfileList(CandlesList candlesList, int countVolumeProfile, VolumeProfileMethod volumeProfileMethod)
+        public CandlesProfileList VolumeProfileList(CandlesList candlesList, int countVolumeProfile, VolumeProfileMethod volumeProfileMethod) //mapping from candlesList to CandlesProfileList
         {
             if (candlesList == null)
             {
@@ -77,7 +99,7 @@ namespace Analysis.Screeners
                 VolumeProfile volumeProfile = new VolumeProfile(0, 0, 0, upperBound, lowerBound);
                 volumeProfiles.Add(volumeProfile);
             }
-            ProfileList profileList = new ProfileList(candlesList.Figi, candlesList.Interval, countVolumeProfile , volumeProfiles, candlesList.Candles);
+            CandlesProfileList profileList = new CandlesProfileList(candlesList.Figi, candlesList.Interval, countVolumeProfile , volumeProfiles, candlesList.Candles);
 
             foreach (var candle in candlesList.Candles)
             {
@@ -112,28 +134,28 @@ namespace Analysis.Screeners
             return profileList;
         }
 
-        private decimal FullAverageMethod(CandleStructure candleStructure)
+        decimal FullAverageMethod(CandleStructure candleStructure)
         {
             decimal price = (candleStructure.High + candleStructure.Low + candleStructure.High + candleStructure.Low) / 4;
             return price;
         }
-        private decimal HiLowAverageMethod(CandleStructure candleStructure)
+        decimal HiLowAverageMethod(CandleStructure candleStructure)
         {
             decimal price = (candleStructure.High + candleStructure.Low) / 2;
             return price;
         }
-        private decimal OpenCloseAverageMethod(CandleStructure candleStructure)
+        decimal OpenCloseAverageMethod(CandleStructure candleStructure)
         {
             decimal price = (candleStructure.Open + candleStructure.Close) / 2;
             return price;
         }
 
-        private decimal MaxLow(CandlesList candlesList)
+        decimal MaxLow(CandlesList candlesList)
         {
             return candlesList.Candles.Select(x => x.Low).Min();
         }
 
-        private decimal MaxHi(CandlesList candlesList)
+        decimal MaxHi(CandlesList candlesList)
         {
             return candlesList.Candles.Select(x => x.High).Max();
         }

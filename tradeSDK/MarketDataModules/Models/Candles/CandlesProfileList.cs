@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MarketDataModules.Models.Candles
 {
-    public class ProfileList : CandlesList
+    public class CandlesProfileList : CandlesList
     {
         public int CountVolumeProfile { get; }
         public List<VolumeProfile> VolumeProfiles { get; }
-        public ProfileList(string figi, CandleInterval interval, int countVolumeProfile, List<VolumeProfile> volumeProfiles, List<CandleStructure> candles) : base(figi, interval, candles)
+        public CandlesProfileList(string figi, CandleInterval interval, int countVolumeProfile, List<VolumeProfile> volumeProfiles, List<CandleStructure> candles) : base(figi, interval, candles)
         {
             VolumeProfiles = volumeProfiles;
             CountVolumeProfile = countVolumeProfile;

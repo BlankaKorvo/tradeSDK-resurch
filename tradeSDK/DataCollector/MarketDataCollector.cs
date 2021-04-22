@@ -65,6 +65,23 @@ namespace DataCollector
             return candlesList;
         }
 
+        async Task<CandlesList> TinkoffCandles(string figi, CandleInterval candleInterval, DateTime dateTime)
+        {
+            Tinkoff.Trading.OpenApi.Models.CandleInterval interval = (Tinkoff.Trading.OpenApi.Models.CandleInterval)candleInterval;
+
+            CandleList tinkoffCandles = await getTinkoffData.GetCandlesTinkoffAsync(figi, interval, dateTime);
+            if (tinkoffCandles == null)
+            {
+                return null;
+            }
+            List<CandleStructure> candles =
+                new List<CandleStructure>(tinkoffCandles.Candles.Select(x =>
+                    new CandleStructure(x.Open, x.Close, x.High, x.Low, x.Volume, x.Time, (CandleInterval)x.Interval, x.Figi)).Distinct());
+
+            CandlesList candlesList = new CandlesList(tinkoffCandles.Figi, candleInterval, candles);
+            return candlesList;
+        }
+
         async Task<InstrumentList> TinkoffInstrumentList()
         {
             MarketInstrumentList tinkoffStocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketStocksAsync());
@@ -98,6 +115,18 @@ namespace DataCollector
             {
                 case Providers.Tinkoff:
                     return await TinkoffCandles(figi, candleInterval, candlesCount);
+                case Providers.Finam:
+                    return null;
+            }
+            return null;
+        }
+
+        public async Task<CandlesList> GetCandlesAsync(string figi, CandleInterval candleInterval, DateTime dateTime, Providers providers = Providers.Tinkoff)
+        {
+            switch (providers)
+            {
+                case Providers.Tinkoff:
+                    return await TinkoffCandles(figi, candleInterval, dateTime);
                 case Providers.Finam:
                     return null;
             }
