@@ -81,7 +81,7 @@ namespace Analysis.Screeners
 
         public CandlesProfileList VolumeProfileList(CandlesList candlesList, int countVolumeProfile, VolumeProfileMethod volumeProfileMethod) //mapping from candlesList to CandlesProfileList
         {
-            if (candlesList == null)
+            if (candlesList == null || candlesList.Candles == null)
             {
                 return null;
             }
@@ -157,7 +157,8 @@ namespace Analysis.Screeners
 
         decimal MaxHi(CandlesList candlesList)
         {
-            return candlesList.Candles.Select(x => x.High).Max();
+            var result = candlesList.Candles.Select(x => x.High).DefaultIfEmpty().Max();
+            return result;
         }
     }
 

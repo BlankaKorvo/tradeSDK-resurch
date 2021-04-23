@@ -41,10 +41,13 @@ namespace tradeSDK
             async Task NewMethod(MarketDataCollector marketDataCollector)
             {
                 List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+                //    var xxx = await marketDataCollector.GetInstrumentByFigi("BBG005BT60Y8");
+                //instrumentList.Add(xxx);
+
                 List<CandlesList> candlesList = new List<CandlesList>();
                 foreach (var item in instrumentList)
                 {
-                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Day, new DateTime(2020, 3, 1));
+                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Minute, new DateTime(2021, 4, 23));
                     if (candles == null)
                     {
                         continue;
@@ -80,29 +83,21 @@ namespace tradeSDK
             //    Console.WriteLine();
 
             //}
-            DateTime dateT = new DateTime(2021, 04, 20);
-            GetTinkoffData getTinkoffData = new GetTinkoffData();
-            var x = await getTinkoffData.GetCandlesTinkoffAsync("BBG00HQ77DS2", Tinkoff.Trading.OpenApi.Models.CandleInterval.Minute, dateT);
-            foreach (var item in x.Candles)
-            {
-                Console.WriteLine(item.Time);
-            }
 
-            Console.ReadKey();
 
             MishMashScreener mishMashScreener = new MishMashScreener();
 
-            try
-            {
+            //try
+            //{
                 await NewMethod(marketDataCollector);
                 //List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
                 //await mishMashScreener.CycleTrading(candleInterval, candlesCount, margin, instrumentList);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-                Log.Error(ex.StackTrace);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Error(ex.Message);
+            //    Log.Error(ex.StackTrace);
+            //}
         }
 
     }
