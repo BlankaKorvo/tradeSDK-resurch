@@ -82,11 +82,12 @@ namespace tradeSDK
             //}
             DateTime dateT = new DateTime(2021, 04, 20);
             GetTinkoffData getTinkoffData = new GetTinkoffData();
-            var x = await getTinkoffData.GetCandlesTinkoffAsync("BBG00HQ77DS2", Tinkoff.Trading.OpenApi.Models.CandleInterval.Day, dateT);
+            var x = await getTinkoffData.GetCandlesTinkoffAsync("BBG00HQ77DS2", Tinkoff.Trading.OpenApi.Models.CandleInterval.Minute, dateT);
             foreach (var item in x.Candles)
             {
                 Console.WriteLine(item.Time);
             }
+
             Console.ReadKey();
 
             MishMashScreener mishMashScreener = new MishMashScreener();

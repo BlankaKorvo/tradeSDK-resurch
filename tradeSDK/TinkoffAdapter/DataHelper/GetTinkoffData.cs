@@ -88,13 +88,14 @@ namespace TinkoffAdapter.DataHelper
             Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return candle list");
             return candleList;
         }
+
         public async Task<CandleList> GetCandlesTinkoffAsync(string figi, CandleInterval candleInterval, DateTime dateFrom)
         {
             Log.Information("Start GetCandlesTinkoffAsync method. Figi: " + figi);
 
             Log.Information("CandleInterval: " + candleInterval.ToString());
             Log.Information("Date from: " + dateFrom);
-            var date = DateTime.Now;
+            var dateTo = DateTime.Now;
             int iterCount = 0;
             List<CandlePayload> AllCandlePayloadTemp = new List<CandlePayload>();
 
@@ -108,24 +109,18 @@ namespace TinkoffAdapter.DataHelper
                 || candleInterval == CandleInterval.QuarterHour
                 || candleInterval == CandleInterval.HalfHour)
             {
-                while (date.CompareTo(dateFrom) == 0)
+                while (dateTo.CompareTo(dateFrom) >= 0)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
-                    date = date.AddDays(-1);
-                    //iterCount++;
-                    //if (iterCount > attemptsCount)
-                    //{
-                       // Log.Information(figi + " could not get the number of candles needed in " + attemptsCount + " attempts ");
-                        Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
-                        //return null;
-                    //}
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, dateTo, AllCandlePayloadTemp, CandlePayloadEqC);
+                    dateTo = dateTo.AddDays(-1);
+                    Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
                 }
             }
             else if (candleInterval == CandleInterval.Hour)
-                while (date.CompareTo(dateFrom) == 0)
+                while (dateTo.CompareTo(dateFrom) >= 0)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
-                    date = date.AddDays(-7);
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, dateTo, AllCandlePayloadTemp, CandlePayloadEqC);
+                    dateTo = dateTo.AddDays(-7);
                     //iterCount++;
                     //if (iterCount > attemptsCount)
                     //{
@@ -136,22 +131,21 @@ namespace TinkoffAdapter.DataHelper
                 }
             else if (candleInterval == CandleInterval.Day)
             {
-                while (date.CompareTo(dateFrom) == 1)
+                while (dateTo.CompareTo(dateFrom) >= 0)
                 {
-                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, date, AllCandlePayloadTemp, CandlePayloadEqC);
-                    date = date.AddYears(-1);
-                    //iterCount++;
-                    //if (iterCount > attemptsCount)
-                    //{
-                       // Log.Information(figi + " could not get the number of candles needed in " + attemptsCount + " attempts ");
-                        Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
-                        //return null;
-                    //}
+                    AllCandlePayloadTemp = await GetUnionCandlesAsync(figi, candleInterval, dateTo, AllCandlePayloadTemp, CandlePayloadEqC);
+                    dateTo = dateTo.AddYears(-1);
+                    Log.Information("Stop GetCandlesTinkoffAsync method. Figi: " + figi + ". Return null");
+
                 }
             }
+            List<CandlePayload> candlePayloadDis = AllCandlePayloadTemp.Distinct().ToList();
+
             List<CandlePayload> candlePayload = (from u in AllCandlePayloadTemp
                                                       orderby u.Time
+                                                      where u.Time.CompareTo(dateFrom) >= 0
                                                       select u).ToList();
+            //var candlePayloadR = 
 
             CandleList candleList = new CandleList(figi, candleInterval, candlePayload);
 
@@ -270,7 +264,7 @@ namespace TinkoffAdapter.DataHelper
             try
             {
                 CandleList candle = await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketCandlesAsync(figi, from, to, interval)));
-                Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth");
+                Log.Information("Return " + candle.Candles.Count + " candles by figi: " + figi + " with " + interval + " lenth. Date: " + from + " " + to);
                 Log.Information("Stop GetCandleByFigiAsync method whith figi: " + figi);
                 return candle;
             }
@@ -286,10 +280,12 @@ namespace TinkoffAdapter.DataHelper
         {
             Log.Information("Start GetUnionCandles. Figi: " + figi);
             Log.Information("Count geting candles = " + AllCandlePayloadTemp.Count);
-            CandleList candleListTemp = await GetOneSetCandlesAsync(figi, candleInterval, date);//.GetAwaiter().GetResult();
+
+            CandleList candleListTemp = await GetOneSetCandlesAsync(figi, candleInterval, date);
             Log.Information(candleListTemp.Figi + " GetCandleByFigi: " + candleListTemp.Candles.Count + " candles");
+
             AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
-            //AllCandlePayloadTemp = AllCandlePayloadTemp.Union(candleListTemp.Candles, CandlePayloadEqC).ToList();
+
             Log.Information("GetUnionCandles return: " + AllCandlePayloadTemp.Count + " count candles");
             Log.Information("Stop GetUnionCandles. Figi: " + figi);
             return AllCandlePayloadTemp;
