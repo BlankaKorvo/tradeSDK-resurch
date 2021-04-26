@@ -11,7 +11,7 @@ namespace TinkoffData
 {
     public static class Mapper 
     {
-        public static List<Quote> ConvertTinkoffCandlesToQuote(List<CandleStructure> candles)
+        public static List<Quote> ConvertThisCandlesToQuote(List<CandleStructure> candles)
         {
             List<Quote> quotes = new List<Quote>();
 
@@ -29,9 +29,7 @@ namespace TinkoffData
             return quotes;
         }
 
-
-
-        public static List<Quote> ConvertTinkoffCandlesToQuote(List<CandleStructure> candles, decimal realClose)
+        public static List<Quote> ConvertThisCandlesToQuote(List<CandleStructure> candles, decimal realClose)
         {
             List<Quote> quotes = new List<Quote>();
 
@@ -53,7 +51,7 @@ namespace TinkoffData
         internal static List<StochResult> StochData(CandlesList candleList, decimal deltaPrice, int stochLookbackPeriod, int stochSignalPeriod, int stochSmoothPeriod)
         {
             Log.Information("Start mapping Stoch");
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, deltaPrice);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, deltaPrice);
             List<StochResult> stoch = Indicator.GetStoch(candles, stochLookbackPeriod, stochSignalPeriod, stochSmoothPeriod).ToList();
             Log.Information("Stop mapping Stoch");
             return stoch;
@@ -72,7 +70,7 @@ namespace TinkoffData
 
         public static List<AdxResult> AdxData(CandlesList candleList, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             List<AdxResult> adx = Indicator.GetAdx(candles, lookbackPeriod).ToList();
             return adx;
         }
@@ -85,7 +83,7 @@ namespace TinkoffData
                 Log.Information("Candles count: " + candleList.Candles.Count);
                 Log.Information("realPrise: " + realPrise);
                 Log.Information("lookbackPeriod: " + lookbackPeriod);
-                List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+                List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
                 List<AdxResult> adx = Indicator.GetAdx(candles, lookbackPeriod).ToList();
                 Log.Information("Stop AdxData method. Figi: " + candleList.Figi);
                 return adx;
@@ -101,34 +99,34 @@ namespace TinkoffData
 
         public static List<AroonResult> AroonData(CandlesList candleList, int lookbackPeriod = 7)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             List<AroonResult> aroon = Indicator.GetAroon(candles, lookbackPeriod).ToList();
             return aroon;
         }
 
         public static List<AroonResult> AroonData(CandlesList candleList, decimal realPrise, int lookbackPeriod = 7)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             List<AroonResult> aroon = Indicator.GetAroon(candles, lookbackPeriod).ToList();
             return aroon;
         }
 
         public static List<BollingerBandsResult> BollingerBandsData(CandlesList candleList, decimal realPrise, int lookbackPeriod = 20, decimal standardDeviations = 2m)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             List<BollingerBandsResult> bollingerBands = Indicator.GetBollingerBands(candles, lookbackPeriod, standardDeviations).ToList();
             return bollingerBands;
         }
         public static List<BollingerBandsResult> BollingerBandsData(CandlesList candleList, int lookbackPeriod = 20, decimal standardDeviations = 2m)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             List<BollingerBandsResult> bollingerBands = Indicator.GetBollingerBands(candles, lookbackPeriod, standardDeviations).ToList();
             return bollingerBands;
         }
 
         public static List<MacdResult> MacdData(CandlesList candleList)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             List<MacdResult> macdResult = Indicator.GetMacd(candles).ToList();
             return macdResult;
         }
@@ -142,7 +140,7 @@ namespace TinkoffData
             Log.Information("fastPeriod: " + fastPeriod);
             Log.Information("slowPeriod: " + slowPeriod);
             Log.Information("signalPeriod: " + signalPeriod);
-            List <Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List <Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             List <MacdResult> macdResult = Indicator.GetMacd(candles, fastPeriod, slowPeriod, signalPeriod).ToList();
             Log.Information("Stop MacdData method:");
             return macdResult;
@@ -150,54 +148,54 @@ namespace TinkoffData
 
         public static List<EmaResult> EmaData(CandlesList candleList, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             return Indicator.GetEma(candles, lookbackPeriod).ToList();
         }
 
         public static List<EmaResult> EmaData(CandlesList candleList, decimal realPrise, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             return Indicator.GetEma(candles, lookbackPeriod).ToList();
         }
 
         public static List<ObvResult> ObvData(CandlesList candleList, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             return Indicator.GetObv(candles, lookbackPeriod).ToList();
         }
         
         public static List<ObvResult> ObvData(CandlesList candleList, decimal realPrise, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             return Indicator.GetObv(candles, lookbackPeriod).ToList();
         }
 
         public static List<AdlResult> AdlData(CandlesList candleList, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             return Indicator.GetAdl(candles, lookbackPeriod).ToList();
         }
 
         public static List<AdlResult> AdlData(CandlesList candleList, decimal realPrise, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             return Indicator.GetAdl(candles, lookbackPeriod).ToList();
         }
 
         public static List<SmaResult> SmaData(CandlesList candleList, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             return Indicator.GetSma(candles, lookbackPeriod).ToList();
         }
         public static List<SmaResult> SmaData(CandlesList candleList, decimal realPrise, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             return Indicator.GetSma(candles, lookbackPeriod).ToList();
         }
 
         public static List<DpoResult> DpoData(CandlesList candleList, int lookbackPeriod)
         {
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             return Indicator.GetDpo(candles, lookbackPeriod).ToList();
         }
 
@@ -205,7 +203,7 @@ namespace TinkoffData
         {
             Log.Information("DPO set price = " + realPrise);
             Log.Information("DPO set lookbackPeriod = " + lookbackPeriod);
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             List <DpoResult> dpoData = Indicator.GetDpo(candles, lookbackPeriod).ToList();
             Log.Information("Last Dpo = " + dpoData.Last().Dpo + " " + dpoData.Last().Date);
             return dpoData;
@@ -216,7 +214,7 @@ namespace TinkoffData
             Log.Information("Super Trend History = " + lookbackPeriod);
             Log.Information("Super Trend Multiplier = " + multiplier);
 
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             List<SuperTrendResult> superTrandData = Indicator.GetSuperTrend(candles, lookbackPeriod, multiplier).ToList();
 
             Log.Information("Super Trend Value = " + superTrandData.Last().SuperTrend + " " + superTrandData.Last().Date);
@@ -231,7 +229,7 @@ namespace TinkoffData
             Log.Information("Super Trend History = " + lookbackPeriod);
             Log.Information("Super Trend Multiplier = " + multiplier);
 
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             List<SuperTrendResult> superTrandData = Indicator.GetSuperTrend(candles, lookbackPeriod, multiplier).ToList();
 
             Log.Information("Super Trend Value = " + superTrandData.Last().SuperTrend + " " + superTrandData.Last().Date);
@@ -246,7 +244,7 @@ namespace TinkoffData
             Log.Information("shortSpanPeriod = " + shortSpanPeriod);
             Log.Information("longSpanPeriod = " + longSpanPeriod);
 
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles);
             List<IchimokuResult> ichimokuData = Indicator.GetIchimoku(candles, signalPeriod, shortSpanPeriod, longSpanPeriod).ToList();
 
             Log.Information("TenkanSen = " + ichimokuData.Last().TenkanSen + " " + ichimokuData.Last().Date);
@@ -266,7 +264,7 @@ namespace TinkoffData
             Log.Information("shortSpanPeriod = " + shortSpanPeriod);
             Log.Information("longSpanPeriod = " + longSpanPeriod);
 
-            List<Quote> candles = ConvertTinkoffCandlesToQuote(candleList.Candles, realPrise);
+            List<Quote> candles = ConvertThisCandlesToQuote(candleList.Candles, realPrise);
             List<IchimokuResult> ichimokuData = Indicator.GetIchimoku(candles, signalPeriod, shortSpanPeriod, longSpanPeriod).ToList();
 
             Log.Information("TenkanSen = " + ichimokuData.Last().TenkanSen + " " + ichimokuData.Last().Date);
