@@ -2,6 +2,7 @@
 using MarketDataModules;
 using MarketDataModules.Models.Candles;
 using ScreenerStocks.Helpers;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +15,7 @@ namespace Analysis.Screeners
 {
     public class VolumeProfileScreener : GetStocksHistory
     {
-        MarketDataCollector dataCollector = new MarketDataCollector();
+        //MarketDataCollector dataCollector = new MarketDataCollector();
         IndicatorSignalsHelper indicatorSignalsHelper = new IndicatorSignalsHelper();
 
         public List<CandlesProfileList> CreateProfilesList(List<CandlesList> listCandlesList, int countVolumeProfile, VolumeProfileMethod volumeProfileMethod)
@@ -65,23 +66,32 @@ namespace Analysis.Screeners
             List<CandlesProfileList> result = 
                 (from x in listCandlesListProfiles where 
                  AverageBargane(x) <= x.Candles.Last().Close * (percent / 100 + 1)
-                 && AverageBargane(x) >= x.Candles.Last().Close * (1 - (percent / 100)) 
+                 && 
+                 AverageBargane(x) >= x.Candles.Last().Close * (1 - (percent / 100)) 
                  select x).ToList();
             return result;
         }
 
+        public decimal RevWeightGreen(VolumeProfile VolumeProfile)
+        {
+            decimal result = VolumeProfile.VolumeGreen * 100 / (VolumeProfile.VolumeRed + VolumeProfile.VolumeGreen);
+            return result;
+        }
 
         decimal AverageBargane(CandlesProfileList candlesListProfile) // Среднее значение границ горизонтального канала прторговки (VolumeProfile:  UpperBound & LowerBound )
         {
+            Log.Information("Start AverageBargane. Figi: " + candlesListProfile.Figi);
             var volProf = candlesListProfile.VolumeProfiles.OrderByDescending(x => x.VolumeGreen + x.VolumeRed);
             var maxVol = volProf.FirstOrDefault();
             decimal bargainingPrice = (maxVol.LowerBound + maxVol.UpperBound) / 2;
+            Log.Information("Stop AverageBargane. Figi: " + candlesListProfile.Figi);
             return bargainingPrice;
+
         }
 
         public CandlesProfileList VolumeProfileList(CandlesList candlesList, int countVolumeProfile, VolumeProfileMethod volumeProfileMethod) //mapping from candlesList to CandlesProfileList
         {
-            if (candlesList == null || candlesList.Candles == null)
+            if (candlesList == null || candlesList.Candles.Count == 0)
             {
                 return null;
             }
@@ -152,12 +162,17 @@ namespace Analysis.Screeners
 
         decimal MaxLow(CandlesList candlesList)
         {
-            return candlesList.Candles.Select(x => x.Low).Min();
+            Log.Information("Start MaxLow. Figi: " + candlesList.Figi);
+            decimal result = candlesList.Candles.Select(x => x.Low).DefaultIfEmpty().Min();
+            Log.Information("Stop MaxLow. Figi: " + candlesList.Figi);
+            return result;
         }
 
         decimal MaxHi(CandlesList candlesList)
         {
-            var result = candlesList.Candles.Select(x => x.High).DefaultIfEmpty().Max();
+           Log.Information("Start MaxHigh. Figi: " + candlesList.Figi);
+            decimal result = candlesList.Candles.Select(x => x.High).DefaultIfEmpty().Max();
+            Log.Information("Stop MaxHigh. Figi: " + candlesList.Figi);
             return result;
         }
     }

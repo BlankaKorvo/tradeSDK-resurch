@@ -41,14 +41,15 @@ namespace tradeSDK
             async Task NewMethod(MarketDataCollector marketDataCollector)
             {
                 List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
-                //    var xxx = await marketDataCollector.GetInstrumentByFigi("BBG005BT60Y8");
+                //List<Instrument> instrumentList = new List<Instrument>();
+                //var xxx = await marketDataCollector.GetInstrumentByFigi("BBG000BPL8G3");
                 //instrumentList.Add(xxx);
 
                 List<CandlesList> candlesList = new List<CandlesList>();
                 foreach (var item in instrumentList)
                 {
-                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Minute, new DateTime(2021, 4, 23));
-                    if (candles == null)
+                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Hour, new DateTime(2020, 4, 26));
+                    if (candles.Candles.Count == 0)
                     {
                         continue;
                     }
@@ -65,10 +66,12 @@ namespace tradeSDK
                 {
                     VolumeProfile maxVol = item.VolumeProfiles.OrderByDescending(x => (x.VolumeGreen + x.VolumeRed)).FirstOrDefault();
                     Instrument instrument = await marketDataCollector.GetInstrumentByFigi(item.Figi);
-                    
+                    decimal volGreenWeight = volumeProfileScreener.RevWeightGreen(maxVol);
+                    decimal volRedWeight = 100 - volGreenWeight;
+
                     using (StreamWriter sw = new StreamWriter("tickers", true, System.Text.Encoding.Default))
                     {
-                        sw.WriteLine(instrument.Ticker + " UpperBound: " + maxVol.UpperBound + " LowerBound: " + maxVol.LowerBound + " VolumeGreen: " + maxVol.VolumeGreen + " VolumeRed: " + maxVol.VolumeRed + " CandlesCount: " + maxVol.CandlesCount + " Close:" + item.Candles.Last().Close);
+                        sw.WriteLine(instrument.Ticker + " UpperBound: " + maxVol.UpperBound + " LowerBound: " + maxVol.LowerBound + " VolumeGreen: " + maxVol.VolumeGreen + " VolumeRed: " + maxVol.VolumeRed + " CandlesCount: " + maxVol.CandlesCount + " Close:" + item.Candles.Last().Close + " GreenVolRev = " + volGreenWeight + " RedVolRev = " + volRedWeight);
                         sw.WriteLine();
                     }
                 }
