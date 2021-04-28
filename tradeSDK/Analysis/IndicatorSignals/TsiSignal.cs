@@ -11,7 +11,7 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    partial class Signal : IndicatorSignalsHelper
+    public partial class Signal : IndicatorSignalsHelper
     {
         int tsiLookbackPeriod = 8;
         int tsiAverageAngleCount = 2;

@@ -12,7 +12,7 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    partial class Signal : IndicatorSignalsHelper
+    public partial class Signal : IndicatorSignalsHelper
     {
         int aroonLookbackPeriod = 7;
         decimal aroonUpValueLong = 100;

@@ -11,7 +11,7 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    partial class Signal : IndicatorSignalsHelper
+    public partial class Signal : IndicatorSignalsHelper
     {
         int adlLookbackPeriodSma = 5;
         int adlAnglesCountLongMax = 10;
@@ -74,7 +74,7 @@ namespace TradingAlgorithms.IndicatorSignals
         }
 
 
-        double AdlDegreeAverageAngle(List<AdlResult> AdlValue, int anglesCount, Adl line)
+        public double AdlDegreeAverageAngle(List<AdlResult> AdlValue, int anglesCount, Adl line)
         {
             if (line == Adl.Adl)
             {
@@ -87,7 +87,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 return DeltaDegreeAngle(values, anglesCount);
             }
         }
-        enum Adl
+        public enum Adl
         {
             Adl,
             AdlSma,

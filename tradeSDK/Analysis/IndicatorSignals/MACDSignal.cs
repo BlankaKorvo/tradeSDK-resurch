@@ -12,7 +12,7 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    partial class Signal : IndicatorSignalsHelper
+    public partial class Signal : IndicatorSignalsHelper
     {
         int macdFastPeriod = 6;
         int macdSlowPeriod = 13;

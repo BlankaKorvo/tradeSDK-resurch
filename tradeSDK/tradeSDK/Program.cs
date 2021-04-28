@@ -13,15 +13,14 @@ using System.Linq;
 using System.IO;
 using TinkoffAdapter.Authority;
 using MarketDataModules.Models.Candles;
+using TinkoffData;
+using Skender.Stock.Indicators;
+using TradingAlgorithms.IndicatorSignals;
 
 namespace tradeSDK
 {
     class Program
     {
-        GetTinkoffData getTinkoffData = new GetTinkoffData();
-        MarketDataCollector marketDataCollector = new MarketDataCollector();
-        GetStocksHistory getStocksHistory = new GetStocksHistory();
-        VolumeProfileScreener volumeProfileScreener = new VolumeProfileScreener();
         static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -40,15 +39,18 @@ namespace tradeSDK
 
             async Task NewMethod(MarketDataCollector marketDataCollector)
             {
+                Signal signal = new Signal();
                 List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
                 //List<Instrument> instrumentList = new List<Instrument>();
                 //var xxx = await marketDataCollector.GetInstrumentByFigi("BBG000BPL8G3");
                 //instrumentList.Add(xxx);
 
+                var candleInterval = CandleInterval.Hour;
+
                 List<CandlesList> candlesList = new List<CandlesList>();
                 foreach (var item in instrumentList)
                 {
-                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, CandleInterval.Hour, new DateTime(2020, 4, 26));
+                    var candles = await marketDataCollector.GetCandlesAsync(item.Figi, candleInterval, new DateTime(2021, 1, 1));
                     if (candles.Candles.Count == 0)
                     {
                         continue;
@@ -57,7 +59,7 @@ namespace tradeSDK
                 }
                 List<CandlesProfileList> profileList = volumeProfileScreener.CreateProfilesList(candlesList, 50, VolumeProfileMethod.All);
 
-                List<CandlesProfileList> profilesList2 = volumeProfileScreener.BargainingOnPrice(profileList, 5);
+                List<CandlesProfileList> profilesList2 = volumeProfileScreener.BargainingOnPrice(profileList, 10);
 
                 List <CandlesProfileList> profilesList1 = volumeProfileScreener.OrderVolBargaining(profilesList2);
     
@@ -65,14 +67,43 @@ namespace tradeSDK
                 foreach (var item in profilesList1)
                 {
                     VolumeProfile maxVol = item.VolumeProfiles.OrderByDescending(x => (x.VolumeGreen + x.VolumeRed)).FirstOrDefault();
-                    Instrument instrument = await marketDataCollector.GetInstrumentByFigi(item.Figi);
+                    //Instrument instrument = await marketDataCollector.GetInstrumentByFigi(item.Figi);
                     decimal volGreenWeight = volumeProfileScreener.RevWeightGreen(maxVol);
                     decimal volRedWeight = 100 - volGreenWeight;
 
-                    using (StreamWriter sw = new StreamWriter("tickers", true, System.Text.Encoding.Default))
+                    Instrument instrument = (from t in instrumentList
+                                             where t.Figi == item.Figi
+                                             select t).FirstOrDefault();
+                    using (StreamWriter sw = new StreamWriter("TickersAll " + candleInterval, true, System.Text.Encoding.Default))
                     {
                         sw.WriteLine(instrument.Ticker + " UpperBound: " + maxVol.UpperBound + " LowerBound: " + maxVol.LowerBound + " VolumeGreen: " + maxVol.VolumeGreen + " VolumeRed: " + maxVol.VolumeRed + " CandlesCount: " + maxVol.CandlesCount + " Close:" + item.Candles.Last().Close + " GreenVolRev = " + volGreenWeight + " RedVolRev = " + volRedWeight);
                         sw.WriteLine();
+                    }
+                    if ((maxVol.UpperBound + maxVol.LowerBound) / 2 < item.Candles.Last().Close)                        
+                    {
+                        using (StreamWriter sw = new StreamWriter("TickersOverPrice " + candleInterval, true, System.Text.Encoding.Default))
+                        {
+                            sw.WriteLine(instrument.Ticker + " UpperBound: " + maxVol.UpperBound + " LowerBound: " + maxVol.LowerBound + " VolumeGreen: " + maxVol.VolumeGreen + " VolumeRed: " + maxVol.VolumeRed + " CandlesCount: " + maxVol.CandlesCount + " Close:" + item.Candles.Last().Close + " GreenVolRev = " + volGreenWeight + " RedVolRev = " + volRedWeight);
+                            sw.WriteLine();
+                        }
+                    }
+                    if (volGreenWeight > 50)
+                    {
+                        using (StreamWriter sw = new StreamWriter("TickersOverGreenWeght " + candleInterval, true, System.Text.Encoding.Default))
+                        {
+                            sw.WriteLine(instrument.Ticker + " UpperBound: " + maxVol.UpperBound + " LowerBound: " + maxVol.LowerBound + " VolumeGreen: " + maxVol.VolumeGreen + " VolumeRed: " + maxVol.VolumeRed + " CandlesCount: " + maxVol.CandlesCount + " Close:" + item.Candles.Last().Close + " GreenVolRev = " + volGreenWeight + " RedVolRev = " + volRedWeight);
+                            sw.WriteLine();
+                        }
+                    }
+                    List<AdlResult> adl = Mapper.AdlData(item, item.Candles.Last().Close, 1);
+                    var AdlAngle = signal.AdlDegreeAverageAngle(adl, 10, Signal.Adl.Adl);
+                    if (AdlAngle > 20 && adl.Last().Adl > 0)
+                    {
+                        using (StreamWriter sw = new StreamWriter("TickersOverADL " + candleInterval, true, System.Text.Encoding.Default))
+                        {
+                            sw.WriteLine(instrument.Ticker + " UpperBound: " + maxVol.UpperBound + " LowerBound: " + maxVol.LowerBound + " VolumeGreen: " + maxVol.VolumeGreen + " VolumeRed: " + maxVol.VolumeRed + " CandlesCount: " + maxVol.CandlesCount + " Close:" + item.Candles.Last().Close + " GreenVolRev = " + volGreenWeight + " RedVolRev = " + volRedWeight + " ADL angle = " + AdlAngle + " ADL " + adl.Last().Adl);
+                            sw.WriteLine();
+                        }
                     }
                 }
             }
@@ -90,17 +121,17 @@ namespace tradeSDK
 
             MishMashScreener mishMashScreener = new MishMashScreener();
 
-            //try
-            //{
-                await NewMethod(marketDataCollector);
-                //List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
-                //await mishMashScreener.CycleTrading(candleInterval, candlesCount, margin, instrumentList);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log.Error(ex.Message);
-            //    Log.Error(ex.StackTrace);
-            //}
+            try
+            {
+                //await NewMethod(marketDataCollector);
+                List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+                await mishMashScreener.CycleTrading(candleInterval, candlesCount, margin, instrumentList);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+            }
         }
 
     }

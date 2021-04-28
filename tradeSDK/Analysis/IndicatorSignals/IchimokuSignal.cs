@@ -11,7 +11,7 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    partial class Signal : IndicatorSignalsHelper
+    public partial class Signal : IndicatorSignalsHelper
     {
         const decimal ichimokuTenkansenPriceDeltaCount = 0.12M;
         const int ichimokuDeltaAngleCountLong = 1;

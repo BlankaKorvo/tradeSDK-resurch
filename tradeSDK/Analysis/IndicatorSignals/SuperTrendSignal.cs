@@ -10,7 +10,7 @@ using TinkoffData;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    partial class Signal
+    public partial class Signal
     {
         int superTrandPeriod = 20;
         int superTrandSensitive = 2;

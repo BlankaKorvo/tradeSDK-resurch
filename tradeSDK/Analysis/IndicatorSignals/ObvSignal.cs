@@ -11,7 +11,7 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    partial class Signal : IndicatorSignalsHelper
+    public partial class Signal : IndicatorSignalsHelper
     {
         int obvLookbackPeriodFirst = 4;
         int obvLookbackPeriodSecond = 17;

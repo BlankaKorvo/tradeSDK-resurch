@@ -11,7 +11,7 @@ using TradingAlgorithms.IndicatorSignals.Helpers;
 
 namespace TradingAlgorithms.IndicatorSignals
 {
-    partial class Signal : IndicatorSignalsHelper, ISignal
+    public partial class Signal : IndicatorSignalsHelper, ISignal
     {
         int adxLookbackPeriod = 8;
         int adxAverageAngleCount = 2;
@@ -134,7 +134,7 @@ namespace TradingAlgorithms.IndicatorSignals
             }
 
         }
-        double AdxDegreeAverageAngle(List<AdxResult> AdxValue, int anglesCount, Adx adxLine)
+        public double AdxDegreeAverageAngle(List<AdxResult> AdxValue, int anglesCount, Adx adxLine)
         {
             Log.Information("Start AdxSignal AdxDegreeAverageAngle method");
             List<AdxResult> skipAdx = AdxValue.Skip(AdxValue.Count - (anglesCount + 1)).ToList();
@@ -160,7 +160,7 @@ namespace TradingAlgorithms.IndicatorSignals
             Log.Information("Stop AdxSignal AdxDegreeAverageAngle method");
             return DeltaDegreeAngle(values);
         }
-        enum Adx
+        public enum Adx
         {
             Pdi,
             Mdi,

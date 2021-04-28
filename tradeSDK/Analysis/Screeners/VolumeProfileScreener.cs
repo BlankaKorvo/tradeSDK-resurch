@@ -72,7 +72,7 @@ namespace Analysis.Screeners
             return result;
         }
 
-        public decimal RevWeightGreen(VolumeProfile VolumeProfile)
+        public decimal RevWeightGreen(VolumeProfile VolumeProfile) //процент веса в общем объеме
         {
             decimal result = VolumeProfile.VolumeGreen * 100 / (VolumeProfile.VolumeRed + VolumeProfile.VolumeGreen);
             return result;

@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace TradingAlgorithms.IndicatorSignals.Helpers
 {
-    internal class IndicatorSignalsHelper
+    public class IndicatorSignalsHelper
     {
-        internal double DeltaDegreeAngle(List<decimal?> values)
+        public double DeltaDegreeAngle(List<decimal?> values)
         {
             Log.Information("Start DeltaDegreeAngle");
             var countDelta = values.Count;

@@ -27,10 +27,10 @@ namespace TradingAlgorithms.Algoritms
             if (
                 Signal.DpoLongSignal(candleList, deltaPrice)
                 &&
-                //Signal.MacdLongSignal(candleList, deltaPrice)
-                //&&
-                //Signal.AroonLongSignal(candleList, deltaPrice)
-                //&&
+                Signal.MacdLongSignal(candleList, deltaPrice)
+                &&
+                Signal.AroonLongSignal(candleList, deltaPrice)
+                &&
                 Signal.AdxLongSignal(candleList, deltaPrice)
                 &&
                 Signal.ObvLongSignal(candleList, deltaPrice)
@@ -40,14 +40,16 @@ namespace TradingAlgorithms.Algoritms
                 //Проверка на отсутсвие гэпа        
                 &&
                 Signal.CandleLongSignal(candleList, deltaPrice)
-                &&
-                Signal.StochLongSignal(candleList, deltaPrice)
+                //&&
+                //Signal.StochLongSignal(candleList, deltaPrice)
                 &&
                 Signal.AdlLongSignal(candleList, deltaPrice)
                 &&
                 Signal.IchimokuLongSignal(candleList, deltaPrice)
+                //&&
+                //Signal.EmaLongSignal(candleList, deltaPrice)
                 &&
-                Signal.EmaLongSignal(candleList, deltaPrice)
+                Signal.SmaLongSignal(candleList, deltaPrice)
                 )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);
