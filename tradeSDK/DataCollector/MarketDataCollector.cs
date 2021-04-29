@@ -27,7 +27,7 @@ namespace DataCollector
             return await TinkoffInstrumentList();
         }
 
-        public async Task<Orderbook> GetOrderbookAsync(string figi, int depth)
+        public async Task<Orderbook> GetOrderbookAsync(string figi, int depth = 20)
         {
             return await TinkoffOrderbook(figi, depth);
         }

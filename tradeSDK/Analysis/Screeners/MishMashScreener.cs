@@ -86,7 +86,7 @@ namespace Analysis.Screeners
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
                 Log.Information("Get TransactionModel: " + transactionData.Figi);
-                if (transactionData.Operation == TinkoffAdapter.Operation.notTrading)
+                if (transactionData.Operation == Operation.notTrading)
                 { continue; }
                 Log.Information("TransactionModel margin = " + transactionData.Purchase);
                 Log.Information("TransactionModel operation = " + transactionData.Operation);
@@ -95,9 +95,9 @@ namespace Analysis.Screeners
 
                 //переписать логику нахрен....
 
-                if (transactionData.Operation == TinkoffAdapter.Operation.toLong)
+                if (transactionData.Operation == Operation.toLong)
                 {
-                    Log.Information("If transactionData.Operation = " + TinkoffAdapter.Operation.toLong.ToString());
+                    Log.Information("If transactionData.Operation = " + Operation.toLong.ToString());
                     Log.Information("Start first transaction");
                     await tinkoffTrading.TransactionAsync(transactionData);
                     int i = 2;
@@ -139,7 +139,7 @@ namespace Analysis.Screeners
                 Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
                 Log.Information("Get TransactionModel: " + transactionData.Figi);
-                if (transactionData.Operation == TinkoffAdapter.Operation.notTrading)
+                if (transactionData.Operation == Operation.notTrading)
                 { continue; }
                 Log.Information("TransactionModel margin = " + transactionData.Purchase);
                 Log.Information("TransactionModel operation = " + transactionData.Operation);
@@ -148,7 +148,7 @@ namespace Analysis.Screeners
 
                 //переписать логику нахрен....
 
-                if (transactionData.Operation == TinkoffAdapter.Operation.toLong)
+                if (transactionData.Operation == Operation.toLong)
                 {
                     Log.Information("If transactionData.Operation = " + TinkoffAdapter.Operation.toLong.ToString());
                     Log.Information("Start first transaction");

@@ -90,7 +90,7 @@ namespace TinkoffAdapter.TinkoffTrade
             CandlesList candleList = await marketDataCollector.GetCandlesAsync(transactionModel.Figi, candleInterval, CandlesCount);
 
             //Получаем стакан
-            Orderbook orderbook = await marketDataCollector.GetOrderbookAsync(transactionModel.Figi, 1);
+            Orderbook orderbook = await marketDataCollector.GetOrderbookAsync(transactionModel.Figi);
             if (orderbook == null)
             {
                 Log.Information("Orderbook " + transactionModel.Figi + " is null");
@@ -100,10 +100,10 @@ namespace TinkoffAdapter.TinkoffTrade
             decimal ask = orderbook.Asks.FirstOrDefault().Price;
             decimal bid = orderbook.Bids.FirstOrDefault().Price;
             int quantityAsksFirst = orderbook.Asks.FirstOrDefault().Quantity;
-            int quantityBidsFirst = orderbook.Bids.FirstOrDefault().Quantity;
+            int quantityBidsFirst = orderbook.Bids.LastOrDefault().Quantity;
             decimal deltaPrice = (ask + bid) / 2;
 
-            Mishmash mishmash = new Mishmash() { candleList = candleList, deltaPrice = deltaPrice };
+            Mishmash mishmash = new Mishmash() { candleList = candleList, deltaPrice = deltaPrice, orderbook = orderbook };
 
             if (mishmash.Long()==true)
             {
@@ -119,49 +119,10 @@ namespace TinkoffAdapter.TinkoffTrade
                 transactionModel.Operation = Operation.fromLong;
                 transactionModel.Price = bid;
             }
-            //Заглушка
-            //else if(mishmash.Short())
-            //{
-            //    Log.Information("Go to Long: " + transactionModel.Figi);
-            //    transactionModel.Quantity = quantityAsksFirst;
-            //    transactionModel.Operation = Operation.;
-            //    transactionModel.Price = ask;
-            //}
-            //else if (mishmash.FromShort())
-            //{
-            //    Log.Information("Go from Long: " + transactionModel.Figi);
-            //    transactionModel.Quantity = quantityBidsFirst;
-            //    transactionModel.Operation = Operation;
-            //    transactionModel.Price = bid;
-            //}
             Log.Information("Stop PurchaseDecision for: " + transactionModel.Figi);
             return transactionModel;
         }
 
-        //private async Task<Orderbook> GetOrderbook(string figi, int depth)
-        //{
-        //    Orderbook orderbook = await context.MarketOrderbookAsync(figi, depth);
-        //    if (orderbook.Asks.Count == 0 || orderbook.Bids.Count == 0)
-        //    {
-        //        Log.Information("Exchange by instrument " + figi + " not working");
-        //        return null;
-        //    }
-        //    Log.Information("Orderbook Figi: " + orderbook.Figi);
-        //    Log.Information("Orderbook Depth: " + orderbook.Depth);
-        //    Log.Information("Orderbook Asks Price: " + orderbook.Asks.FirstOrDefault().Price);
-        //    Log.Information("Orderbook Asks Quantity: " + orderbook.Asks.FirstOrDefault().Quantity);
-
-        //    Log.Information("Orderbook Bids Price: " + orderbook.Bids.FirstOrDefault().Price);
-        //    Log.Information("Orderbook Bids Quantity: " + orderbook.Bids.FirstOrDefault().Quantity);
-
-        //    Log.Information("Orderbook ClosePrice: " + orderbook.ClosePrice);
-        //    Log.Information("Orderbook LastPrice: " + orderbook.LastPrice);
-        //    Log.Information("Orderbook LimitDown: " + orderbook.LimitDown);
-        //    Log.Information("Orderbook LimitUp: " + orderbook.LimitUp);
-        //    Log.Information("Orderbook TradeStatus: " + orderbook.TradeStatus);
-        //    Log.Information("Orderbook MinPriceIncrement: " + orderbook.MinPriceIncrement);
-        //    return orderbook;
-        //}
 
         private async Task BuyStoksAsync(TransactionModel transactionModel)
         {
@@ -183,9 +144,9 @@ namespace TinkoffAdapter.TinkoffTrade
                 return; }
 
             await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Buy, transactionModel.Price)));
-            using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
+            using (StreamWriter sw = new StreamWriter("_operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Buy " + transactionModel.Figi + " Quantity: " + transactionModel.Quantity +  " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
+                sw.WriteLine(DateTime.Now + @" Buy " + transactionModel.Figi + " Quantity: " + lots +  " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
                 sw.WriteLine();
             }
             Log.Information("Create order for Buy " + lots + " lots " + "figi: " + transactionModel.Figi + "price: " + transactionModel.Price);
@@ -199,9 +160,9 @@ namespace TinkoffAdapter.TinkoffTrade
             if (lots == 0)
             { return; }
             await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Sell, transactionModel.Price)));
-            using (StreamWriter sw = new StreamWriter("operation", true, System.Text.Encoding.Default))
+            using (StreamWriter sw = new StreamWriter("_operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Sell " + transactionModel.Figi + "Quantity: " + transactionModel.Quantity + " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
+                sw.WriteLine(DateTime.Now + @" Sell " + transactionModel.Figi + " Quantity: " + lots + " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
                 sw.WriteLine();
             }
             Log.Information("Create order for Sell " + lots + " stocks " + "figi: " + transactionModel.Figi + "price: " + transactionModel.Price);

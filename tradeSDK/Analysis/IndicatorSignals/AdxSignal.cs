@@ -57,19 +57,21 @@ namespace TradingAlgorithms.IndicatorSignals
                             &&
                             adx.Last().Adx > mdiLast
                             &&
+                            adx.Last().Adx > 25
+                            &&
                             adxDegreeAverageAngle > 0
                             &&
                             pdiDegreeAverageAngle > pdiAngleLong
                             &&
                             mdiDegreeAverageAngle < 0
-                            &&
-                            countAdxCandles <= expecCountAdxCandles
+                            //&&
+                            //countAdxCandles <= expecCountAdxCandles
                             )
             {
                 Log.Information("Adx Pdi = " + pdiLast + " " + adx.Last().Date + " should be more then Adx Mdi");
                 Log.Information("Adx Mdi = " + mdiLast + " " + adx.Last().Date + " should be less then Adx Pdi и Adx");
                 Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " should be more Adx then Mdi");
-                Log.Information("countAdxCandles = " + countAdxCandles + " should be less then expecCountAdxCandles "+ expecCountAdxCandles);
+                //Log.Information("countAdxCandles = " + countAdxCandles + " should be less then expecCountAdxCandles "+ expecCountAdxCandles);
                 Log.Information("Adx angle " + adxAverageAngleCount + " straights Adx = " + adxDegreeAverageAngle + " should be more then 0");
                 Log.Information("Adx angle " + adxAverageAngleCount + " straights Pdi = " + pdiDegreeAverageAngle + " should be more then " + pdiAngleLong);
                 Log.Information("Adx angle " + adxAverageAngleCount + " straights Mdi = " + mdiDegreeAverageAngle + " should be less then 0");

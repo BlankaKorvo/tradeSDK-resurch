@@ -18,6 +18,7 @@ namespace TradingAlgorithms.Algoritms
         //Передаваемые при создании объекта параметры
         public CandlesList candleList { get; set; }
         public decimal deltaPrice { get; set; }
+        public Orderbook orderbook { get; set; }
 
         //Тюнинг индикаторов
 
@@ -44,12 +45,14 @@ namespace TradingAlgorithms.Algoritms
                 //Signal.StochLongSignal(candleList, deltaPrice)
                 &&
                 Signal.AdlLongSignal(candleList, deltaPrice)
-                &&
-                Signal.IchimokuLongSignal(candleList, deltaPrice)
+                //&&
+                //Signal.IchimokuLongSignal(candleList, deltaPrice)
                 //&&
                 //Signal.EmaLongSignal(candleList, deltaPrice)
                 &&
                 Signal.SmaLongSignal(candleList, deltaPrice)
+                &&
+                Signal.OrderbookSignal(candleList, orderbook)
                 )
             {
                 Log.Information("Mishmash Algoritms: Long - true " + candleList.Figi);
