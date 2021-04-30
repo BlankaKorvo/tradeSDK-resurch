@@ -31,7 +31,7 @@ namespace tradeSDK
             MarketDataCollector marketDataCollector = new MarketDataCollector();
             GetStocksHistory getStocksHistory = new GetStocksHistory();
             VolumeProfileScreener volumeProfileScreener = new VolumeProfileScreener();
-            var candleInterval = CandleInterval.FiveMinutes;
+            var candleInterval = CandleInterval.Hour;
 
             int candlesCount = 45;
             decimal margin = 9000;
