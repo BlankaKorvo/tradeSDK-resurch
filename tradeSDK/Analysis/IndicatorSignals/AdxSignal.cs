@@ -13,10 +13,12 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     public partial class Signal : IndicatorSignalsHelper, ISignal
     {
-        int adxLookbackPeriod = 8;
+        int adxLookbackPeriod = 14;
         int adxAverageAngleCount = 2;
         int adxFromLongAverageAngleCount = 2;
-        double pdiAngleLong = 0;
+        double pdiAngleLong = 40;
+        double mdiAngleLong = 40;
+        double adxAngleLong = 0;
         int expecCountAdxCandles = 2;
 
         public bool AdxLongSignal(CandlesList candleList, decimal deltaPrice)
@@ -56,14 +58,18 @@ namespace TradingAlgorithms.IndicatorSignals
                             pdiLast > mdiLast
                             &&
                             adx.Last().Adx > mdiLast
+                            //&&
+                            //adx.Last().Adx > 25
                             &&
-                            adx.Last().Adx > 25
-                            &&
-                            adxDegreeAverageAngle > 0
+                            //adx.Last().Adx < adx.Last().Pdi
+                            //&&
+                            //adx.Last().Adx < adx.Last().Mdi  //очень сспорное решение
+                            //&&
+                            adxDegreeAverageAngle > adxAngleLong
                             &&
                             pdiDegreeAverageAngle > pdiAngleLong
                             &&
-                            mdiDegreeAverageAngle < 0
+                            mdiDegreeAverageAngle < mdiAngleLong
                             //&&
                             //countAdxCandles <= expecCountAdxCandles
                             )

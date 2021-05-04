@@ -14,8 +14,8 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     public partial class Signal : IndicatorSignalsHelper
     {
-        int macdFastPeriod = 6;
-        int macdSlowPeriod = 13;
+        int macdFastPeriod = 12;
+        int macdSlowPeriod = 26;
         int macdSignalPeriod = 9;
         int macdAverageAngleCount = 2;
         double macdAverageAngleCondition = 0;

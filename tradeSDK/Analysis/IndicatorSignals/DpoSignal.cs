@@ -14,7 +14,7 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     public partial class Signal : IndicatorSignalsHelper
     {
-        int dpoPeriod = 10;
+        int dpoPeriod = 14;
         decimal dpoLastDpoCondition = 0;
         int dpoAverageAngleCount = 3;
         double dpoAverageAngleConditionLong = 0;

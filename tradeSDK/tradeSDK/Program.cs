@@ -33,7 +33,7 @@ namespace tradeSDK
             VolumeProfileScreener volumeProfileScreener = new VolumeProfileScreener();
             var candleInterval = CandleInterval.Hour;
 
-            int candlesCount = 45;
+            int candlesCount = 80;
             decimal margin = 9000;
 
 

@@ -14,7 +14,7 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     public partial class Signal : IndicatorSignalsHelper
     {
-        int aroonLookbackPeriod = 7;
+        int aroonLookbackPeriod = 14;
         decimal aroonUpValueLong = 100;
         decimal aroonUpValueFromLong = 50;
 
@@ -30,7 +30,8 @@ namespace TradingAlgorithms.IndicatorSignals
                 aroon.Last().AroonUp == aroonUpValueLong
                 &&
                 aroon.Last().AroonDown < aroonDownValue
-
+                &&
+                (aroon[aroon.Count - 2].AroonUp < aroon[aroon.Count - 2].AroonDown || aroon[aroon.Count - 3].AroonUp < aroon[aroon.Count - 3].AroonDown)
                 )
             {
                 Log.Information("Aroon Up = " + aroon.Last().AroonUp + " " + aroon.Last().Date);
