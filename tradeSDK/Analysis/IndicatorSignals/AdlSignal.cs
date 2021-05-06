@@ -13,27 +13,22 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     public partial class Signal : IndicatorSignalsHelper
     {
-        int adlLookbackPeriodSma = 5;
+        int adlSmaLookbackPeriod = 5;
         int adlAnglesCountLongMax = 10;
-        int adlAnglesCountFromLong = 1;
-        int adlAnglesCountLongMin = 3;
+        int adlAnglesCountFromLong = 5;
+        int adlAnglesCountLongMin = 1;
         double adlAverageAngleConditionLong = 0;
 
         internal bool AdlLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Adl LongSignal. Figi: " + candleList.Figi);
-            List<AdlResult> adl = Mapper.AdlData(candleList, deltaPrice, adlLookbackPeriodSma);
+            List<AdlResult> adl = Mapper.AdlData(candleList, deltaPrice, adlSmaLookbackPeriod);
             double adlDegreeAverageAngleMax = AdlDegreeAverageAngle(adl, adlAnglesCountLongMax, Adl.Adl);
             double adlDegreeAverageAngleMin = AdlDegreeAverageAngle(adl, adlAnglesCountLongMin, Adl.Adl);
-            double adlDegreeAverageAngle1 = AdlDegreeAverageAngle(adl, 1, Adl.Adl);
             if (
-                //adl.Last().Adl > 0
-                //&&
                 adlDegreeAverageAngleMax > adlAverageAngleConditionLong
                 &&
                 adlDegreeAverageAngleMin > adlAverageAngleConditionLong
-                &&
-                adlDegreeAverageAngle1 > adlAverageAngleConditionLong
                )
             {
                 Log.Information("Adl = " + adl.Last().Adl);
@@ -55,7 +50,7 @@ namespace TradingAlgorithms.IndicatorSignals
         internal bool AdlFromLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Adl FromLongSignal. Figi: " + candleList.Figi);
-            List<AdlResult> adl = Mapper.AdlData(candleList, deltaPrice, adlLookbackPeriodSma);
+            List<AdlResult> adl = Mapper.AdlData(candleList, deltaPrice, adlSmaLookbackPeriod);
             double adlDegreeAverageAngle = AdlDegreeAverageAngle(adl, adlAnglesCountFromLong, Adl.Adl);
             Log.Information("Adl = " + adl.Last().Adl);
             Log.Information("AdlDegreeAverageAngle = " + adlDegreeAverageAngle + " in " + adlAnglesCountLongMax + " count. It must be < 0 for fromLong");

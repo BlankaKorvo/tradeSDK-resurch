@@ -29,6 +29,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 bidsdeth = orderbook.Bids.Count;
             }
 
+
             List<OrderbookEntry> asksSmall = orderbook.Asks.Take(depthSmall).ToList();
             List<OrderbookEntry> bidsSmall = orderbook.Bids.Skip(bidsdeth).ToList();
             List<OrderbookEntry> asksLarge = orderbook.Asks.ToList();

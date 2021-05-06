@@ -31,7 +31,7 @@ namespace tradeSDK
             MarketDataCollector marketDataCollector = new MarketDataCollector();
             GetStocksHistory getStocksHistory = new GetStocksHistory();
             VolumeProfileScreener volumeProfileScreener = new VolumeProfileScreener();
-            var candleInterval = CandleInterval.Hour;
+            var candleInterval = CandleInterval.Minute;
 
             int candlesCount = 80;
             decimal margin = 9000;
@@ -42,8 +42,14 @@ namespace tradeSDK
 
             try
             {
+                List<string> tickers = new List<string> { "BBG000B9XRY4", "BBG000N9MNX3", "BBG009S3NB30", "BBG000BVPV84" };
                 //await NewMethod(marketDataCollector);
-                List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+                //List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
+                List<Instrument> instrumentList = new List<Instrument> { };
+                foreach (var item in tickers)
+                {
+                    instrumentList.Add(await marketDataCollector.GetInstrumentByFigi(item));
+                }
                 await mishMashScreener.CycleTrading(candleInterval, candlesCount, margin, instrumentList);
             }
             catch (Exception ex)

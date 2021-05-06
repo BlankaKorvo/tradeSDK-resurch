@@ -14,8 +14,8 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     public partial class Signal : IndicatorSignalsHelper
     {
-        int macdFastPeriod = 12;
-        int macdSlowPeriod = 26;
+        int macdFastPeriod = 6;
+        int macdSlowPeriod = 13;
         int macdSignalPeriod = 9;
         int macdAverageAngleCount = 2;
         double macdAverageAngleCondition = 0;
@@ -29,9 +29,10 @@ namespace TradingAlgorithms.IndicatorSignals
             if (
                 macd.Last().Macd > macd.Last().Signal
                 && macd.Last().Histogram > 0
-                && macdDegreeAverageAngle >= macdAverageAngleCondition
-                && macdDegreeAverageAngle1 > macdAverageAngleCondition
+                //&& macdDegreeAverageAngle >= macdAverageAngleCondition
+                //&& macdDegreeAverageAngle1 > macdAverageAngleCondition
                 && macd.Last().Histogram > macd[macd.Count - 2].Histogram
+                //&& (macd.Last().Histogram / macd[macd.Count - 2].Histogram) < 2m
                 )
             {
                 Log.Information("Macd = " + macd.Last().Macd);
@@ -67,8 +68,8 @@ namespace TradingAlgorithms.IndicatorSignals
             if (
                 macd.Last().Macd < macd.Last().Signal
                 || macd.Last().Histogram < 0
-                || macdDegreeAverageAngle < macdAverageAngleCondition
-                //|| macd.Last().Histogram < macd[macd.Count - 2].Histogram
+                //|| macdDegreeAverageAngle < macdAverageAngleCondition
+                || macd.Last().Histogram < macd[macd.Count - 2].Histogram
                 //|| MacdHistogramDegreeAverageAngle(macd, 1) < MacdHistogramDegreeAverageAngle(macd, 2)
                 )
             {

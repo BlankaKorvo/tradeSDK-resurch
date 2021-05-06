@@ -14,7 +14,7 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     public partial class Signal : IndicatorSignalsHelper
     {
-        int BollingerBandsanglesCount = 3;
+        int BollingerBandsanglesCount = 1;
         internal bool BollingerBandsLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start BollingerBands LongSignal. Figi: " + candleList.Figi);

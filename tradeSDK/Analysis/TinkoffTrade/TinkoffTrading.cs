@@ -144,9 +144,10 @@ namespace TinkoffAdapter.TinkoffTrade
                 return; }
 
             await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.PlaceLimitOrderAsync(new LimitOrder(transactionModel.Figi, lots, OperationType.Buy, transactionModel.Price)));
+            Instrument instrument = await marketDataCollector.GetInstrumentByFigi(transactionModel.Figi);
             using (StreamWriter sw = new StreamWriter("_operation", true, System.Text.Encoding.Default))
             {
-                sw.WriteLine(DateTime.Now + @" Buy " + transactionModel.Figi + " Quantity: " + lots +  " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
+                sw.WriteLine(DateTime.Now + @" Buy " + transactionModel.Figi + " " + instrument.Ticker + " Quantity: " + lots +  " price: " + transactionModel.Price + " mzda: " + (transactionModel.Price * 0.02m) / 100m);
                 sw.WriteLine();
             }
             Log.Information("Create order for Buy " + lots + " lots " + "figi: " + transactionModel.Figi + "price: " + transactionModel.Price);

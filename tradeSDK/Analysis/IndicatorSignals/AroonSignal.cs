@@ -30,8 +30,7 @@ namespace TradingAlgorithms.IndicatorSignals
                 aroon.Last().AroonUp == aroonUpValueLong
                 &&
                 aroon.Last().AroonDown < aroonDownValue
-                &&
-                (aroon[aroon.Count - 2].AroonUp < aroon[aroon.Count - 2].AroonDown || aroon[aroon.Count - 3].AroonUp < aroon[aroon.Count - 3].AroonDown)
+                //&& (aroon[aroon.Count - 2].AroonUp < aroonUpValueLong)// || aroon[aroon.Count - 3].AroonUp < aroonUpValueLong)
                 )
             {
                 Log.Information("Aroon Up = " + aroon.Last().AroonUp + " " + aroon.Last().Date);

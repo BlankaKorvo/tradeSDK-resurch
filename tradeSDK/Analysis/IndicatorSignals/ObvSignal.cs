@@ -13,8 +13,8 @@ namespace TradingAlgorithms.IndicatorSignals
 {
     public partial class Signal : IndicatorSignalsHelper
     {
-        int obvSmaLookbackPeriodFirst = 4;
-        int obvSmaLookbackPeriodSecond = 17;
+        int obvSmaLookbackPeriodFirst = 10;
+        int obvSmaLookbackPeriodSecond = 25;
         int obvAnglesCount = 3;
 
         internal bool ObvLongSignal(CandlesList candleList, decimal deltaPrice)
@@ -39,14 +39,14 @@ namespace TradingAlgorithms.IndicatorSignals
                 &&
                 smaDegreeAverageAngleFirst > 0
                 &&
-                denominatorDegreeAverageAngleFirst > 0
-                &&
+                //denominatorDegreeAverageAngleFirst > 0
+                //&&
                 //углы lookbackPeriodSecond
                 obvDegreeAverageAngleSecond > 0
                 &&
                 smaDegreeAverageAngleSecond > 0
-                &&
-                denominatorDegreeAverageAngleSecond > 0
+                //&&
+                //denominatorDegreeAverageAngleSecond > 0
                )
 
             {

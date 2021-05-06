@@ -29,7 +29,7 @@ namespace TradingAlgorithms.IndicatorSignals
             if (
                 //lastCandle.Open >= preLastCandle.Close
                 //&&
-                lastCandle.Open <= deltaPrice
+                lastCandle.Open <= candleList.Candles.Last().Close
                 &&
                 persentHighPrice < percent
                 //&&
