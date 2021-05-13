@@ -14,49 +14,93 @@ namespace TradingAlgorithms.IndicatorSignals
     public partial class Signal : IndicatorSignalsHelper
     {
 
-        decimal percent = 0.3M;
+        decimal percent = 1M;
+        decimal deltaPriceDifference = 2; //во столько раз, текущая свеча может быть больше прошлой
         internal bool CandleLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start CandleSignal LongSignal. Figi: " + candleList.Figi);
             int greenCountCandles = 2;
             Log.Information("percent = " + percent);
-            decimal persentHighPrice = ((candleList.Candles.Last().High * 100) / deltaPrice) - 100;
+   
+
             CandleStructure preLastCandle = candleList.Candles[candleList.Candles.Count - 2];
-            CandleStructure lastCandle = candleList.Candles.Last();
-            int countGreenCounts = CountGreenCandles(candleList);
-            //Log.Information("countGreenCounts = " + countGreenCounts + " It must be <= " + greenCountCandles);
+            CandleStructure lastCandle = candleList.Candles.LastOrDefault();
+
+
+            decimal persentHighPrice = ((lastCandle.High * 100) / deltaPrice) - 100;
+            decimal lastHighPrice = ((preLastCandle.High * 100) / deltaPrice) - 100;
+
+
+            decimal deltaPricePreLastCandle = 0;
+            decimal deltaPriceLastCandle = 0;
+            if (candleList.Interval == CandleInterval.Minute) //эспешиали фор ебучий тинькофф, которые не отрисовывает текущую свечку. Поэтому open - это close last candle
+            {
+                deltaPricePreLastCandle = lastCandle.High - lastCandle.Low;
+                if (deltaPricePreLastCandle == 0)
+                {
+                    deltaPricePreLastCandle = 0.01m;
+                }
+                deltaPriceLastCandle = deltaPrice - lastCandle.Close; //эспешиали фор ебучий тинькофф, которые не отрисовывает текущую свечку. Поэтому open - это close last candle
+            }
+            else
+            {
+                deltaPricePreLastCandle = preLastCandle.High - preLastCandle.Low;
+                if (deltaPricePreLastCandle == 0)
+                {
+                    deltaPricePreLastCandle = 0.01m;
+                }
+                deltaPriceLastCandle = deltaPrice - lastCandle.Open; 
+
+            }
+            //int countGreenCounts = CountGreenCandles(candleList);
+            decimal diff = deltaPriceLastCandle / deltaPricePreLastCandle;
+
+            Log.Information("deltaPrice = " + deltaPrice);
+            Log.Information("Interval = " + candleList.Interval);
+            Log.Information("LastCandle. Date: " + lastCandle.Time + " Low: " + lastCandle.Low + " Open: " + lastCandle.Open + " Close: " + lastCandle.Close + " High: " + lastCandle.High + " Volume: " + lastCandle.Volume);
+            Log.Information("PreLastCandle. Date: " + preLastCandle.Time + " Low: " + preLastCandle.Low + " Open: " + preLastCandle.Open + " Close: " + preLastCandle.Close + " High: " + preLastCandle.High + " Volume: " + lastCandle.Volume);
+            Log.Information("Last candle must be green");
+            Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent + " %");
+            Log.Information("lastHighPrice: " + lastHighPrice + "must be < " + percent + " %");
+            Log.Information("deltaPriceLastCandle / deltaPricePreLastCandle: " + diff + " must be < " + deltaPriceDifference);
 
             if (
                 //lastCandle.Open >= preLastCandle.Close
-                //&&
-                lastCandle.Open <= candleList.Candles.Last().Close
+                //&&                
+                IsCandleGreen(candleList, deltaPrice)
                 &&
                 persentHighPrice < percent
-                //&&
-                //countGreenCounts <= greenCountCandles
+                &&
+                lastHighPrice < percent
+                &&
+                diff < deltaPriceDifference
+
+               //&&
+               //countGreenCounts <= greenCountCandles
                )
             {
-                Log.Information("deltaPrice = " + deltaPrice);
-                Log.Information("LastOpen = " + lastCandle.Open);
-                //Log.Information("preLastClose = " + preLastCandle.Close);
-                Log.Information("deltaPrice must be >= Open");
-                Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent + " %");
-                //Log.Information("LastOpen must be >= PreLastClose");
                 Log.Information("CandleSignal = Long - true for: " + candleList.Figi);
                 return true;
             }
             else
             {
-                Log.Information("price = " + deltaPrice);
-                Log.Information("LastOpen = " + lastCandle.Open);
-                Log.Information("preLastClose = " + preLastCandle.Close);
-                Log.Information("deltaPrice must be >= Open");
-                Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent + " %");
-                Log.Information("LastOpen must be >= PreLastClose");
                 Log.Information("CandleSignal = Long - false for: " + candleList.Figi);
                 return false;
             }
         }
+
+        private static bool IsCandleGreen(CandlesList candleList, decimal deltaPrice)
+        {
+            if (candleList.Interval == CandleInterval.Minute)
+            {
+                return candleList.Candles.LastOrDefault().Close <= deltaPrice;
+            }
+            else
+            {
+                return (candleList.Candles.LastOrDefault().Open <= deltaPrice && candleList.Candles.LastOrDefault().Open <= candleList.Candles.LastOrDefault().Close);
+            }
+        }
+
         int CountGreenCandles(CandlesList candlesList)
         {
             int greenCount = 0;

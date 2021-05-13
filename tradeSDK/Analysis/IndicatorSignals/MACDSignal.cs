@@ -23,12 +23,26 @@ namespace TradingAlgorithms.IndicatorSignals
         {
             Log.Information("Start MACD LongSignal. Figi: " + candleList.Figi);
             List<MacdResult> macd = Mapper.MacdData(candleList, deltaPrice, macdFastPeriod, macdSlowPeriod, macdSignalPeriod);
+            decimal histogramIncrease = 0;
+            if (macd[macd.Count - 2].Histogram != 0m)
+            {
+                histogramIncrease = Convert.ToDecimal(macd.Last().Histogram / macd[macd.Count - 2].Histogram);
+            }
+            else
+            {
+                histogramIncrease = Convert.ToDecimal(macd.Last().Histogram / 0.01m);
+            }
 
             double macdDegreeAverageAngle = MacdDegreeAverageAngle(macd, macdAverageAngleCount);
             double macdDegreeAverageAngle1 = MacdDegreeAverageAngle(macd, 1);
+
+
+            Log.Information("histogramIncrease = " + histogramIncrease + " it mudt be < 2");
+
             if (
                 macd.Last().Macd > macd.Last().Signal
                 && macd.Last().Histogram > 0
+                && histogramIncrease < 2
                 //&& macdDegreeAverageAngle >= macdAverageAngleCondition
                 //&& macdDegreeAverageAngle1 > macdAverageAngleCondition
                 && macd.Last().Histogram > macd[macd.Count - 2].Histogram

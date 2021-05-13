@@ -51,16 +51,18 @@ namespace TradingAlgorithms.IndicatorSignals
                 sw.Write(DateTime.Now + " " + orderbook.Figi + " Asks: ");
                 foreach (var item in asksLarge)
                 {
-                    sw.Write(item.Quantity + " ");
+                    sw.Write(" q: " + item.Quantity + " p: " + item.Price);
                 }
                 sw.WriteLine();
                 sw.WriteLine();
                 sw.Write(DateTime.Now + " " + orderbook.Figi + " Bids: ");
                 foreach (var item in bidsLarge)
                 {
-                    sw.Write(item.Quantity + " ");
+                    sw.Write(" q: " + item.Quantity + " p: " + item.Price);
                 }
                 sw.WriteLine();
+                sw.WriteLine("max price bid: " + bidsLarge.Max().Price);
+                sw.WriteLine("max price ask: " + asksLarge.Max().Price);
                 sw.WriteLine("asksSmallQuantitySum " + asksSmallQuantitySum);
                 sw.WriteLine("bidsSmallQuantitySum " + bidsSmallQuantitySum);
                 sw.WriteLine("asksLargeQuantitySum " + asksLargeQuantitySum);

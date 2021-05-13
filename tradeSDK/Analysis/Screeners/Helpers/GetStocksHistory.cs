@@ -96,15 +96,17 @@ namespace ScreenerStocks.Helpers
         //определяет: торговалась ли акция последние заданные минуты
         private bool NotTradeableCountMinutes(CandlesList candleList, int notTradeMinutes)
         {
-            Log.Information("Start NotTradeable method. Not trade minutes = " + notTradeMinutes);
+            Log.Information("Start NotTradeableCountMinutes method. Not trade minutes = " + notTradeMinutes);
             var timeNow = DateTime.Now.ToUniversalTime();
             Log.Information("UTC : "+ timeNow.ToString());
+            Log.Information("Last candle time is : " + candleList.Candles.LastOrDefault().Time + " Close: " + candleList.Candles.LastOrDefault().Close + " Open: " + candleList.Candles.LastOrDefault().Open + " Volume: " +candleList.Candles.LastOrDefault().Volume);
+            Log.Information("Last candle time is : " + candleList.Candles[candleList.Candles.Count - 2].Time + " Close: " + candleList.Candles[candleList.Candles.Count - 2].Close + " Open: " + candleList.Candles[candleList.Candles.Count - 2].Open + " Volume: " + candleList.Candles[candleList.Candles.Count - 2].Volume);
             if (candleList == null)
             {
                 Log.Warning("CandleList = null");
                 return false;
             } 
-            else if (candleList.Candles.Last().Time < timeNow.AddMinutes(-notTradeMinutes))
+            else if (candleList.Candles.Last().Time <= timeNow.AddMinutes(-notTradeMinutes))
             {
                 Log.Information("Last time candle of " + candleList.Figi + " is " + candleList.Candles.Last().Time.ToString() + " < then " + timeNow.AddMinutes(-notTradeMinutes));
                 //Log.Information("Last time candle of " + candleList.Figi + " is " + candleList.Candles.Last().Time.ToString());
@@ -121,9 +123,9 @@ namespace ScreenerStocks.Helpers
             }
         }
 
-        private bool NotTradeableCountCandles(CandlesList candleList, int notTradeCandles = 2)
+        private bool NotTradeableCountCandles(CandlesList candleList, int notTradeCandles = 3)
         {
-            Log.Information("Start NotTradeable method. Not trade candles = " + notTradeCandles);
+            Log.Information("Start NotTradeableCountCandles method. Not trade candles = " + notTradeCandles);
             int notTradeMinutes = 0;
             if (candleList == null)
             {
@@ -134,43 +136,54 @@ namespace ScreenerStocks.Helpers
             {
                 case CandleInterval.Minute:
                     notTradeMinutes = 1 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.TwoMinutes:
                     notTradeMinutes = 2 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.ThreeMinutes:
                     notTradeMinutes = 3 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.FiveMinutes:
                     notTradeMinutes = 5 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.TenMinutes:
                     notTradeMinutes = 10 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.QuarterHour:
                     notTradeMinutes = 15 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.HalfHour:
                     notTradeMinutes = 30 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.Hour:
                     notTradeMinutes = 60 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.Day:
                     notTradeMinutes = 1440 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.Week:
                     notTradeMinutes = 10080 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
                 case CandleInterval.Month:
                     notTradeMinutes = 43200 * notTradeCandles;
+                    Log.Information("notTradeMinutes = " + notTradeMinutes);
                     break;
             }
             return NotTradeableCountMinutes(candleList, notTradeMinutes);
         }
 
         // определяет: не привышает ли стоимость ации определенную сумму
-        private bool LessPrice(CandlesList candleList, decimal margin)
+        private bool LessPrice(CandlesList candleList, decimal margin)  //проверяем, что цена ниже располагаемой для покупки суммы
         {
             Log.Information("Start LessPrice with figi: " + candleList.Figi);
             Log.Information("LessPrice. Last Close = " + candleList.Candles.Last().Close);
@@ -206,7 +219,7 @@ namespace ScreenerStocks.Helpers
             }
             else
             {
-                Log.Information(candlesList.Figi + " Not add to valid candles, because price < margin or this stocks not tradeble last " + notTradeMinutes + " minutes");
+                Log.Information(candlesList.Figi + "  Not Valid CandlesList");
                 Log.Information("Stop validation CandlesList " + candlesList.Figi);
                 return false;
             }
@@ -231,6 +244,7 @@ namespace ScreenerStocks.Helpers
             }
             else
             {
+                Log.Information(candlesList.Figi + " Not Valid CandlesList");
                 Log.Information("Stop validation CandlesList " + candlesList.Figi);
                 return false;
             }

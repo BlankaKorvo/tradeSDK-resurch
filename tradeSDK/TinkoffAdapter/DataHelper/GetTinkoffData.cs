@@ -222,6 +222,7 @@ namespace TinkoffAdapter.DataHelper
 
             Log.Information("Start GetCandleByFigiAsync method whith figi: " + figi);
             //DateTime to = DateTime.Now;
+            to = to.AddMinutes(2);
             DateTime from = to;
             switch (interval)
             {
@@ -260,7 +261,6 @@ namespace TinkoffAdapter.DataHelper
                     break;
             }
             Log.Information("Time periods for candles with figi: " + figi + " = " + from + " - " + to);
-
             try
             {
                 CandleList candle = await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketCandlesAsync(figi, from, to, interval)));

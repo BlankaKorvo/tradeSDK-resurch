@@ -26,15 +26,14 @@ namespace TradingAlgorithms.Algoritms
         public bool Long()
         {
             if (
-                Signal.DpoLongSignal(candleList, deltaPrice)
-                &&
+                //Signal.DpoLongSignal(candleList, deltaPrice)
+                //&&
                 Signal.MacdLongSignal(candleList, deltaPrice)                  
                 //&&
                 //Signal.ObvLongSignal(candleList, deltaPrice)
-                //Проверка на отсутствие боковика
-                
-                &&
-                Signal.BollingerBandsLongSignal(candleList, deltaPrice)                
+                //Проверка на отсутствие боковика                
+                //&&
+                //Signal.BollingerBandsLongSignal(candleList, deltaPrice)                
                 //Проверка на отсутсвие гэпа        
                 &&
                 Signal.CandleLongSignal(candleList, deltaPrice)
