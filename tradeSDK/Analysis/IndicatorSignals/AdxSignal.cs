@@ -15,7 +15,7 @@ namespace TradingAlgorithms.IndicatorSignals
     {
         int adxLookbackPeriod = 14;
         int adxAverageAngleCount = 1;
-        int adxFromLongAverageAngleCount = 3;
+        int adxFromLongAverageAngleCount = 2;
         double pdiAngleLong = 40;
         double mdiAngleLong = -40;
         double adxAngleLong = 0;
@@ -119,36 +119,42 @@ namespace TradingAlgorithms.IndicatorSignals
             Log.Information("Start AdxSignal FromLongSignal method with figi:" + candleList.Figi);
             List<AdxResult> adx = Mapper.AdxData(candleList, deltaPrice, adxLookbackPeriod);
             if (adx == null) { return false; }
+
+
+            decimal? pdiLast = adx.Last().Pdi;
+            decimal? mdiLast = adx.Last().Mdi;
+            double adxDegreeAverageAngleLast = AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Adx);
+            double pdiDegreeAverageAngleLast = AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Pdi);
+            double mdiDegreeAverageAngleLast = AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Mdi);
+
+            Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date);
+            Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date);
+            Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date);
+
+            Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Adx = " + adxDegreeAverageAngleLast + " should be less then " + 0);
+            Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Pdi = " + pdiDegreeAverageAngleLast + " should be less then " + 0);
+            Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Mdi = " + mdiDegreeAverageAngleLast + " should be less then " + 0);
+
+
             if (
-                    AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Adx) <= 0
+                    adxDegreeAverageAngleLast <= 0
                     ||
                     (
-                        AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Pdi) < 0
+                        pdiDegreeAverageAngleLast < 0
                         &&
-                        AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Mdi) > 0
+                        mdiDegreeAverageAngleLast > 0
                     )
                )
             {
-                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date );
-                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date );
-                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date );
-                //Log.Information("countAdxCandles = " + countAdxCandles + " should be less then expecCountAdxCandles " + expecCountAdxCandles);
-                Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Adx = " + AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Adx) + " should be less then 0");
-                Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Pdi = " + AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Pdi) + " should be less then" + pdiAngleLong);
-                Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Mdi = " + AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Mdi) + " should be more then 0");
+
+
                 Log.Information("Adx = FromLong - true for: " + candleList.Figi);
                 Log.Information("Stop AdxSignal FromLongSignal method with figi:" + candleList.Figi);
                 return true;
             }
             else
             {
-                Log.Information("Adx Pdi = " + adx.Last().Pdi + " " + adx.Last().Date + " should be more then Adx Mdi");
-                Log.Information("Adx Mdi = " + adx.Last().Mdi + " " + adx.Last().Date + " should be less then Adx Pdi & Adx");
-                Log.Information("Adx Adx = " + adx.Last().Adx + " " + adx.Last().Date + " should be more then Adx Mdi");
-                //Log.Information("countAdxCandles = " + countAdxCandles + " should be less then expecCountAdxCandles " + expecCountAdxCandles);
-                Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Adx = " + AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Adx) + " should be more then 0");
-                Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Pdi = " + AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Pdi) + " should be more then" + pdiAngleLong);
-                Log.Information("Adx angle " + adxFromLongAverageAngleCount + " straights Mdi = " + AdxDegreeAverageAngle(adx, adxFromLongAverageAngleCount, Adx.Mdi) + " should be less then 0");
+
                 Log.Information("Adx = FromLong - false for: " + candleList.Figi);
                 Log.Information("Stop AdxSignal FromLongSignal method with figi:" + candleList.Figi);
                 return false;

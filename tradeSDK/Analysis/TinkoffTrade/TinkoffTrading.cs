@@ -100,7 +100,7 @@ namespace TinkoffAdapter.TinkoffTrade
             decimal ask = orderbook.Asks.FirstOrDefault().Price;
             decimal bid = orderbook.Bids.FirstOrDefault().Price;
             int quantityAsksFirst = orderbook.Asks.FirstOrDefault().Quantity;
-            int quantityBidsFirst = orderbook.Bids.LastOrDefault().Quantity;
+            int quantityBidsFirst = orderbook.Bids.FirstOrDefault().Quantity;
             decimal deltaPrice = (ask + bid) / 2;
 
             Mishmash mishmash = new Mishmash() { candleList = candleList, deltaPrice = deltaPrice, orderbook = orderbook };

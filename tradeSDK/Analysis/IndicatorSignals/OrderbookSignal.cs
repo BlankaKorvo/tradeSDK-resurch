@@ -61,8 +61,8 @@ namespace TradingAlgorithms.IndicatorSignals
                     sw.Write(" q: " + item.Quantity + " p: " + item.Price);
                 }
                 sw.WriteLine();
-                sw.WriteLine("max price bid: " + bidsLarge.Max().Price);
-                sw.WriteLine("max price ask: " + asksLarge.Max().Price);
+                sw.WriteLine("max price bid: " + bidsLarge.OrderBy(x => x.Quantity).LastOrDefault().Price);
+                sw.WriteLine("max price ask: " + asksLarge.OrderBy(x => x.Quantity).LastOrDefault().Price);
                 sw.WriteLine("asksSmallQuantitySum " + asksSmallQuantitySum);
                 sw.WriteLine("bidsSmallQuantitySum " + bidsSmallQuantitySum);
                 sw.WriteLine("asksLargeQuantitySum " + asksLargeQuantitySum);
