@@ -4,14 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TinkoffAdapter
+namespace MarketDataModules
 {
-    public class TransactionModel
+    public class TransactionModel : TransactionModelBase
+    {
+        public int Quantity { get; set; } //кол-во акций
+        public decimal Purchase { get; set; } //объем покупки в валюте
+    }
+
+    public class TransactionModelBase
     {
         public string Figi { get; set; }
         public decimal Price { get; set; }
-        public decimal Purchase { get; set; } //объем покупки в валюте
-        public int Quantity { get; set; } //кол-во акций
         public Operation Operation { get; set; }
 
     }

@@ -27,8 +27,8 @@ namespace TradingAlgorithms.IndicatorSignals
             CandleStructure lastCandle = candleList.Candles.LastOrDefault();
 
 
-            decimal persentHighPrice = ((lastCandle.High * 100) / deltaPrice) - 100;
-            decimal lastHighPrice = ((preLastCandle.High * 100) / deltaPrice) - 100;
+            decimal growthWickLastCandle = ((lastCandle.High * 100) / deltaPrice) - 100;
+            decimal growthWickPreLastCandle = ((preLastCandle.High * 100) / deltaPrice) - 100;
 
 
             decimal deltaPricePreLastCandle = 0;
@@ -44,12 +44,13 @@ namespace TradingAlgorithms.IndicatorSignals
             }
             else
             {
+                deltaPriceLastCandle = deltaPrice - lastCandle.Open;
                 deltaPricePreLastCandle = preLastCandle.High - preLastCandle.Low;
                 if (deltaPricePreLastCandle == 0)
                 {
                     deltaPricePreLastCandle = 0.01m;
                 }
-                deltaPriceLastCandle = deltaPrice - lastCandle.Open; 
+                
 
             }
             //int countGreenCounts = CountGreenCandles(candleList);
@@ -60,8 +61,8 @@ namespace TradingAlgorithms.IndicatorSignals
             Log.Information("LastCandle. Date: " + lastCandle.Time + " Low: " + lastCandle.Low + " Open: " + lastCandle.Open + " Close: " + lastCandle.Close + " High: " + lastCandle.High + " Volume: " + lastCandle.Volume);
             Log.Information("PreLastCandle. Date: " + preLastCandle.Time + " Low: " + preLastCandle.Low + " Open: " + preLastCandle.Open + " Close: " + preLastCandle.Close + " High: " + preLastCandle.High + " Volume: " + lastCandle.Volume);
             Log.Information("Last candle must be green");
-            Log.Information("persentHighPrice: " + persentHighPrice + "must be < " + percent + " %");
-            Log.Information("lastHighPrice: " + lastHighPrice + "must be < " + percent + " %");
+            Log.Information("persentHighPrice: " + growthWickLastCandle + "must be < " + percent + " %");
+            Log.Information("lastHighPrice: " + growthWickPreLastCandle + "must be < " + percent + " %");
             Log.Information("deltaPriceLastCandle / deltaPricePreLastCandle: " + diff + " must be < " + deltaPriceDifference);
 
             if (
@@ -69,11 +70,11 @@ namespace TradingAlgorithms.IndicatorSignals
                 //&&                
                 IsCandleGreen(candleList, deltaPrice)
                 &&
-                persentHighPrice < percent
-                &&
-                lastHighPrice < percent
-                &&
-                diff < deltaPriceDifference
+                growthWickLastCandle < percent
+                //&&
+                //lastHighPrice < percent
+                //&&
+                //diff < deltaPriceDifference
 
                //&&
                //countGreenCounts <= greenCountCandles

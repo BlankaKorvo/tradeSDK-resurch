@@ -216,6 +216,11 @@ namespace TinkoffAdapter.DataHelper
             MarketInstrument instrument =  await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketSearchByFigiAsync(figi)));
             return instrument;
         }
+        public async Task<MarketInstrumentList> GetMarketInstrumentListByTicker(string ticker)
+        {
+            MarketInstrumentList instruments = await Model.Retry().ExecuteAsync(async () => await Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketSearchByTickerAsync(ticker)));
+            return instruments;
+        }
 
         async Task<CandleList> GetOneSetCandlesAsync(string figi, CandleInterval interval, DateTime to)
         {

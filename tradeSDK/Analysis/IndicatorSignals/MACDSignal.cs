@@ -42,7 +42,7 @@ namespace TradingAlgorithms.IndicatorSignals
             if (
                 macd.Last().Macd > macd.Last().Signal
                 && macd.Last().Histogram > 0
-                && histogramIncrease < 2
+                //&& histogramIncrease < 2
                 //&& macdDegreeAverageAngle >= macdAverageAngleCondition
                 //&& macdDegreeAverageAngle1 > macdAverageAngleCondition
                 && macd.Last().Histogram > macd[macd.Count - 2].Histogram

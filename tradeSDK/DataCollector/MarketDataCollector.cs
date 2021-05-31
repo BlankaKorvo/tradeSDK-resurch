@@ -142,8 +142,23 @@ namespace DataCollector
             return instrument;
         }
 
-
-
+        public async Task<Instrument> GetInstrumentByTicker(string ticker)
+        {
+            MarketInstrument instrumentT = null;
+            MarketInstrumentList instrumentList = await getTinkoffData.GetMarketInstrumentListByTicker(ticker);
+            if (instrumentList.Instruments.Count == 1)
+            {
+                instrumentT = instrumentList.Instruments.FirstOrDefault();
+            }
+            else
+            {
+                throw new Exception("При поиске по ticker - кол-во найденных инструментов = " + instrumentList.Instruments.Count);
+            }
+            Instrument instrument = new Instrument(instrumentT.Figi, instrumentT.Ticker,
+                instrumentT.Isin, instrumentT.MinPriceIncrement, instrumentT.Lot,
+                (Currency)instrumentT.Currency, instrumentT.Name, (InstrumentType)instrumentT.Type);
+            return instrument;
+        }
     }
 }
 

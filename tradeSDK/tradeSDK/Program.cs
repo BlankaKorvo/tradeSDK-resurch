@@ -31,26 +31,37 @@ namespace tradeSDK
             MarketDataCollector marketDataCollector = new MarketDataCollector();
             GetStocksHistory getStocksHistory = new GetStocksHistory();
             VolumeProfileScreener volumeProfileScreener = new VolumeProfileScreener();
-            var candleInterval = CandleInterval.FiveMinutes;
+            var candleInterval = CandleInterval.Day;
 
             int candlesCount = 80;
             decimal maxMoneyForTrade = 9000;
-
-
 
             MishMashScreener mishMashScreener = new MishMashScreener();
 
             try
             {
-                List<string> tickers = new List<string> { "BBG000N9MNX3", "BBG000B9XRY4", "BBG009S3NB30", "BBG000BVPV84", "BBG005DXJS36" };
+                List<string> tickers = new List<string> { }; //= new List<string> { "qdel", "med", "appf", "sage", "crox", "bio", "lpx", "hear", "txn", "trow", "fizz", "rgr", "bx", "coo", "vrtx", "prg", "azpn", "bpmc", "holx", "nbix" };
                 //await NewMethod(marketDataCollector);
-                //List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
-                List<Instrument> instrumentList = new List<Instrument> { };
-                foreach (var item in tickers)
+                List<Instrument> UsdinstrumentList = await getStocksHistory.AllUsdStocksAsync();
+                //List<Instrument> RubinstrumentList = await getStocksHistory.AllRubStocksAsync();
+                //List<Instrument> instrumentList = UsdinstrumentList.Union(RubinstrumentList).ToList();
+                var result = await mishMashScreener.GetAllTransactionModels(candleInterval, candlesCount, maxMoneyForTrade, UsdinstrumentList);
+
+                foreach (var item in result)
                 {
-                    instrumentList.Add(await marketDataCollector.GetInstrumentByFigi(item));
+                    if (item.Operation == Operation.toLong)
+                    { 
+                        tickers.Add(item.Figi);
+                        Console.WriteLine(item.Figi);
+                    }
                 }
-                await mishMashScreener.CycleTrading(candleInterval, candlesCount, maxMoneyForTrade, instrumentList);
+                Console.ReadLine();
+                //List<Instrument> instrumentList = new List<Instrument> { };
+                //foreach (var item in tickers)
+                //{
+                //    instrumentList.Add(await marketDataCollector.GetInstrumentByTicker(item));
+                //}
+                //await mishMashScreener.CycleTrading(candleInterval, candlesCount, maxMoneyForTrade, instrumentList);
             }
             catch (Exception ex)
             {

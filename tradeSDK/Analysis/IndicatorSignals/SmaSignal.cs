@@ -14,7 +14,7 @@ namespace TradingAlgorithms.IndicatorSignals
     public partial class Signal : IndicatorSignalsHelper
     {
         int smaLookbackPeriod = 8;
-        const decimal smaPriceDeltaCount = 0.5M;
+        const decimal smaPriceDeltaCount = 4M;
         internal bool SmaLongSignal(CandlesList candleList, decimal deltaPrice)
         {
             Log.Information("Start Sma LongSignal. Figi: " + candleList.Figi);

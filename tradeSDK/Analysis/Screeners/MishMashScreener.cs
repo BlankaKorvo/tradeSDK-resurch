@@ -150,7 +150,7 @@ namespace Analysis.Screeners
 
                 if (transactionData.Operation == Operation.toLong)
                 {
-                    Log.Information("If transactionData.Operation = " + TinkoffAdapter.Operation.toLong.ToString());
+                    Log.Information("If transactionData.Operation = " + Operation.toLong.ToString());
                     Log.Information("Start first transaction");
                     await tinkoffTrading.TransactionAsync(transactionData);
                     int i = 2;
@@ -170,6 +170,34 @@ namespace Analysis.Screeners
                     continue;
                 }
             }
+        }
+        public async Task<List<TransactionModelBase>> GetAllTransactionModels(CandleInterval candleInterval, int candleCount, decimal maxMoneyForTrade, List<Instrument> instrumentList)
+        {
+            Log.Information("Start GetTransactionModels");
+            List<TransactionModelBase> TransactionModelBaseList = new List<TransactionModelBase>();
+            foreach (var item in instrumentList)
+            {
+                CandlesList candlesList = await marketDataCollector.GetCandlesAsync(item.Figi, candleInterval, candleCount);
+                if (
+                    candlesList == null
+                    ||
+                    ValidCandles(candlesList, candlesList.Candles.Last().Close) == false
+                    )
+                {
+                    Log.Information(item.Figi + " not valid instrument");
+                    continue;
+                }
+
+                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandlesCount = candleCount, candleInterval = candleInterval, Purchase = maxMoneyForTrade };
+
+                TransactionModelBase transactionModelBase = await tinkoffTrading.PurchaseDecisionAsync(item.Figi);
+                Log.Information("Get TransactionModelBase: " + transactionModelBase.Figi);
+                Log.Information("TransactionModel operation = " + transactionModelBase.Operation);
+                Log.Information("TransactionModel price = " + transactionModelBase.Price);
+                TransactionModelBaseList.Add(transactionModelBase);
+            }
+            Log.Information("Stop GetTransactionModels");
+            return TransactionModelBaseList;
         }
 
         async Task<List<CandlesList>> SortUsdCandlesAsync(CandleInterval candleInterval, int candleCount, decimal margin, int notTradeMinuts)

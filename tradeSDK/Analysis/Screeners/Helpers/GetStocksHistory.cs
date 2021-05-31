@@ -41,6 +41,29 @@ namespace ScreenerStocks.Helpers
             Log.Information("Stop AllUsdStocks method");
             return usdStocks;
         }
+        public async Task<List<Instrument>> AllRubStocksAsync()
+        {
+            Log.Information("Start AllStocks method");
+            List<Instrument> usdStocks = new List<Instrument>();
+            InstrumentList stocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await dataCollector.GetInstrumentListAsync());
+            Log.Information("Get All MarketInstruments. Count =  " + stocks.Instruments.Count);
+            foreach (Instrument item in stocks.Instruments)
+            {
+                if (item.Currency == Currency.Rub)
+                {
+                    usdStocks.Add(item);
+                    Log.Information("Find " + item.Currency.ToString() + " MarketInstrument: " + item.Figi);
+                }
+                else
+                {
+                    Log.Information("Find " + item.Currency.ToString() + " MarketInstrument: " + item.Figi);
+                    continue;
+                }
+            }
+            Log.Information("Return  RUB MarketInstruments. Count: " + usdStocks.Count);
+            Log.Information("Stop AllUsdStocks method");
+            return usdStocks;
+        }
 
         internal async Task<List<CandlesList>> AllUsdCandlesAsync(CandleInterval candleInterval, int candelCount)
         {

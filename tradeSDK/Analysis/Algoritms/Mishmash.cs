@@ -29,7 +29,11 @@ namespace TradingAlgorithms.Algoritms
              
                 //Signal.DpoLongSignal(candleList, deltaPrice)
                 //&&
-                Signal.MacdLongSignal(candleList, deltaPrice)                  
+                Signal.MacdLongSignal(candleList, deltaPrice)
+                &&
+                Signal.AroonLongSignal(candleList, deltaPrice)
+                &&
+                Signal.AdxLongSignal(candleList, deltaPrice)
                 //&&
                 //Signal.ObvLongSignal(candleList, deltaPrice)
                 //Проверка на отсутствие боковика                
@@ -48,10 +52,7 @@ namespace TradingAlgorithms.Algoritms
                 //Signal.EmaLongSignal(candleList, deltaPrice)
                 &&
                 Signal.SmaLongSignal(candleList, deltaPrice)
-                &&
-                Signal.AroonLongSignal(candleList, deltaPrice)
-                &&
-                Signal.AdxLongSignal(candleList, deltaPrice)
+
                 &&
                 Signal.VolumeLongSignal(candleList)
                 &&

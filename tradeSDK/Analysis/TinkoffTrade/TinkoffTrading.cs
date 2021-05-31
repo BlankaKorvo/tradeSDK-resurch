@@ -10,9 +10,10 @@ using Tinkoff.Trading.OpenApi.Models;
 using Tinkoff.Trading.OpenApi.Network;
 using TinkoffAdapter.DataHelper;
 using TradingAlgorithms.Algoritms;
-using MarketDataModules;
+using Operation = MarketDataModules.Operation;
 using Orderbook = MarketDataModules.Orderbook;
 using CandleInterval = MarketDataModules.CandleInterval;
+using MarketDataModules;
 
 namespace TinkoffAdapter.TinkoffTrade
 {
@@ -121,6 +122,46 @@ namespace TinkoffAdapter.TinkoffTrade
             }
             Log.Information("Stop PurchaseDecision for: " + transactionModel.Figi);
             return transactionModel;
+        }
+
+        public async Task<TransactionModelBase> PurchaseDecisionAsync(string figi)
+        {
+            Log.Information("Start PurchaseDecision method. Figi: " + this.Figi);
+            TransactionModelBase transactionModelBase = new TransactionModelBase();
+            transactionModelBase.Figi = figi;
+            //Получаем свечи
+            CandlesList candleList = await marketDataCollector.GetCandlesAsync(figi, candleInterval, CandlesCount);
+
+            //Получаем стакан
+            Orderbook orderbook = await marketDataCollector.GetOrderbookAsync(figi);
+            if (orderbook == null)
+            {
+                Log.Information("Orderbook " + figi + " is null");
+                transactionModelBase.Operation = Operation.notTrading;
+                return transactionModelBase;
+            }
+            decimal ask = orderbook.Asks.FirstOrDefault().Price;
+            decimal bid = orderbook.Bids.FirstOrDefault().Price;
+            int quantityAsksFirst = orderbook.Asks.FirstOrDefault().Quantity;
+            int quantityBidsFirst = orderbook.Bids.FirstOrDefault().Quantity;
+            decimal deltaPrice = (ask + bid) / 2;
+
+            Mishmash mishmash = new Mishmash() { candleList = candleList, deltaPrice = deltaPrice, orderbook = orderbook };
+
+            if (mishmash.Long() == true)
+            {
+                Log.Information("Go to Long: " + transactionModelBase.Figi);
+                transactionModelBase.Operation = Operation.toLong;
+                transactionModelBase.Price = ask;
+            }
+            else if (mishmash.FromLong() == true)
+            {
+                Log.Information("Go from Long: " + transactionModelBase.Figi);
+                transactionModelBase.Operation = Operation.fromLong;
+                transactionModelBase.Price = bid;
+            }
+            Log.Information("Stop PurchaseDecision for: " + figi);
+            return transactionModelBase;
         }
 
 
@@ -244,5 +285,4 @@ namespace TinkoffAdapter.TinkoffTrade
             return lots;
         }
     }
-
 }

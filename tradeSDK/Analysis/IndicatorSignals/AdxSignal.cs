@@ -16,8 +16,8 @@ namespace TradingAlgorithms.IndicatorSignals
         int adxLookbackPeriod = 14;
         int adxAverageAngleCount = 1;
         int adxFromLongAverageAngleCount = 2;
-        double pdiAngleLong = 40;
-        double mdiAngleLong = -40;
+        double pdiAngleLong = 20;
+        double mdiAngleLong = -20;
         double adxAngleLong = 0;
         int expecCountAdxCandles = 2;
 
