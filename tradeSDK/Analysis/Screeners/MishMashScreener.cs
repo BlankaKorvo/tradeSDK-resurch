@@ -59,12 +59,12 @@ namespace Analysis.Screeners
                 await Trading(candleInterval, candleCount, margin, candleLists);
             }
         }
-        public async Task CycleTrading(CandleInterval candleInterval, int candleCount, decimal maxMoneyForTrade, List<Instrument> instrumentList)
+        public async Task CycleTrading(CandleInterval candleInterval, int candleCount, decimal maxMoneyForTrade, List<string> figis)
         {
             while (true)
             {
                 Log.Information("Start CycleTrading");
-                await Trading(candleInterval, candleCount, maxMoneyForTrade, instrumentList);
+                await Trading(candleInterval, candleCount, maxMoneyForTrade, figis);
             }
         }
 
@@ -119,24 +119,24 @@ namespace Analysis.Screeners
             }            
         }
 
-        public async Task Trading(CandleInterval candleInterval, int candleCount, decimal maxMoneyForTrade, List<Instrument> instrumentList)
+        public async Task Trading(CandleInterval candleInterval, int candleCount, decimal maxMoneyForTrade, List<string> figis)
         {
             Log.Information("Start Trading");
-            foreach (var item in instrumentList)
+            foreach (string figi in figis)
             {
-                CandlesList candlesList = await marketDataCollector.GetCandlesAsync(item.Figi, candleInterval, candleCount);
+                CandlesList candlesList = await marketDataCollector.GetCandlesAsync(figi, candleInterval, candleCount);
                 if (
                     candlesList == null
                     ||
                     ValidCandles(candlesList, candlesList.Candles.Last().Close) == false
                     )
                 {
-                    Log.Information(item.Figi + " not valid instrument");
+                    Log.Information(figi + " not valid instrument");
                     continue;
                 }
-                Log.Information("Start ScreenerStocks for: " + item.Figi);
-                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = item.Figi, CandlesCount = candleCount, candleInterval = candleInterval, Purchase = maxMoneyForTrade };
-                Log.Information("Get object TinkoffTrading with FIGI: " + item.Figi);
+                Log.Information("Start ScreenerStocks for: " + figi);
+                TinkoffTrading tinkoffTrading = new TinkoffTrading() { Figi = figi, CandlesCount = candleCount, candleInterval = candleInterval, Purchase = maxMoneyForTrade };
+                Log.Information("Get object TinkoffTrading with FIGI: " + figi);
                 TransactionModel transactionData = await tinkoffTrading.PurchaseDecisionAsync();
                 Log.Information("Get TransactionModel: " + transactionData.Figi);
                 if (transactionData.Operation == Operation.notTrading)

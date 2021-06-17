@@ -49,7 +49,7 @@ namespace TradingAlgorithms.IndicatorSignals.Helpers
             return averageAngles;
         }
 
-        internal bool GreenCandle(CandleStructure candleStructure)
+        internal bool IsCandleGreen(CandleStructure candleStructure)
         {
             if (candleStructure.Open <= candleStructure.Close)
                 return true;

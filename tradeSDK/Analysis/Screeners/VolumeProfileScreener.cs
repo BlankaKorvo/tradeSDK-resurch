@@ -134,7 +134,7 @@ namespace Analysis.Screeners
                     if (price >= profiles.LowerBound && price < profiles.UpperBound)
                     {
                         profiles.CandlesCount++;
-                        if (indicatorSignalsHelper.GreenCandle(candle))
+                        if (indicatorSignalsHelper.IsCandleGreen(candle))
                             profiles.VolumeGreen += candle.Volume;
                         else
                             profiles.VolumeRed += candle.Volume;
