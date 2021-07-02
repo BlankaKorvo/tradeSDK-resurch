@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinkoffAdapter", "TinkoffAd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarketDataModules", "MarketDataModules\MarketDataModules.csproj", "{EC2599EF-CE6A-497C-B3AD-8C5473577E73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinamAdapter", "FinamAdapter\FinamAdapter.csproj", "{333150B0-AC8B-406E-846F-FCF99963025B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinamAdapter", "FinamAdapter\FinamAdapter.csproj", "{333150B0-AC8B-406E-846F-FCF99963025B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AloraAdapter", "AloraAdapter\src\AloraAdapter.csproj", "{A708EB7B-F4BC-4A12-AB30-229FD0654634}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{333150B0-AC8B-406E-846F-FCF99963025B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{333150B0-AC8B-406E-846F-FCF99963025B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{333150B0-AC8B-406E-846F-FCF99963025B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A708EB7B-F4BC-4A12-AB30-229FD0654634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A708EB7B-F4BC-4A12-AB30-229FD0654634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A708EB7B-F4BC-4A12-AB30-229FD0654634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A708EB7B-F4BC-4A12-AB30-229FD0654634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
