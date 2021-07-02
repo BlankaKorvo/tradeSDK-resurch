@@ -16,6 +16,8 @@ using MarketDataModules.Models.Candles;
 using TinkoffData;
 using Skender.Stock.Indicators;
 using TradingAlgorithms.IndicatorSignals;
+using Alor;
+using Instrument = MarketDataModules.Instrument;
 
 namespace tradeSDK
 {
@@ -37,6 +39,11 @@ namespace tradeSDK
 
             int candlesCount = 80;
             decimal maxMoneyForTrade = 9000;
+
+
+
+            ClientAlor client = new Client();
+
 
             MishMashScreener mishMashScreener = new MishMashScreener();
             List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
