@@ -38,9 +38,7 @@ namespace tradeSDK
 
             int candlesCount = 80;
             decimal maxMoneyForTrade = 9000;
-
-
-
+            
             MishMashScreener mishMashScreener = new MishMashScreener();
             List<Instrument> instrumentList = await getStocksHistory.AllUsdStocksAsync();
 

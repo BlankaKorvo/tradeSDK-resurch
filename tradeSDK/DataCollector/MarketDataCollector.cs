@@ -82,6 +82,7 @@ namespace DataCollector
             return candlesList;
         }
 
+
         async Task<InstrumentList> TinkoffInstrumentList()
         {
             MarketInstrumentList tinkoffStocks = await RetryPolicy.Model.RetryToManyReq().ExecuteAsync(async () => await Auth.Context.MarketStocksAsync());
